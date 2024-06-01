@@ -1,0 +1,9 @@
+.menu-container{
+    .nav{
+        a{
+            &.active{
+                color: red;
+            }
+        }
+    }
+}
