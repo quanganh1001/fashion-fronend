@@ -6,7 +6,6 @@ const instance = axios.create({
 
 
 instance.interceptors.response.use(function(response){
-    console.log(response.data);
     return response && response.data ? response.data :response;
 }, function (error) {
     return Promise.reject(error)
