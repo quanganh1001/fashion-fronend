@@ -1,7 +1,21 @@
-import axiosInstance from "../ultils/axiosCustomize"
+import api from "../ultils/axiosCustomize"
+import jwtDecode from "jwt-decode";
 
-const postLogin = (username, password) => {
-    return axiosInstance.post("login", {username,password})
+
+export const login = (data) => {
+    return api.post('login', data)
+        .then(res => res.data);
 }
 
-export {postLogin} ; 
+export const getAuth = () => {
+    const auth = localStorage.getItem('auth');
+    return auth ? JSON.parse(auth) : {};
+}
+
+
+
+export const isTokenExpired = (token) => {
+    const userPayload = jwtDecode(token);
+    const { exp } = userPayload;
+    return exp * 1000 < Date.now();
+}

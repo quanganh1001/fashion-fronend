@@ -2,16 +2,13 @@
 import { useState } from "react";
 import { postLogin } from "../../services/Auth";
 import $  from 'jquery';
-import { useDispatch } from "react-redux";
-import {useNavigate} from "react-router-dom";
-import { doLogin } from "../../redux/action/accountAction";
+import { useNavigate } from "react-router-dom";
 
 const Login = (props) => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [passBlank, setPassBlank] = useState("");
   const [usernameBlank, setUsernameBlank] = useState("");
-  const dispatch = useDispatch();
   const navigate = useNavigate();
 
   let valid = true;
@@ -43,7 +40,7 @@ const Login = (props) => {
     try {
       let res = await postLogin(username, password);
       
-        dispatch(doLogin(res))
+      
         
         navigate("/")
      

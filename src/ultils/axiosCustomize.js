@@ -1,14 +1,24 @@
 import axios from 'axios';
+import { getAuth, isTokenExpired } from '../services/Auth';
 
-const instance = axios.create({
+const api = axios.create({
     baseURL: 'http://localhost:8080/'
 })
 
 
-instance.interceptors.response.use(function(response){
-    return response && response.data ? response.data :response;
-}, function (error) {
-    return Promise.reject(error)
-})
+api.interceptors.request.use(
+    config => { 
+        const { accessToken } = getAuth();
+        if (accessToken) {
+            if (!isTokenExpired(accessToken)) {
+                config.headers['Authorization'] = `Bearer ${accessToken}`;
+            }
+        }
+        return config;
+    },
+    error => {
+        return Promise.reject(error);
+    }
+);
 
-export default instance;
+export default api;
