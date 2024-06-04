@@ -9,11 +9,11 @@ const INITIAL_STATE = {
   },
   isAuthenticated: false,
 };
+
 const accountReducer = (state = INITIAL_STATE, action) => {
   switch (action.type) {
     
     case FETCH_USER_LOGIN_SUCCESS:
-        console.log(action);
       return {
         ...state,
         account: {

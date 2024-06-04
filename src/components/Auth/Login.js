@@ -42,15 +42,15 @@ const Login = (props) => {
 
     try {
       let res = await postLogin(username, password);
-      console.log(res);
-      if(res){
+      
         dispatch(doLogin(res))
         
         navigate("/")
-      }
+     
     } catch (error) {
-      console.error("Error logging in:", error);
-      // Xử lý lỗi đăng nhập, ví dụ: hiển thị thông báo lỗi cho người dùng
+      if(error.response.status === 401){
+        setPassBlank("Sai tài khoản hoặc mật khẩu");
+      }
     }
   };
 

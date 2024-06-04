@@ -1,6 +1,6 @@
 import React from "react";
 import "./index.css";
-import App from "./App";
+import Admin from "./Admin";
 import { Route, Routes } from "react-router-dom";
 import Category from "./components/Admin/Category";
 import Product from "./components/Admin/Product";
@@ -11,7 +11,7 @@ const Layout = (props) => {
     return(
         <>
         <Routes>
-        <Route path="/" element={<App />}>
+        <Route path="/" element={<Admin />}>
           <Route path="category" element={<Category />} />
           <Route path="product" element={<Product />} />
         </Route>

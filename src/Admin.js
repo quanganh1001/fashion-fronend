@@ -1,8 +1,8 @@
-import "./App.scss";
+import "./Admin.scss";
 import Menu from "./components/Admin/Menu";
 import { Outlet } from "react-router-dom";
 
-const App = () => {
+const Admin = () => {
   return (
     <div className="app-container">
       <div className="menu-container">
@@ -16,4 +16,4 @@ const App = () => {
   );
 };
 
-export default App;
+export default Admin;
