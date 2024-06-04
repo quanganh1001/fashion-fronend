@@ -1,16 +1,15 @@
-import axiosInstance from "../ultils/axiosCustomize"
-
-
+import instance from "../ultils/axiosCustomize"
 
 const getAllProducts = async () => {
     try {
-      const response = await axiosInstance.get('products');
-      console.log(response);
+      
+      const response = await instance.get('products');
+      
       return response;
     } catch (error) {
-      console.error("Error fetching products:", error);
+      console.log("Error fetching products:", error);
       return { EC: 1, data: [] };
     }
 }
 
-export {getAllProducts}
+export {getAllProducts};
