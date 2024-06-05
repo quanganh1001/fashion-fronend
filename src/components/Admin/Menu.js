@@ -1,40 +1,53 @@
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import React, { useEffect, useState } from "react";
-
+import { Link, useLocation } from "react-router-dom";
 
 const Menu = (props) => {
-  const [username, setUsername] = useState('');
+  const [username, setUsername] = useState("");
+
+  const navItems = [
+    { path: "/admin", label: "Trang chủ" },
+    { path: "/admin/products", label: "Sản phẩm" },
+    { path: "/admin/categories", label: "Danh mục sản phẩm" },
+  ];
+
+  const location = useLocation();
 
   useEffect(() => {
-    const auth = localStorage.getItem('auth');
-    if (auth) {
-      setUsername(auth.username);
-    }
+    const auth = JSON.parse(localStorage.getItem("auth"));
+    setUsername(auth.username);
   }, []);
+
   return (
     <>
-      <div className="bg-dark sidebar">
+      <div className="d-flex flex-column p-3 text-white bg-dark min-vh-100">
         <ul className=" list-group p-3 menu">
-            <li className="p-3 text-light menu-item" >Trang chủ</li>
-            <li className="p-3 text-light menu-item" >Quản
-                lý Sản phẩm
+          {navItems.map((item) => (
+            <li className="nav-item my-2" key={item.label}>
+              <Link
+                to={item.path}
+                className={'nav-link ps-3 py-2'}
+                style={{
+                  backgroundColor: location.pathname === item.path ? "#E9ECEF" : "transparent",
+                  borderRadius: location.pathname === item.path ? "8px" : "0",
+                  color: location.pathname === item.path ? "#000" : "#fff",
+                }}
+              >
+                {item.label}
+              </Link>
             </li>
-            <li className="p-3 text-light menu-item" >
-                Quản lý danh mục Sản phẩm
-            </li>
-           
-          
-            <div className="m-3">
-                <div className="mb-3 text-light" >
-                    Xin chào, {username} <FontAwesomeIcon icon="fa-regular fa-eye" /> ! 
-                      
-                </div>
-                
-                <button className="btn btn-danger">Đăng xuất</button>
-                
+          ))}
+
+          <div className="m-3">
+            <div className="mb-3 text-light">
+              Xin chào, {username} <FontAwesomeIcon icon="fa-regular fa-eye" />{" "}
+              !
             </div>
+
+            <button className="btn btn-danger">Đăng xuất</button>
+          </div>
         </ul>
-        </div>
+      </div>
     </>
   );
 };

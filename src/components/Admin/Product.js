@@ -1,28 +1,28 @@
 import React, { useEffect, useState } from "react";
-import axiosInstance from "../../ultils/axiosCustomize";
+import api from "../../ultils/axiosCustomize";
 import { Table, InputGroup, FormControl, Button, Form } from 'react-bootstrap';
 
-const ProductPage = () => {
+const Product = () => {
   const [products, setProducts] = useState([]);
   const [page, setPage] = useState(1);
   const [keyword, setKeyword] = useState("");
   const [totalPages, setTotalPages] = useState(1);
-
+ 
   useEffect(() => {
     fetchProducts();
   }, [page, keyword]);
 
   const fetchProducts = async () => {
     try {
-      const response = await axiosInstance.get("/products", {
+      const response = await api.get("/products", {
         params: {
           keyword: keyword,
           page: page,
-    
         }
       });
-      setProducts(response.productsRes);
-      setTotalPages(response.totalPages);
+      console.log(response.data);
+      setProducts(response.data.productsRes);
+      setTotalPages(response.data.totalPages);
     } catch (error) {
       console.error("Error fetching products:", error);
     }
@@ -44,7 +44,7 @@ const ProductPage = () => {
   };
 
   return (
-    <div>
+    <>
       <h1>Product Page</h1>
       <div>
         <InputGroup className="mb-3">
@@ -75,8 +75,8 @@ const ProductPage = () => {
       <Form.Select value={page} onChange={handlePageChange}>
         {renderPageOptions()}
       </Form.Select>
-    </div>
+    </>
   );
 };
 
-export default ProductPage;
+export default Product;

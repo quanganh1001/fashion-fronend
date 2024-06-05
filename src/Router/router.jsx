@@ -31,10 +31,8 @@ export const router = createBrowserRouter([
                         children: [
                             {
                                 index: true,
-                                element:
-                                    <PaginationProvider>
+                                element:     
                                         <HomeAdmin />
-                                    </PaginationProvider>
                             },
                             
                         ]
@@ -42,16 +40,11 @@ export const router = createBrowserRouter([
 
                     {
                         path: 'products',
-                        element: <Outlet />,
-                        children: [
-                            {
-                                element:
-                                    <PaginationProvider>
-                                        <Product />
-                                    </PaginationProvider>
-                            },
-                            
-                        ]
+                        element: (
+                            <PaginationProvider>
+                                <Product />
+                            </PaginationProvider>
+                        )
                     },
 
                     {

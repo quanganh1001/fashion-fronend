@@ -12,7 +12,7 @@ export default function AuthProvider({ children }) {
     const navigate = useNavigate();
 
     const [auth, setAuth] = useState(getAuth());
-
+   
     // useEffect(() => {
     //     const interval = setInterval(() => {
     //         if (auth.accessToken && auth.refreshToken) {
@@ -36,8 +36,11 @@ export default function AuthProvider({ children }) {
     //     return () => clearInterval(interval);
     // }, [auth]);
 
-
-
+    useEffect(() => {
+     
+            setAuth(JSON.parse(localStorage.getItem('auth')));
+        
+    }, []);
     return (
         <AuthContext.Provider value={{ auth}}>
             {children}
