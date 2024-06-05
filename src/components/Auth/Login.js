@@ -1,27 +1,35 @@
 /* eslint-disable no-restricted-globals */
-import { useState } from "react";
-import { postLogin } from "../../services/Auth";
-import $  from 'jquery';
+import { useState, useEffect } from "react";
+import $ from "jquery";
 import { useNavigate } from "react-router-dom";
+import { getAuth } from "../../services/Auth";
+import { login } from "../../services/Auth";
 
-const Login = (props) => {
+export default function Login() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [passBlank, setPassBlank] = useState("");
   const [usernameBlank, setUsernameBlank] = useState("");
+  const [auth, setAuth] = useState(getAuth());
   const navigate = useNavigate();
 
-  let valid = true;
+  useEffect(() => {
+    localStorage.setItem("auth", JSON.stringify(auth));
+  }, [auth]);
 
-  const handleLogin = async (event) => {
+  const submitForm = async (event) => {
+    event.preventDefault();
+
+    let valid = true;
+
     if (password === "") {
       $("#password").addClass("border-danger");
       setPassBlank("Mật khẩu không được để trống");
       valid = false;
     } else {
       setPassBlank("");
-      $("#password").removeClass("border-danger")
-    };
+      $("#password").removeClass("border-danger");
+    }
 
     if (username === "") {
       valid = false;
@@ -29,26 +37,29 @@ const Login = (props) => {
       setUsernameBlank("Tên đăng nhập không được để trống");
     } else {
       setUsernameBlank("");
-      $("#username").removeClass("border-danger")
-
-    };
+      $("#username").removeClass("border-danger");
+    }
 
     if (!valid) {
       return;
     }
 
-    try {
-      let res = await postLogin(username, password);
-      
-      
-        
-        navigate("/")
-     
-    } catch (error) {
-      if(error.response.status === 401){
-        setPassBlank("Sai tài khoản hoặc mật khẩu");
-      }
-    }
+    login({ username, password })
+      .then((res) => {
+        console.log(res);
+        setAuth({
+          token: res.token,
+          refreshToken: res.refreshToken,
+          role: res.role,
+          usename: res.username,
+        });
+        navigate('/admin')
+      })
+      .catch((error) => {
+        if(error.response.data === 'Invalid username or password'){
+          setPassBlank("Sai tên đăng nhập hoặc mật khẩu");
+        };
+      });
   };
 
   return (
@@ -57,41 +68,37 @@ const Login = (props) => {
       <div className="mt-5 bg-white p-5 shadow border col-8">
         <div className="card-body">
           <p className="login-box-msg">Đăng nhập</p>
-
-          <div className=" mb-3">
-            <input
-              id="username"
-              type="text"
-              className="form-control"
-              placeholder="Tên đăng nhập"
-              onChange={() => setUsername(event.target.value)}
-            />
-            <span className="text-danger">{usernameBlank}</span>
-          </div>
-          <div className=" mb-3">
-            <input
-              id="password"
-              type="password"
-              className="form-control"
-              placeholder="Mật khẩu"
-              onChange={() => setPassword(event.target.value)}
-            />
-            <span className="text-danger">{passBlank}</span>
-          </div>
-          <div className="row">
-            <div className="col-4">
-              <button
-                onClick={() => handleLogin(props)}
-                className="btn btn-dark"
-              >
-                Đăng nhập
-              </button>
+          <form onSubmit={submitForm}>
+            <div className=" mb-3">
+              <input
+                id="username"
+                type="text"
+                className="form-control"
+                placeholder="Tên đăng nhập"
+                onChange={(event) => setUsername(event.target.value)}
+              />
+              <span className="text-danger">{usernameBlank}</span>
             </div>
-          </div>
+            <div className=" mb-3">
+              <input
+                id="password"
+                type="password"
+                className="form-control"
+                placeholder="Mật khẩu"
+                onChange={(event) => setPassword(event.target.value)}
+              />
+              <span className="text-danger">{passBlank}</span>
+            </div>
+            <div className="row">
+              <div className="col-4">
+                <button type="submit" className="btn btn-dark">
+                  Đăng nhập
+                </button>
+              </div>
+            </div>
+          </form>
         </div>
       </div>
     </div>
   );
-};
-
-export default Login;
+}
