@@ -11,7 +11,7 @@ export default function AuthProvider({ children }) {
 
     const navigate = useNavigate();
 
-    const [auth, setAuth] = useState(getAuth());
+    const [auth] = useState(getAuth());
 
     // useEffect(() => {
     //     const interval = setInterval(() => {

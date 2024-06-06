@@ -16,7 +16,7 @@ export default function Login() {
   useEffect(() => {
     localStorage.setItem("auth", JSON.stringify(auth));
   }, [auth]);
-
+  
   const submitForm = async (event) => {
     event.preventDefault();
 
