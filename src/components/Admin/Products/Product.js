@@ -1,14 +1,14 @@
 import { Dropdown, Pagination } from "react-bootstrap";
 import { Link } from "react-router-dom";
-import useModal from "../../CustomHooks/useModal";
-import { deleteProduct } from "../../Services/ProductSerivce";
+import useModal from "../../../CustomHooks/useModal";
+import { deleteProduct } from "../../../Services/ProductSerivce";
 import React, { useEffect, useState } from "react";
-import api from "../../Ultils/AxiosCustomize";
-import CustomPagination from "../Fragments/CustomPagination";
-import usePagination from "../../CustomHooks/userPagination";
-import SearchForm from "../Fragments/SearchForm";
+import api from "../../../Ultils/AxiosCustomize";
+import CustomPagination from "../../Fragments/CustomPagination";
+import usePagination from "../../../CustomHooks/userPagination";
+import SearchForm from "../../Fragments/SearchForm";
 
-export default function Category() {
+export default function Product() {
   const [products, setProducts] = useState([]);
   const [totalPages, setTotalPages] = useState(1);
   const [totalProducts, setTotalProducts] = useState();
@@ -57,32 +57,37 @@ export default function Category() {
 
   return (
     <>
-      <h1>Sản phẩm</h1>
+      <div className="d-flex flex-wrap justify-content-between align-items-center">
+        <h1 className="">Sản phẩm</h1>
+      </div>
       <hr />
-      <div className="d-flex justify-content-between align-items-center">
-        <div>
+
+      <div className="d-flex flex-wrap my-5 justify-content-between align-items-center">
+        <div className="col">
           <Link to="/admin/products/add">
-            <i className="bi bi-plus-circle-fill btn btn-link fs-1"></i>
+            <button className="btn btn-dark">Thêm sản phẩm</button>
           </Link>
         </div>
 
-        <SearchForm placeholder={"Nhập tên sản phẩm hoặc mã sản phẩm"} />
+        <div className="col-5">
+          <SearchForm placeholder={"Nhập tên sản phẩm hoặc mã sản phẩm"} />
+        </div>
       </div>
 
-      <table className="table table-hover">
+      <table className="table table-striped table-hover table-bordered border">
         <thead>
           <tr>
-            <th>ID</th>
-            <th>Tên sản phẩm</th>
-            <th>Giá tiền </th>
+            <th>Mã sản phẩm</th>
+            <th>Tên sản phâm</th>
+            <th>Danh mục</th>
           </tr>
         </thead>
         <tbody>
           {products.map((p) => (
             <tr key={p.id} className="align-middle">
-              <td>{p.id}</td>
+              <td>{p.productCode}</td>
               <td>{p.productName}</td>
-              <td>{p.price} $</td>
+              <td>{p.catName}</td>
               <td>
                 <Dropdown>
                   <Dropdown.Toggle variant="dark">Hành động</Dropdown.Toggle>

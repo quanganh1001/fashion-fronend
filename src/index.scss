@@ -15,3 +15,14 @@ code {
 li{
   list-style-type: none;
 }
+
+.btn-active{
+  background-color: rgba(0, 0, 0, 0.871) !important;
+  color: white !important;
+  border-color: rgba(0, 0, 0, 0.871)  !important;
+}
+
+.btn-non-active{
+  background-color: white  !important;
+  color: rgba(0, 0, 0, 0.871) !important;
+}

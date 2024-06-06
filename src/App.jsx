@@ -7,7 +7,7 @@ function App() {
       
         <Outlet />
       
-    </AuthProvider>
+    </AuthProvider> 
   )
 }
 
