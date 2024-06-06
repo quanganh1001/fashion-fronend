@@ -1,6 +1,6 @@
 const Category = (props) => {
     return (
-        <div>Category</div>
+        <div>Quản lý danh mục</div>
     )
 }
 export default Category;

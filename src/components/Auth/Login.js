@@ -1,22 +1,18 @@
 /* eslint-disable no-restricted-globals */
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import $ from "jquery";
 import { useNavigate } from "react-router-dom";
-import { getAuth } from "../../services/Auth";
-import { login } from "../../services/Auth";
+
+import { login } from "../../Services/Auth";
 
 export default function Login() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [passBlank, setPassBlank] = useState("");
   const [usernameBlank, setUsernameBlank] = useState("");
-  const [auth, setAuth] = useState(getAuth());
+
   const navigate = useNavigate();
 
-  useEffect(() => {
-    localStorage.setItem("auth", JSON.stringify(auth));
-  }, [auth]);
-  
   const submitForm = async (event) => {
     event.preventDefault();
 
@@ -46,13 +42,8 @@ export default function Login() {
 
     login({ username, password })
       .then((res) => {
-        console.log(res);
-        setAuth({
-          token: res.token,
-          refreshToken: res.refreshToken,
-          role: res.role,
-          usename: res.username,
-        });
+        localStorage.setItem("auth", JSON.stringify(res));
+        
         navigate('/admin')
       })
       .catch((error) => {

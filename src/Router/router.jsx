@@ -1,12 +1,12 @@
-import AdminLayout from "../components/Layout/AdminLayout.js";
-import { ProtectedRoute } from "./ProtectedRoute"
+import AdminLayout from "../Components/Layout/AdminLayout.js";
+import { ProtectedRoute } from "./ProtectedRoute.jsx"
 import { Outlet, createBrowserRouter } from "react-router-dom"
-import App from "../App";
-import PaginationProvider from "../ContextProvider/PaginationProvider";
-import Product from "../components/Admin/Product"
-import Category from "../components/Admin/Category"
-import Login from "../components/Auth/Login";
-import HomeAdmin from "../components/Admin/HomeAdmin.js";
+import App from "../App.jsx";
+import PaginationProvider from "../ContextProvider/PaginationProvider.js";
+import Product from '../Components/Admin/Product.js';
+import Category from "../Components/Admin/Category.js"
+import Login from "../Components/Auth/Login.js";
+import HomeAdmin from "../Components/Admin/HomeAdmin.js";
 
 export const router = createBrowserRouter([
     {
@@ -31,10 +31,8 @@ export const router = createBrowserRouter([
                         children: [
                             {
                                 index: true,
-                                element:
-                                    <PaginationProvider>
+                                element:     
                                         <HomeAdmin />
-                                    </PaginationProvider>
                             },
                             
                         ]
@@ -42,16 +40,9 @@ export const router = createBrowserRouter([
 
                     {
                         path: 'products',
-                        element: <Outlet />,
-                        children: [
-                            {
-                                element:
-                                    <PaginationProvider>
-                                        <Product />
-                                    </PaginationProvider>
-                            },
-                            
-                        ]
+                        element: (
+                                <Product />
+                        )
                     },
 
                     {
@@ -60,9 +51,7 @@ export const router = createBrowserRouter([
                         children: [
                             {
                                 element:
-                                    <PaginationProvider>
                                         <Category />
-                                    </PaginationProvider>
                             },
                             
                         ]

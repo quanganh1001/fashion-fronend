@@ -1,4 +1,4 @@
-import Menu from "../Admin/Menu"
+import Menu from "../Admin/Menu";
 
 export default function AdminLayout({ children }) {
     return (
@@ -8,7 +8,7 @@ export default function AdminLayout({ children }) {
                     <Menu />
                 </div>
                 <div className='col offset-2'>
-                    <div className='container p-5'>
+                    <div className='m-3 mt-5 bg-white p-5 shadow border'>
                         {children}
                     </div>
                 </div>

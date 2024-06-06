@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { getAuth, login, refreshToken } from "../services/Auth";
+import { getAuth } from "../Services/Auth";
 import { AuthContext } from "./Context";
 import { useLocation, useNavigate } from "react-router-dom";
 
@@ -11,8 +11,8 @@ export default function AuthProvider({ children }) {
 
     const navigate = useNavigate();
 
-    const [auth] = useState(getAuth());
-
+    const [auth, setAuth] = useState(getAuth());
+   
     // useEffect(() => {
     //     const interval = setInterval(() => {
     //         if (auth.accessToken && auth.refreshToken) {
@@ -36,8 +36,11 @@ export default function AuthProvider({ children }) {
     //     return () => clearInterval(interval);
     // }, [auth]);
 
-
-
+    useEffect(() => {
+     
+            setAuth(JSON.parse(localStorage.getItem('auth')));
+        
+    }, []);
     return (
         <AuthContext.Provider value={{ auth}}>
             {children}

@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { getAuth, isTokenExpired } from '../services/Auth';
+import { getAuth, isTokenExpired } from '../Services/Auth';
 
 const api = axios.create({
     baseURL: 'http://localhost:8080/'
