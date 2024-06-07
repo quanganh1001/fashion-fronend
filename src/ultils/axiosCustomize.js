@@ -8,11 +8,11 @@ const api = axios.create({
 
 api.interceptors.request.use(
     config => { 
-        const { accessToken } = getAuth();
-        if (accessToken) {
-            if (!isTokenExpired(accessToken)) {
-                config.headers['Authorization'] = `Bearer ${accessToken}`;
-            }
+        const { token } = getAuth();
+        if (token) {
+          if (!isTokenExpired(token)) {
+            config.headers["Authorization"] = `Bearer ${token}`;
+          }
         }
         return config;
     },

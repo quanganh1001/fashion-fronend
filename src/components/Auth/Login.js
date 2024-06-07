@@ -42,6 +42,7 @@ export default function Login() {
 
     login({ username, password })
       .then((res) => {
+        console.log(res);
         localStorage.setItem("auth", JSON.stringify(res));
         
         navigate('/admin')

@@ -20,15 +20,16 @@ const Menu = (props) => {
 
   return (
     <>
-      <div className="shadow-lg d-flex flex-column text-white bg-dark min-vh-100">
+      <div className="shadow-lg d-flex flex-column text-white bg-dark bg-gradient min-vh-100">
         <ul className=" list-group p-3 menu ">
           {navItems.map((item) => (
             <li className="nav-item my-2 " key={item.label}>
               <Link
                 to={item.path}
-                className={'nav-link ps-3 py-2'}
+                className={"nav-link ps-3 py-2"}
                 style={{
-                  backgroundColor: location.pathname === item.path ? "#E9ECEF" : "transparent",
+                  backgroundColor:
+                    location.pathname === item.path ? "#E9ECEF" : "transparent",
                   borderRadius: location.pathname === item.path ? "8px" : "0",
                   color: location.pathname === item.path ? "#000" : "#fff",
                 }}
@@ -40,7 +41,7 @@ const Menu = (props) => {
 
           <div className="col-12 border-top ">
             <div className="mb-3 text-light mt-3 ">
-              Xin chào, 
+              Xin chào,
               {username} ! <FontAwesomeIcon icon="fa-regular fa-eye" />
             </div>
 

@@ -1,5 +1,5 @@
-import { useState } from "react";
-
+import { useState,useEffect } from "react";
+import api from "../../../Ultils/AxiosCustomize";
 
 export default function AddProduct() {
   const [product, setProduct] = useState({
@@ -19,7 +19,7 @@ export default function AddProduct() {
   const [categoryError, setCategoryError] = useState(''); 
   const [brandError, setBrandError] = useState("");
   const [imgSizeError, setImgSizeError] = useState("");
-  const [listCategories, setListCategories] = useState({});
+  const [listCategories, setListCategories] = useState([]);
 
   const imgSizeOptions = [
     { value: "IMAGE_1", label: "Size áo polo" },
@@ -29,9 +29,19 @@ export default function AddProduct() {
     { value: "IMAGE_5", label: "Size áo khoác" },
   ];
 
-  const fetch {
+  useEffect(() => {
+    fetchListCategories();
+  }, []);
 
-  }
+  const fetchListCategories = async () => {
+    try {
+      const response = await api.get("/categories");
+      console.log(response);
+      setListCategories(response)
+    } catch (error) {
+      console.error("Error fetching list categories:", error);
+    }
+  };
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -167,7 +177,11 @@ export default function AddProduct() {
                 onChange={handleInputChange}
               >
                 <option value="">--Chọn danh mục--</option>
-                <option></option>
+                {listCategories.map((option) => (
+                  <option key={option.id} value={option.id}>
+                    {option.catName}
+                  </option>
+                ))}
               </select>
               <span value={categoryError} className="text-danger"></span>
             </div>

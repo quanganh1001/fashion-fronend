@@ -5,33 +5,33 @@ export default function PaginationProvider({ children }) {
 
     const [searchParams, setSearchParams] = useSearchParams({
         page: 1,
-        size: 10,
-        search: ''
+        limit: 10,
+        keyword: ''
     });
 
     const setPage = (page) => {
         searchParams.set('page', page);
         setSearchParams(searchParams)
-        window.scrollTo(0, 0);
     }
 
-    const setPageSize = (size) => {
-        searchParams.set('page', 1);
-        searchParams.set('size', size);
-        searchParams.set('search', "");
-        setSearchParams(searchParams);
-    }
+    const setPageLimit = (size) => {
+      searchParams.set("page", 1);
+      searchParams.set("limit", size);
+      searchParams.set("keyword", "");
+      setSearchParams(searchParams);
+    };
 
-    const handleSearch = (search) => {
-        searchParams.set('page', 1);
-        searchParams.set('search', search);
-        setSearchParams(searchParams);
-    }
+    const handleSearch = (keyword) => {
+      searchParams.set("page", 1);
+      searchParams.set("keyword", keyword);
+      setSearchParams(searchParams);
+    };
 
     return (
-        <PaginationContext.Provider
-            value={{searchParams,setPage,setPageSize,handleSearch}}>
-            {children}
-        </PaginationContext.Provider>
-    )
+      <PaginationContext.Provider
+        value={{ searchParams, setPage, setPageLimit, handleSearch }}
+      >
+        {children}
+      </PaginationContext.Provider>
+    );
 }

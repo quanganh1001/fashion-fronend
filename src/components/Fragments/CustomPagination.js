@@ -7,7 +7,7 @@ export default function CustomPagination({
   currentPage,
   totalProducts,
 }) {
-  const { searchParams, setPage, setPageSize } = usePagination();
+  const { searchParams, setPage, setPageLimit } = usePagination();
 
   const pageList = useMemo(() => {
     return Array.from({ length: totalPages }, (_, i) => i + 1);
@@ -20,8 +20,8 @@ export default function CustomPagination({
           <select
             className="form-select"
             id="page-size"
-            value={searchParams.get("size")}
-            onChange={(e) => setPageSize(e.target.value)}
+            value={searchParams.get("limit")}
+            onChange={(e) => setPageLimit(e.target.value)}
           >
             <option value="10">10 items</option>
             <option value="20">20 items</option>
@@ -38,12 +38,21 @@ export default function CustomPagination({
           <Pagination>
             <Pagination.First
               onClick={() => setPage(1)}
-              linkClassName="btn-non-active "
+              disabled={currentPage === 1}
+              linkClassName={
+                currentPage === 1
+                  ? "btn-non-active bg-light border-light"
+                  : "btn-non-active"
+              }
             />
             <Pagination.Prev
-              linkClassName="btn-non-active"
-              onClick={() => setPage(currentPage - 1)}
+              linkClassName={
+                currentPage === 1
+                  ? "btn-non-active bg-light border-light"
+                  : "btn-non-active"
+              }
               disabled={currentPage === 1}
+              onClick={() => setPage(currentPage - 1)}
             />
             {pageList?.map((pageNo, i) => (
               <Pagination.Item
@@ -59,12 +68,21 @@ export default function CustomPagination({
             ))}
             <Pagination.Next
               onClick={() => setPage(currentPage + 1)}
-              linkClassName="btn-non-active"
               disabled={currentPage === pageList.length}
+              linkClassName={
+                currentPage === pageList.length
+                  ? "btn-non-active bg-light border-light"
+                  : "btn-non-active"
+              }
             />
             <Pagination.Last
               onClick={() => setPage(pageList.length)}
-              linkClassName="btn-non-active"
+              disabled={currentPage === pageList.length}
+              linkClassName={
+                currentPage === pageList.length
+                  ? "btn-non-active bg-light border-light"
+                  : "btn-non-active"
+              }
             />
           </Pagination>
         </div>

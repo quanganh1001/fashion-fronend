@@ -21,12 +21,12 @@ export default function Product() {
     try {
       const response = await api.get("/products", {
         params: {
-          keyword: searchParams.get("search"),
+          keyword: searchParams.get("keyword"),
           page: searchParams.get("page"),
-          limit: searchParams.get("size"),
+          limit: searchParams.get("limit"),
         },
       });
-
+      
       setProducts(response.data.productsRes);
       setTotalPages(response.data.totalPages);
       setCurrentPage(response.data.currentPage);
@@ -63,7 +63,7 @@ export default function Product() {
       <div className="d-flex flex-wrap my-5 justify-content-between align-items-center">
         <div className="col">
           <Link to="/admin/products/add">
-            <button className="btn btn-dark">Thêm sản phẩm</button>
+            <button className="btn btn-dark bg-gradient">Thêm sản phẩm</button>
           </Link>
         </div>
 
@@ -88,7 +88,9 @@ export default function Product() {
               <td>{p.catName}</td>
               <td>
                 <Dropdown>
-                  <Dropdown.Toggle variant="dark">Hành động</Dropdown.Toggle>
+                  <Dropdown.Toggle variant="dark bg-gradient">
+                    Hành động
+                  </Dropdown.Toggle>
                   <Dropdown.Menu>
                     <Dropdown.Item
                       as={Link}
@@ -109,7 +111,7 @@ export default function Product() {
 
       <CustomPagination
         totalPages={totalPages}
-        currenPage={currentPage}
+        currentPage={currentPage}
         totalProducts={totalProducts}
       />
     </>
