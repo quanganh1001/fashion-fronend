@@ -1,7 +1,5 @@
 import { Dropdown, Pagination } from "react-bootstrap";
 import { Link } from "react-router-dom";
-import useModal from "../../../CustomHooks/useModal";
-import { deleteProduct } from "../../../Services/ProductSerivce";
 import React, { useEffect, useState } from "react";
 import api from "../../../Ultils/AxiosCustomize";
 import CustomPagination from "../../Fragments/CustomPagination";
@@ -12,7 +10,7 @@ export default function Product() {
   const [products, setProducts] = useState([]);
   const [totalPages, setTotalPages] = useState(1);
   const [totalProducts, setTotalProducts] = useState();
-  const [currenPage, setCurrenPage] = useState();
+  const [currentPage, setCurrentPage] = useState();
   const { searchParams } = usePagination();
 
   useEffect(() => {
@@ -31,7 +29,7 @@ export default function Product() {
 
       setProducts(response.data.productsRes);
       setTotalPages(response.data.totalPages);
-      setCurrenPage(response.data.currenPage);
+      setCurrentPage(response.data.currentPage);
       setTotalProducts(response.data.totalProduct);
     } catch (error) {
       console.error("Error fetching products:", error);
@@ -111,7 +109,7 @@ export default function Product() {
 
       <CustomPagination
         totalPages={totalPages}
-        currenPage={currenPage}
+        currenPage={currentPage}
         totalProducts={totalProducts}
       />
     </>

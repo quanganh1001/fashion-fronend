@@ -1,89 +1,244 @@
+import { useState } from "react";
+
+
 export default function AddProduct() {
+  const [product, setProduct] = useState({
+    productCode: "",
+    productName: "",
+    price: "",
+    category: "",
+    discountPrice: "",
+    brand: "TORANO",
+    description: "",
+    imgSize: "",
+  });
+
+  const [codeError, setCodeError] = useState(''); 
+  const [nameError, setNameError] = useState(""); 
+  const [priceError, setPriceError] = useState(""); 
+  const [categoryError, setCategoryError] = useState(''); 
+  const [brandError, setBrandError] = useState("");
+  const [imgSizeError, setImgSizeError] = useState("");
+  const [listCategories, setListCategories] = useState({});
+
+  const imgSizeOptions = [
+    { value: "IMAGE_1", label: "Size áo polo" },
+    { value: "IMAGE_2", label: "Size áo sơ mi" },
+    { value: "IMAGE_3", label: "Size quần âu" },
+    { value: "IMAGE_4", label: "Size quần jean + kaki" },
+    { value: "IMAGE_5", label: "Size áo khoác" },
+  ];
+
+  const fetch {
+
+  }
+
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setProduct({ ...product, [name]: value });
+  };
+
+  const addProduct = (e) => {
+    e.preventDefault();
+    let isValid = true;
+
+    if (product.productCode === '') {
+      isValid = false;
+      setCodeError("Mã sản phẩm không được để trống");
+    } else {
+      setCodeError("");
+    }
+
+    if (product.productName === "") {
+      isValid = false;
+      setNameError("Tên sản phẩm không được để trống");
+    } else {
+      setNameError("");
+    }
+
+    if (product.price === "") {
+      isValid = false;
+      setPriceError("Giá sản phẩm không được để trống");
+    } else if (!(product.price).match(/^[0-9]+$/)) {
+      setPriceError("Giá sản phẩm không hợp lệ");
+    }else {
+      setPriceError("");
+    }
+
+    if (product.category === "") {
+      isValid = false;
+      setCategoryError("Danh mục không được để trống")
+    } else {
+      setCategoryError("")
+    }
+
+    if (product.brand === "") {
+      isValid = false;
+      setBrandError("Thương hiệu không được để trống");
+    } else {
+      setBrandError("");
+    }
+
+    if (product.imgSize === "") {
+      isValid = false;
+      setImgSizeError("Ảnh chọn size không được để trống");
+    } else {
+      setImgSizeError("");
+    }
+
+  };
+
   return (
     <>
       <h2>THÊM MỚI SẢN PHẨM</h2>
       <div className="mt-5 bg-white p-5 shadow border">
-        <form>
+        <form onSubmit={addProduct}>
           <div className="row">
             <div className="mb-3 col-6">
-              <label for="product-id" className="form-label">
+              <label className="form-label">
                 Mã sản phẩm<span style={{ color: "red" }}>*</span>
               </label>
-              <input type="text" className="form-control" id="product-id" />
-              <span id="idError" className="text-danger"></span>
+              <input
+                id="productCode"
+                name="productCode"
+                value={product.productCode}
+                type="text"
+                className={
+                  codeError !== ""
+                    ? "border-danger form-control"
+                    : "form-control"
+                }
+                onChange={handleInputChange}
+              />
+              <span className="text-danger">{codeError}</span>
             </div>
 
             <div className="mb-3 col-6">
-              <label for="pr-name" className="form-label">
+              <label className="form-label">
                 Tên sản phẩm<span style={{ color: "red" }}>*</span>
               </label>
-              <input type="text" className="form-control" id="pr-name" />
-              <span id="nameError" className="text-danger"></span>
+              <input
+                id="productName"
+                type="text"
+                name="productName"
+                className={
+                  nameError !== ""
+                    ? "border-danger form-control"
+                    : "form-control"
+                }
+                value={product.productName}
+                onChange={handleInputChange}
+              />
+              <span className="text-danger">{nameError}</span>
             </div>
 
             <div className="mb-3 col-6">
-              <label for="price" className="form-label">
+              <label className="form-label">
                 Giá tiền<span style={{ color: "red" }}>*</span>
               </label>
-              <input type="text" className="form-control" id="price" />
-              <span id="priceError" className="text-danger"></span>
+              <input
+                id="price"
+                type="text"
+                className={
+                  priceError !== ""
+                    ? "border-danger form-control"
+                    : "form-control"
+                }
+                name="price"
+                value={product.price}
+                onChange={handleInputChange}
+              />
+              <span className="text-danger">{priceError}</span>
             </div>
 
             <div className="mb-3 col-6">
               <label className="form-label">
                 Danh mục sản phẩm<span style={{ color: "red" }}>*</span>
               </label>
-              <select className="form-control category">
+              <select
+                id="category"
+                className={
+                  categoryError !== ""
+                    ? "border-danger form-control"
+                    : "form-control"
+                }
+                value={product.category}
+                name="category"
+                onChange={handleInputChange}
+              >
                 <option value="">--Chọn danh mục--</option>
                 <option></option>
               </select>
-              <select className="form-control">
-                <option value="">--Chọn danh mục--</option>
-                <option></option>
-              </select>
-              <span id="categoryError" className="text-danger"></span>
+              <span value={categoryError} className="text-danger"></span>
             </div>
 
             <div className="mb-3 col-6">
-              <label for="discount-price" className="form-label">
-                Giá khuyến mãi
-              </label>
-              <input type="text" className="form-control" id="discount-price" />
-              <span id="discountError" className="text-danger"></span>
+              <label className="form-label">Giá khuyến mãi</label>
+              <input
+                id="discountPrice"
+                type="text"
+                className="form-control"
+                value={product.discountPrice}
+                name="discountPrice"
+                onChange={handleInputChange}
+              />
             </div>
 
             <div className="mb-3 col-6">
-              <label for="brand" className="form-label">
+              <label className="form-label">
                 Thương hiệu<span style={{ color: "red" }}>*</span>
               </label>
               <input
-                type="text"
-                className="form-control"
                 id="brand"
-                value="TORANO"
+                type="text"
+                className={
+                  brandError !== ""
+                    ? "border-danger form-control"
+                    : "form-control"
+                }
+                value={product.brand}
+                name="brand"
+                onChange={handleInputChange}
               />
-              <span id="brandError" className="text-danger"></span>
+              <span className="text-danger">{brandError}</span>
             </div>
 
             <div className="mb-3">
-              <label for="description" className="form-label">
-                Mô tả
-              </label>
+              <label className="form-label">Mô tả</label>
               <textarea
-                className="form-control"
                 id="description"
+                className="form-control"
                 rows="4"
                 cols="50"
+                name="description"
+                value={product.description}
+                onChange={handleInputChange}
               ></textarea>
             </div>
 
             <div className="mb-3">
-              <label for="imgSize" className="form-label">
+              <label className="form-label">
                 Ảnh hướng dẫn chọn size<span style={{ color: "red" }}>*</span>
               </label>
-              <select className="form-control" id="imgSize">
-                <option></option>
+              <select
+                id="imgSize"
+                className={
+                  imgSizeError !== ""
+                    ? "border-danger form-control"
+                    : "form-control"
+                }
+                value={product.imgSize}
+                name="imgSize"
+                onChange={handleInputChange}
+              >
+                <option value="">--Chọn size--</option>
+                {imgSizeOptions.map((option) => (
+                  <option key={option.value} value={option.value}>
+                    {option.label}
+                  </option>
+                ))}
               </select>
+              <span className="text-danger">{imgSizeError}</span>
             </div>
 
             <button

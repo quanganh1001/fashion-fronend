@@ -4,7 +4,7 @@ import { useMemo } from "react";
 
 export default function CustomPagination({
   totalPages,
-  currenPage,
+  currentPage,
   totalProducts,
 }) {
   const { searchParams, setPage, setPageSize } = usePagination();
@@ -42,25 +42,25 @@ export default function CustomPagination({
             />
             <Pagination.Prev
               linkClassName="btn-non-active"
-              onClick={() => setPage(currenPage - 1)}
-              disabled={currenPage === 1}
+              onClick={() => setPage(currentPage - 1)}
+              disabled={currentPage === 1}
             />
             {pageList?.map((pageNo, i) => (
               <Pagination.Item
                 key={i}
                 onClick={() => setPage(pageNo)}
-                active={currenPage === pageNo}
+                active={currentPage === pageNo}
                 linkClassName={
-                  currenPage === pageNo ? "btn-active" : "btn-non-active"
+                  currentPage === pageNo ? "btn-active" : "btn-non-active"
                 }
               >
                 {pageNo}
               </Pagination.Item>
             ))}
             <Pagination.Next
-              onClick={() => setPage(currenPage + 1)}
+              onClick={() => setPage(currentPage + 1)}
               linkClassName="btn-non-active"
-              disabled={currenPage === pageList.length}
+              disabled={currentPage === pageList.length}
             />
             <Pagination.Last
               onClick={() => setPage(pageList.length)}
