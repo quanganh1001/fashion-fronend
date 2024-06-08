@@ -19,6 +19,7 @@ export default function AddProduct() {
   const [codeError, setCodeError] = useState('');
   const [nameError, setNameError] = useState("");
   const [priceError, setPriceError] = useState("");
+  const [discountPriceError, setDiscountPriceError] = useState("");
   const [categoryError, setCategoryError] = useState('');
   const [brandError, setBrandError] = useState("");
   const [imgSizeError, setImgSizeError] = useState("");
@@ -77,6 +78,16 @@ export default function AddProduct() {
       setPriceError("");
     }
 
+    if (
+      product.discountPrice !== "" &&
+      !product.discountPrice.match(/^[0-9]+$/)
+    ) {
+      isValid = false;
+      setDiscountPriceError("Giá sản phẩm không hợp lệ");
+    } else {
+      setDiscountPriceError("");
+    }
+
     if (product.catId === "") {
       isValid = false;
       setCategoryError("Danh mục không được để trống")
@@ -114,7 +125,7 @@ export default function AddProduct() {
   
     return (
       <>
-        <h2>THÊM MỚI SẢN PHẨM</h2>
+        <h2>Thêm mới sản phẩm</h2>
         <div className="mt-5 bg-white p-5 shadow border">
           <form onSubmit={addProductForm}>
             <div className="row">
@@ -205,11 +216,16 @@ export default function AddProduct() {
                 <input
                   id="discountPrice"
                   type="text"
-                  className="form-control"
-                  value={product.discountPrice}
+                  className={
+                    discountPriceError !== ""
+                      ? "border-danger form-control"
+                      : "form-control"
+                  }
                   name="discountPrice"
+                  value={product.discountPrice}
                   onChange={handleInputChange}
                 />
+                <span className="text-danger">{discountPriceError}</span>
               </div>
 
               <div className="mb-3 col-6">
@@ -272,7 +288,7 @@ export default function AddProduct() {
               <button
                 type="submit"
                 id="submit"
-                className="col-2 btn btn-dark text-align-center"
+                className="col-2 btn btn-dark bg-gradient text-align-center"
               >
                 Thêm sản phẩm
               </button>

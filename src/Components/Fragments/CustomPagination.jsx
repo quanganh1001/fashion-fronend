@@ -18,7 +18,7 @@ export default function CustomPagination({
       <div className="my-4 d-flex justify-content-between align-items-center">
         <div className="d-flex flex-wrap align-items-center">
           <select
-            className="form-select"
+            className="form-select bg-body-secondary"
             id="page-size"
             value={searchParams.get("limit")}
             onChange={(e) => setPageLimit(e.target.value)}
@@ -60,7 +60,9 @@ export default function CustomPagination({
                 onClick={() => setPage(pageNo)}
                 active={currentPage === pageNo}
                 linkClassName={
-                  currentPage === pageNo ? "btn-active" : "btn-non-active"
+                  currentPage === pageNo
+                    ? "btn-active bg-gradient"
+                    : "btn-non-active"
                 }
               >
                 {pageNo}

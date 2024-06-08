@@ -17,10 +17,22 @@ const createProduct = async (data) => {
 }
 
  const deleteProduct = async (productId) => {
-  return apiPrivate.delete(`/products/${productId}`).then((res) => {
-    console.log(`Đã xóa thành công`);
-    
-  });
+  return await apiPrivate.delete(`/products/${productId}`)
 }
 
-export {getAllProducts,createProduct, deleteProduct};
+const getProduct = async (id) => {
+  return await apiPublic.get('/products/'+id)
+}
+
+const updateProduct = async (id, product) => {
+  console.log(product);
+  return await apiPrivate.put("/products/" + id, product);
+};
+
+export {
+  getAllProducts,
+  createProduct,
+  deleteProduct,
+  getProduct,
+  updateProduct,
+};

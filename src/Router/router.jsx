@@ -1,13 +1,14 @@
-import AdminLayout from "../Components/Layout/AdminLayout.js";
+import AdminLayout from "../Components/Layout/AdminLayout.jsx";
 import { ProtectedRoute } from "./ProtectedRoute.jsx";
 import { Outlet, createBrowserRouter } from "react-router-dom";
 import App from "../App.jsx";
-import Product from "../Components/Admin/Products/Product.js";
-import Category from "../Components/Admin/Category.js";
-import Login from "../Components/Auth/Login.js";
-import HomeAdmin from "../Components/Admin/HomeAdmin.js";
-import PaginationProvider from "../ContextProvider/PaginationProvider.js";
-import AddProduct from "../Components/Admin/Products/AddProduct.js";
+import Product from "../Components/Admin/Products/Product";
+import Category from "../Components/Admin/Category.jsx";
+import Login from "../Components/Auth/Login.jsx";
+import HomeAdmin from "../Components/Admin/HomeAdmin.jsx";
+import PaginationProvider from "../ContextProvider/PaginationProvider.jsx";
+import AddProduct from "../Components/Admin/Products/AddProduct";
+import EditProduct from "../Components/Admin/Products/EditProduct";
 
 export const router = createBrowserRouter([
   {
@@ -53,9 +54,13 @@ export const router = createBrowserRouter([
               {
                 path: "add",
                 element: (
-                  <PaginationProvider>
                     <AddProduct />
-                  </PaginationProvider>
+                ),
+              },
+              {
+                path: ':id/edit',
+                element: (
+                    <EditProduct />
                 ),
               },
             ],

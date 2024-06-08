@@ -1,11 +1,11 @@
-import { Dropdown, Pagination } from "react-bootstrap";
+import { Dropdown } from "react-bootstrap";
 import { Link } from "react-router-dom";
 import React, { useEffect, useState } from "react";
 import CustomPagination from "../../Fragments/CustomPagination";
 import usePagination from "../../../CustomHooks/userPagination";
 import SearchForm from "../../Fragments/SearchForm";
 import { deleteProduct, getAllProducts } from "../../../Services/ProductService";
-import useModal from "../../../CustomHooks/useAuth";
+import useModal from "../../../CustomHooks/useModal";
 import { toast } from "react-toastify";
 
 export default function Product() {
@@ -75,6 +75,7 @@ export default function Product() {
             <th>Mã sản phẩm</th>
             <th>Tên sản phâm</th>
             <th>Danh mục</th>
+            <th>Trạng thái</th>
           </tr>
         </thead>
         <tbody>
@@ -83,8 +84,9 @@ export default function Product() {
               <td>{p.productCode}</td>
               <td>{p.productName}</td>
               <td>{p.catName}</td>
+              <td>{p.isActivated ? "Kích hoạt" : "Ẩn"}</td>
               <td>
-                <Dropdown>
+                <Dropdown data-bs-theme="dark">
                   <Dropdown.Toggle variant="dark bg-gradient">
                     Hành động
                   </Dropdown.Toggle>
