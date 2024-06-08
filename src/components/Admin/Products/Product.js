@@ -1,10 +1,12 @@
 import { Dropdown, Pagination } from "react-bootstrap";
 import { Link } from "react-router-dom";
 import React, { useEffect, useState } from "react";
-import api from "../../../Ultils/AxiosCustomize";
 import CustomPagination from "../../Fragments/CustomPagination";
 import usePagination from "../../../CustomHooks/userPagination";
 import SearchForm from "../../Fragments/SearchForm";
+import { deleteProduct, getAllProducts } from "../../../Services/ProductService";
+import useModal from "../../../CustomHooks/useAuth";
+import { toast } from "react-toastify";
 
 export default function Product() {
   const [products, setProducts] = useState([]);
@@ -12,21 +14,15 @@ export default function Product() {
   const [totalProducts, setTotalProducts] = useState();
   const [currentPage, setCurrentPage] = useState();
   const { searchParams } = usePagination();
-
+  const { openModal, closeModal } = useModal();
+  
   useEffect(() => {
     fetchProducts();
   }, [searchParams]);
 
   const fetchProducts = async () => {
     try {
-      const response = await api.get("/products", {
-        params: {
-          keyword: searchParams.get("keyword"),
-          page: searchParams.get("page"),
-          limit: searchParams.get("limit"),
-        },
-      });
-      
+      const response = await getAllProducts(searchParams);
       setProducts(response.data.productsRes);
       setTotalPages(response.data.totalPages);
       setCurrentPage(response.data.currentPage);
@@ -36,21 +32,22 @@ export default function Product() {
     }
   };
 
-  const handleDelete = (productId, productTitle) => {
-    //   openModal(
-    //       'Xóa sản phẩm',
-    //       `Bạn có chắc muốn xóa ${productTitle}?`,
-    //       () => {
-    //           deleteProduct(productId)
-    //               .then(() => {
-    //                 fetchProducts();
-    //               })
-    //               .catch((err => {
-    //                   console.log(err.response.data);
-    //               }));
-    //           closeModal();
-    //       },
-    //   );
+  const handleDelete = (productId) => {
+      openModal(
+          'Xóa sản phẩm',
+          `Bạn có chắc muốn xóa sản phẩm này?`,
+          () => {
+              deleteProduct(productId)
+                .then(() => {
+                    toast.success("Xóa sản phẩm thành công!")
+                    fetchProducts();
+                  })
+                  .catch((err => {
+                      toast.error("Xảy ra lỗi!");
+                  }));
+              closeModal();
+          },
+      );
   };
 
   return (
@@ -98,7 +95,7 @@ export default function Product() {
                     >
                       Xem/Sửa
                     </Dropdown.Item>
-                    <Dropdown.Item onClick={() => handleDelete(p.id, p.title)}>
+                    <Dropdown.Item onClick={() => handleDelete(p.id)}>
                       Xóa
                     </Dropdown.Item>
                   </Dropdown.Menu>

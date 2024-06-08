@@ -1,17 +1,16 @@
 /* eslint-disable no-restricted-globals */
 import { useState } from "react";
 import $ from "jquery";
-import { useNavigate } from "react-router-dom";
-
-import { login } from "../../Services/Auth";
+import useAuth from "../../CustomHooks/useAuth";
+import { toast } from "react-toastify";
 
 export default function Login() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [passBlank, setPassBlank] = useState("");
   const [usernameBlank, setUsernameBlank] = useState("");
-
-  const navigate = useNavigate();
+  const [error, setError] = useState("");
+  const { handleLogin } = useAuth();
 
   const submitForm = async (event) => {
     event.preventDefault();
@@ -36,22 +35,21 @@ export default function Login() {
       $("#username").removeClass("border-danger");
     }
 
-    if (!valid) {
-      return;
+    if (valid) {
+      try {
+        await handleLogin({ username, password });
+        toast.success("Đăng nhập thành công!")
+      } catch (error) {
+        if (error.response.data === "Invalid username or password") {
+          toast.error("Sai tên đăng nhập hoặc mật khẩu");
+          setError("Sai tên đăng nhập hoặc mật khẩu");
+        } else if (error.response.data === "Account has been deactivated") {
+          toast.error("Tài khoản không hoạt động");
+          setError("Tài khoản không hoạt động");
+        }
+      } 
+      
     }
-
-    login({ username, password })
-      .then((res) => {
-        console.log(res);
-        localStorage.setItem("auth", JSON.stringify(res));
-        
-        navigate('/admin')
-      })
-      .catch((error) => {
-        if(error.response.data === 'Invalid username or password'){
-          setPassBlank("Sai tên đăng nhập hoặc mật khẩu");
-        };
-      });
   };
 
   return (
@@ -80,6 +78,7 @@ export default function Login() {
                 onChange={(event) => setPassword(event.target.value)}
               />
               <span className="text-danger">{passBlank}</span>
+              <span className="text-danger">{error}</span>
             </div>
             <div className="row">
               <div className="col-4">

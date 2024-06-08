@@ -1,12 +1,18 @@
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import React, { useEffect, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
+import useAuth from "../../CustomHooks/useAuth";
+import { toast } from "react-toastify";
+
+
 
 const Menu = (props) => {
   const [username, setUsername] = useState("");
 
+  const { auth,handleLogout } = useAuth();
+
   const navItems = [
-    { path: "/admin", label: "TRANG CHỦ" },
+    { path: "/admin/home", label: "TRANG CHỦ" },
     { path: "/admin/products", label: "QUẢN LÝ SẢN PHẨM" },
     { path: "/admin/categories", label: "QUẢN LÝ DANH MỤC" },
   ];
@@ -14,9 +20,19 @@ const Menu = (props) => {
   const location = useLocation();
 
   useEffect(() => {
-    const auth = JSON.parse(localStorage.getItem("auth"));
     setUsername(auth.username);
   }, []);
+
+  const logout = async () => {
+    try {
+      await handleLogout();
+      toast.success("Đã đăng xuất!")
+    } catch (error) {
+      toast.success("Có lỗi xảy ra!");
+    }
+    
+  }
+
 
   return (
     <>
@@ -28,10 +44,15 @@ const Menu = (props) => {
                 to={item.path}
                 className={"nav-link ps-3 py-2"}
                 style={{
-                  backgroundColor:
-                    location.pathname === item.path ? "#E9ECEF" : "transparent",
-                  borderRadius: location.pathname === item.path ? "8px" : "0",
-                  color: location.pathname === item.path ? "#000" : "#fff",
+                  backgroundColor: location.pathname.startsWith(item.path)
+                    ? "#E9ECEF"
+                    : "transparent",
+                  borderRadius: location.pathname.startsWith(item.path)
+                    ? "8px"
+                    : "0",
+                  color: location.pathname.startsWith(item.path)
+                    ? "#000"
+                    : "#fff",
                 }}
               >
                 {item.label}
@@ -45,7 +66,9 @@ const Menu = (props) => {
               {username} ! <FontAwesomeIcon icon="fa-regular fa-eye" />
             </div>
 
-            <button className="btn btn-danger">Đăng xuất</button>
+            <button className="btn btn-danger" onClick={logout}>
+              Đăng xuất
+            </button>
           </div>
         </ul>
       </div>

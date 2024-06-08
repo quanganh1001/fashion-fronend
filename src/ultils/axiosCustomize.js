@@ -1,24 +1,32 @@
 import axios from 'axios';
 import { getAuth, isTokenExpired } from '../Services/Auth';
 
-const api = axios.create({
+const apiPrivate = axios.create({
     baseURL: 'http://localhost:8080/'
 })
 
+const apiPublic = axios.create({
+  baseURL: "http://localhost:8080/",
+});
 
-api.interceptors.request.use(
-    config => { 
-        const { token } = getAuth();
-        if (token) {
-          if (!isTokenExpired(token)) {
-            config.headers["Authorization"] = `Bearer ${token}`;
-          }
-        }
-        return config;
-    },
-    error => {
-        return Promise.reject(error);
+
+apiPrivate.interceptors.request.use(
+  (config) => {
+    const { token } = getAuth();
+    if (token) {
+      if (!isTokenExpired(token)) {
+        config.headers["Authorization"] = `Bearer ${token}`;
+      } else {
+        
+      }
     }
+    return config;
+  },
+  (error) => {
+    return Promise.reject(error);
+  }
 );
 
-export default api;
+
+
+export { apiPrivate, apiPublic };

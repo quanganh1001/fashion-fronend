@@ -1,11 +1,20 @@
-import api from "../Ultils/AxiosCustomize"
+import { apiPublic } from "../Ultils/AxiosCustomize"
 import jwtDecode from "jwt-decode";
 
 
-export const login = (data) => {
-    return api.post('login', data)
-        .then(res => res.data);
+export const login = async (data) => {
+    const response = await apiPublic.post("/auth/login", data);
+    return response;
 }
+
+
+export const logout = async () => {
+    const auth = JSON.parse(localStorage.getItem("auth"));
+    const response = await apiPublic.delete("/auth/logout", {
+      data: auth.token,
+    });
+    return response;
+};
 
 export const getAuth = () => {
     const auth = localStorage.getItem('auth');

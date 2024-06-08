@@ -1,7 +1,8 @@
-import { useEffect, useState } from "react";
-import { getAuth } from "../Services/Auth";
+import {  useState,useEffect } from "react";
+import { getAuth, login, logout } from "../Services/Auth";
 import { AuthContext } from "./Context";
 import { useLocation, useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
 
 
 
@@ -11,8 +12,13 @@ export default function AuthProvider({ children }) {
 
     const navigate = useNavigate();
 
+    const redirectTo = location.state?.redirectTo?.pathname || "/admin/home";
+
     const [auth, setAuth] = useState(getAuth());
-   
+
+   useEffect(() => {
+     localStorage.setItem("auth", JSON.stringify(auth));
+   }, [auth]);
     // useEffect(() => {
     //     const interval = setInterval(() => {
     //         if (auth.accessToken && auth.refreshToken) {
@@ -36,15 +42,34 @@ export default function AuthProvider({ children }) {
     //     return () => clearInterval(interval);
     // }, [auth]);
 
-    useEffect(() => {
-     
-            setAuth(JSON.parse(localStorage.getItem('auth')));
-        
-    }, []);
+    const handleLogin = async (data) => {
+        await login(data)
+          .then((res) => {
+                setAuth({
+                  token: res.data.token,
+                  refreshToken: res.data.refreshToken,
+                  role: res.data.role,
+                  username: res.data.username
+                });
+                navigate(redirectTo, { replace: true });
+            })
+           
+    }
+
+    const handleLogout = async () => {
+      await logout()
+        .then((res) => {
+            if (res.status === 200) {
+              setAuth({});
+              navigate('/');
+            }   
+        }) 
+    };
+    
     return (
-        <AuthContext.Provider value={{ auth}}>
-            {children}
-        </AuthContext.Provider>
-    )
+      <AuthContext.Provider value={{ auth, handleLogin, handleLogout }}>
+        {children}
+      </AuthContext.Provider>
+    );
     
 }

@@ -19,10 +19,10 @@ export default function CustomModal() {
             </Modal.Body>
             <Modal.Footer>
                 <Button variant="secondary" onClick={closeModal}>
-                    Close
+                    Đóng
                 </Button>
-                <Button variant="primary" onClick={modal.onAccept}>
-                    Confirm
+                <Button variant="dark" onClick={modal.onAccept}>
+                    Lưu
                 </Button>
             </Modal.Footer>
         </Modal>

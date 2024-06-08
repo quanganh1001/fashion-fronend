@@ -1,13 +1,8 @@
-import api from "../Ultils/AxiosCustomize";
+import { apiPrivate } from "../Ultils/AxiosCustomize";
 
 const getAllCategories = async () => {
-  try {
-    const response = await api.get("categories");
-    
+    const response = await apiPrivate.get("categories");
     return response;
-  } catch (error) {
-    console.log("Error fetching categories:", error);
-  }
 };
 
 

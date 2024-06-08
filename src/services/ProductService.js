@@ -1,24 +1,26 @@
-import api from "../Ultils/AxiosCustomize"
+import { apiPublic, apiPrivate } from "../Ultils/AxiosCustomize"
 
-const getAllProducts = async () => {
-    try {
-      
-      const response = await api.get('products');
-      
-      return response;
-    } catch (error) {
-      console.log("Error fetching products:", error);
-      return { EC: 1, data: [] };
-    }
+const getAllProducts = async (searchParams) => {
+    const response = await apiPublic.get("products", {
+      params: {
+        keyword: searchParams.get("keyword"),
+        page: searchParams.get("page"),
+        limit: searchParams.get("limit"),
+      },
+    });
+
+    return response;
+};
+
+const createProduct = async (data) => {
+  return await apiPrivate.post("products", data)
 }
-
 
  const deleteProduct = async (productId) => {
-  return api.delete(`/products/${productId}`)
-      .then(res => {
-          console.log(`Đã xóa thành công`);
-          console.log(res);
-      });
+  return apiPrivate.delete(`/products/${productId}`).then((res) => {
+    console.log(`Đã xóa thành công`);
+    
+  });
 }
 
-export {getAllProducts, deleteProduct};
+export {getAllProducts,createProduct, deleteProduct};
