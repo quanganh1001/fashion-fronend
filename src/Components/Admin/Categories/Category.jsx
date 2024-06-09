@@ -61,6 +61,7 @@ export default function Category() {
   return (
     <>
       <h1>Danh mục sản phẩm </h1>
+      <hr />
       <div className="mt-5 bg-white p-5 shadow border">
         <div>
           <span className="text-dark link-underline-dark link-underline-opacity-0 link-underline-opacity-100-hover">

@@ -2,7 +2,7 @@ import { useState,useEffect } from "react";
 import { getAllCategories } from "../../../Services/CategoryService";
 import { createProduct } from "../../../Services/ProductService";
 import { toast } from "react-toastify";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 
 export default function AddProduct() {
   const [product, setProduct] = useState({
@@ -126,6 +126,7 @@ export default function AddProduct() {
     return (
       <>
         <h2>Thêm mới sản phẩm</h2>
+        <hr />
         <div className="mt-5 bg-white p-5 shadow border">
           <form onSubmit={addProductForm}>
             <div className="row">
@@ -204,7 +205,7 @@ export default function AddProduct() {
                   <option value="">--Chọn danh mục--</option>
                   {listCategories.map((option) => (
                     <option key={option.id} value={option.id}>
-                      { option.categoryCode} - {option.catName}
+                      {option.categoryCode} - {option.catName}
                     </option>
                   ))}
                 </select>

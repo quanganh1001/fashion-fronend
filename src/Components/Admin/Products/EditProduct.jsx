@@ -1,8 +1,13 @@
 import { useState, useEffect } from "react";
 import { getProduct, updateProduct } from "../../../Services/ProductService";
 import { toast } from "react-toastify";
-import { useNavigate } from "react-router-dom";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams, Link } from "react-router-dom";
+import {
+  deleteProductDetail,
+  getAllProductsDetails,
+} from "../../../Services/ProductDetail";
+import { Dropdown } from "react-bootstrap";
+import useModal from "../../../CustomHooks/useModal";
 
 export default function EditProduct() {
   const { id } = useParams();
@@ -17,6 +22,8 @@ export default function EditProduct() {
     imageChooseSize: "",
     isActivated: true,
   });
+
+  const [listProductsDetails, setListProductsDetails] = useState([]);
 
   const navigator = useNavigate();
   const [codeError, setCodeError] = useState("");
@@ -34,8 +41,11 @@ export default function EditProduct() {
     { value: "IMAGE_5", label: "Size áo khoác" },
   ];
 
+  const { openModal, closeModal } = useModal();
+
   useEffect(() => {
     fetchProduct();
+    fetchProductDetail();
   }, []);
 
   const fetchProduct = async () => {
@@ -53,6 +63,12 @@ export default function EditProduct() {
         isActivated: response.data.isActivated,
       });
     } catch (error) {}
+  };
+
+  const fetchProductDetail = async () => {
+    await getAllProductsDetails(id).then((res) => {
+      setListProductsDetails(res.data);
+    });
   };
 
   const handleInputChange = (e) => {
@@ -124,169 +140,235 @@ export default function EditProduct() {
     }
   };
 
+  const handleDelete = async (id) => {
+    openModal(
+      "Xóa chi tiết sản phẩm",
+      `Bạn có chắc muốn xóa chi tiết sản phẩm này?`,
+      () => {
+        deleteProductDetail(id)
+          .then(() => {
+            toast.success("Xóa sản phẩm thành công!");
+            fetchProductDetail();
+          })
+          .catch((err) => {
+            toast.error("Xảy ra lỗi!");
+          });
+        closeModal();
+      }
+    );
+  };
+
   return (
     <>
       <h2>Sửa sản phẩm</h2>
-      <div className="mt-5 bg-white p-5 shadow border">
-        <form onSubmit={updateProductForm}>
-          <div className="row">
-            <div className="mb-3">
-              <label className="form-label">
-                Mã sản phẩm<span style={{ color: "red" }}>*</span>
-              </label>
-              <input
-                id="productCode"
-                name="productCode"
-                value={product.productCode ?? ""}
-                type="text"
-                className={
-                  codeError !== ""
-                    ? "border-danger form-control"
-                    : "form-control"
-                }
-                onChange={handleInputChange}
-              />
-              <span className="text-danger">{codeError}</span>
-            </div>
-
-            <div className="mb-3">
-              <label className="form-label">
-                Tên sản phẩm<span style={{ color: "red" }}>*</span>
-              </label>
-              <input
-                id="productName"
-                type="text"
-                name="productName"
-                className={
-                  nameError !== ""
-                    ? "border-danger form-control"
-                    : "form-control"
-                }
-                value={product.productName ?? ""}
-                onChange={handleInputChange}
-              />
-              <span className="text-danger">{nameError}</span>
-            </div>
-
-            <div className="mb-3">
-              <label className="form-label">
-                Giá tiền<span style={{ color: "red" }}>*</span>
-              </label>
-              <input
-                id="price"
-                type="text"
-                className={
-                  priceError !== ""
-                    ? "border-danger form-control"
-                    : "form-control"
-                }
-                name="price"
-                value={product.price}
-                onChange={handleInputChange}
-              />
-              <span className="text-danger">{priceError}</span>
-            </div>
-
-            <div className="mb-3">
-              <label className="form-label">Giá khuyến mãi</label>
-              <input
-                id="discountPrice"
-                type="text"
-                className={
-                  discountPriceError !== ""
-                    ? "border-danger form-control"
-                    : "form-control"
-                }
-                name="discountPrice"
-                value={product.discountPrice ?? ""}
-                onChange={handleInputChange}
-              />
-              <span className="text-danger">{discountPriceError}</span>
-            </div>
-
-            <div className="mb-3">
-              <label className="form-label">
-                Thương hiệu<span style={{ color: "red" }}>*</span>
-              </label>
-              <input
-                id="brand"
-                type="text"
-                className={
-                  brandError !== ""
-                    ? "border-danger form-control"
-                    : "form-control"
-                }
-                value={product.brand ?? ""}
-                name="brand"
-                onChange={handleInputChange}
-              />
-              <span className="text-danger">{brandError}</span>
-            </div>
-
-            <div className="mb-3">
-              <label className="form-label">Mô tả</label>
-              <textarea
-                id="description"
-                className="form-control"
-                rows="4"
-                cols="50"
-                name="description"
-                value={product.description ?? ""}
-                onChange={handleInputChange}
-              ></textarea>
-            </div>
-
-            <div className="mb-3">
-              <label className="form-label">
-                Ảnh hướng dẫn chọn size<span style={{ color: "red" }}>*</span>
-              </label>
-              <select
-                id="imgSize"
-                className={
-                  imgSizeError !== ""
-                    ? "border-danger form-control"
-                    : "form-control"
-                }
-                value={product.imageChooseSize ?? ""}
-                name="imageChooseSize"
-                onChange={handleInputChange}
-              >
-                <option value="">--Chọn size--</option>
-                {imgSizeOptions.map((option) => (
-                  <option key={option.value} value={option.value}>
-                    {option.label}
-                  </option>
-                ))}
-              </select>
-              <span className="text-danger">{imgSizeError}</span>
-            </div>
-
-            <div className="mb-3">
-              <label className="form-label">
-                Trạng thái<span style={{ color: "red" }}>*</span>
-              </label>
-              <input
-                className="form-check-input bg-dark border-dark mx-2"
-                type="checkbox"
-                name="isActivated"
-                checked={product.isActivated ?? true}
-                onChange={(e) =>
-                  setProduct({ ...product, isActivated: e.target.checked })
-                }
-              />
-              {product.isActivated ? "Kích hoạt" : "Ẩn"}
-            </div>
-            <button
-              type="submit"
-              id="submit"
-              className="col-2 btn btn-dark bg-gradient text-align-center"
-            >
-              Lưu lại
+      <hr />
+      <div className="mt-5 d-flex flex-wrap justify-content-between">
+        <div className="mb-3 col-12">
+          <Link>
+            <button className="btn btn-dark bg-gradient">
+              Quản lý ảnh sản phẩm
             </button>
+          </Link>
+        </div>
+        <div className=" col-6 bg-white p-5 shadow border">
+          <form onSubmit={updateProductForm}>
+            <div className="row">
+              <div className="mb-3">
+                <label className="form-label">
+                  Mã sản phẩm<span style={{ color: "red" }}>*</span>
+                </label>
+                <input
+                  id="productCode"
+                  name="productCode"
+                  value={product.productCode ?? ""}
+                  type="text"
+                  className={
+                    codeError !== ""
+                      ? "border-danger form-control"
+                      : "form-control"
+                  }
+                  onChange={handleInputChange}
+                />
+                <span className="text-danger">{codeError}</span>
+              </div>
+
+              <div className="mb-3">
+                <label className="form-label">
+                  Tên sản phẩm<span style={{ color: "red" }}>*</span>
+                </label>
+                <input
+                  id="productName"
+                  type="text"
+                  name="productName"
+                  className={
+                    nameError !== ""
+                      ? "border-danger form-control"
+                      : "form-control"
+                  }
+                  value={product.productName ?? ""}
+                  onChange={handleInputChange}
+                />
+                <span className="text-danger">{nameError}</span>
+              </div>
+
+              <div className="mb-3">
+                <label className="form-label">
+                  Giá tiền<span style={{ color: "red" }}>*</span>
+                </label>
+                <input
+                  id="price"
+                  type="text"
+                  className={
+                    priceError !== ""
+                      ? "border-danger form-control"
+                      : "form-control"
+                  }
+                  name="price"
+                  value={product.price}
+                  onChange={handleInputChange}
+                />
+                <span className="text-danger">{priceError}</span>
+              </div>
+
+              <div className="mb-3">
+                <label className="form-label">Giá khuyến mãi</label>
+                <input
+                  id="discountPrice"
+                  type="text"
+                  className={
+                    discountPriceError !== ""
+                      ? "border-danger form-control"
+                      : "form-control"
+                  }
+                  name="discountPrice"
+                  value={product.discountPrice ?? ""}
+                  onChange={handleInputChange}
+                />
+                <span className="text-danger">{discountPriceError}</span>
+              </div>
+
+              <div className="mb-3">
+                <label className="form-label">
+                  Thương hiệu<span style={{ color: "red" }}>*</span>
+                </label>
+                <input
+                  id="brand"
+                  type="text"
+                  className={
+                    brandError !== ""
+                      ? "border-danger form-control"
+                      : "form-control"
+                  }
+                  value={product.brand ?? ""}
+                  name="brand"
+                  onChange={handleInputChange}
+                />
+                <span className="text-danger">{brandError}</span>
+              </div>
+
+              <div className="mb-3">
+                <label className="form-label">Mô tả</label>
+                <textarea
+                  id="description"
+                  className="form-control"
+                  rows="4"
+                  cols="50"
+                  name="description"
+                  value={product.description ?? ""}
+                  onChange={handleInputChange}
+                ></textarea>
+              </div>
+
+              <div className="mb-3">
+                <label className="form-label">
+                  Ảnh hướng dẫn chọn size<span style={{ color: "red" }}>*</span>
+                </label>
+                <select
+                  id="imgSize"
+                  className={
+                    imgSizeError !== ""
+                      ? "border-danger form-control"
+                      : "form-control"
+                  }
+                  value={product.imageChooseSize ?? ""}
+                  name="imageChooseSize"
+                  onChange={handleInputChange}
+                >
+                  <option value="">--Chọn size--</option>
+                  {imgSizeOptions.map((option) => (
+                    <option key={option.value} value={option.value}>
+                      {option.label}
+                    </option>
+                  ))}
+                </select>
+                <span className="text-danger">{imgSizeError}</span>
+              </div>
+
+              <div className="mb-3">
+                <label className="form-label">
+                  Trạng thái<span style={{ color: "red" }}>*</span>
+                </label>
+                <input
+                  className="form-check-input bg-dark border-dark mx-2"
+                  type="checkbox"
+                  name="isActivated"
+                  checked={product.isActivated ?? true}
+                  onChange={(e) =>
+                    setProduct({ ...product, isActivated: e.target.checked })
+                  }
+                />
+                {product.isActivated ? "Kích hoạt" : "Ẩn"}
+              </div>
+              <button
+                type="submit"
+                id="submit"
+                className="col-4 btn btn-dark bg-gradient text-align-center"
+              >
+                Lưu lại
+              </button>
+            </div>
+          </form>
+        </div>
+
+        <div className=" col-5 bg-white p-5 shadow border">
+          <h3>Mã phân loại chi tiết sản phẩm</h3>
+          <div className="col my-4">
+            <Link>
+              <button className="btn btn-dark bg-gradient">Thêm mã</button>
+            </Link>
           </div>
-        </form>
+          {listProductsDetails.length === 0 ? (
+            <div>Chưa có mã phân loại sản phẩm</div>
+          ) : null}
+          <div
+            className="overflow-auto border ps-3 mt-3"
+            style={{ maxHeight: "80vh" }}
+          >
+            {listProductsDetails.map((pd) => (
+              <div key={pd.id} className="d-flex align-items-center mt-3">
+                <Dropdown data-bs-theme="dark" className="me-3">
+                  <Dropdown.Toggle variant="dark bg-gradient btn-sm">
+                    Hành động
+                  </Dropdown.Toggle>
+                  <Dropdown.Menu>
+                    <Dropdown.Item
+                      as={Link}
+                      // to={`/admin/productDetail/${pd.id}/edit`}
+                    >
+                      Xem/Sửa
+                    </Dropdown.Item>
+                    <Dropdown.Item onClick={() => handleDelete(pd.id)}>
+                      Xóa
+                    </Dropdown.Item>
+                  </Dropdown.Menu>
+                </Dropdown>
+
+                <div>{pd.code}</div>
+              </div>
+            ))}
+          </div>
+        </div>
       </div>
-      <div></div>
     </>
   );
 }
