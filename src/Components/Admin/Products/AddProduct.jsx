@@ -204,7 +204,7 @@ export default function AddProduct() {
                   <option value="">--Chọn danh mục--</option>
                   {listCategories.map((option) => (
                     <option key={option.id} value={option.id}>
-                      {option.catName}
+                      { option.categoryCode} - {option.catName}
                     </option>
                   ))}
                 </select>

@@ -1,5 +1,4 @@
 import { useState, useEffect } from "react";
-import { getAllCategories } from "../../../Services/CategoryService";
 import { getProduct, updateProduct } from "../../../Services/ProductService";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
