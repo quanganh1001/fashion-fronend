@@ -10,6 +10,7 @@ import PaginationProvider from "../ContextProvider/PaginationProvider.jsx";
 import AddProduct from "../Components/Admin/Products/AddProduct";
 import EditProduct from "../Components/Admin/Products/EditProduct";
 import AddCategory from "../Components/Admin/Categories/AddCategory.jsx";
+import ImageProduct from "../Components/Admin/Products/ImageProduct.jsx";
 
 export const router = createBrowserRouter([
   {
@@ -60,6 +61,10 @@ export const router = createBrowserRouter([
                 path: ":id/edit",
                 element: <EditProduct />,
               },
+              {
+                path: ":id/images",
+                element: <ImageProduct/>,
+              },
             ],
           },
 
@@ -69,9 +74,7 @@ export const router = createBrowserRouter([
             children: [
               {
                 index: true,
-                element: (           
-                    <Category />
-                ),
+                element: <Category />,
               },
               {
                 path: "add",

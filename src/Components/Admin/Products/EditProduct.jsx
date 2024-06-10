@@ -164,7 +164,7 @@ export default function EditProduct() {
       <hr />
       <div className="mt-5 d-flex flex-wrap justify-content-between">
         <div className="mb-3 col-12">
-          <Link>
+          <Link to={"/admin/products/" + id +"/images"}>
             <button className="btn btn-dark bg-gradient">
               Quản lý ảnh sản phẩm
             </button>

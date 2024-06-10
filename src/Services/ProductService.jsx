@@ -25,9 +25,26 @@ const getProduct = async (id) => {
 }
 
 const updateProduct = async (id, product) => {
-  console.log(product);
   return await apiPrivate.put("/products/" + id, product);
 };
+
+const getAllImageProducts = async (id) => {
+  const response = await apiPublic.get("products/" +id+"/images");
+  return response;
+};
+
+const createImage = async (productId,formData) => {
+  const response = await apiPrivate.post(
+    `products/${productId}/createImage`,
+    formData,
+    {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    }
+  );
+  return response;
+}; 
 
 export {
   getAllProducts,
@@ -35,4 +52,6 @@ export {
   deleteProduct,
   getProduct,
   updateProduct,
+  getAllImageProducts,
+  createImage,
 };
