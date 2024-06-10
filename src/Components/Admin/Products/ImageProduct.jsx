@@ -6,8 +6,10 @@ import {
   createImage,
   getAllImageProducts,
   getProduct,
+  updateImageBackground,
 } from "../../../Services/ProductService";
 import { deleteImage } from "../../../Services/ImageProductService";
+import LoadingSprinner from "../../Fragments/LoadingSpinner";
 
 export default function ImageProduct() {
   const { id } = useParams();
@@ -46,9 +48,8 @@ export default function ImageProduct() {
       toast.error("Vui lòng chọn ít nhất một hình ảnh.");
       setImageFileError("Vui lòng chọn ít nhất một hình ảnh.");
       return;
-    }
+    } else setImageFileError("");
 
-    // Kiểm tra kích thước của từng file
     for (let i = 0; i < imgFiles.length; i++) {
       if (imgFiles[i].size > 100 * 1024 * 1024) {
         toast.error(
@@ -59,6 +60,7 @@ export default function ImageProduct() {
         );
         return;
       }
+      else setImageFileError("")
     }
 
     setIsLoading(true);
@@ -80,11 +82,11 @@ export default function ImageProduct() {
       });
   };
   const handleDelete = async (id) => {
-    openModal("Xóa sản phẩm", `Bạn có chắc muốn xóa sản phẩm này?`, () => {
+    openModal("Xóa sản phẩm", `Bạn có chắc muốn xóa ảnh này?`, () => {
       deleteImage(id)
         .then(() => {
           toast.success("Xóa thành công");
-          fetchImagesProduct();
+          fetchImageBackground();
         })
         .catch(() => {
           toast.error("Lỗi! Không thể xóa.");
@@ -94,54 +96,79 @@ export default function ImageProduct() {
     });
   };
 
+  const handleUpdateBackground = (imageUrl) => {
+    openModal("Đổi ảnh nền sản phẩm", `Bạn có chắc muốn đổi ảnh này?`, () => {
+      updateImageBackground(id, imageUrl)
+        .then(() => {
+          toast.success("Thay đổi thành công");
+          setImageBackground(imageUrl);
+        })
+        .catch(() => {
+          toast.error("Lỗi! Không thể thay đổi.");
+        });
+
+      closeModal();
+    });
+  }
+
   return (
     <>
       <h1>Thêm ảnh sản phẩm</h1>
+      <hr />
       <div className="mt-5 bg-white p-5 shadow border">
-        <form encType="multipart/form-data" onSubmit={addImage}>
-          <div className="mb-3 col-6">
-            <label className="form-label">
-              File ảnh<span>*</span>
-            </label>
-            <input
-              className={
-                imageFileError === ""
-                  ? "form-control"
-                  : "form-control border-danger"
-              }
-              type="file"
-              name="file"
-              accept="video/*, image/*"
-              multiple
-            />
-            <span className="text-danger">{imageFileError}</span>
-          </div>
+        <div className="d-flex justify-content-between mb-5">
+          <form
+            encType="multipart/form-data"
+            className="col-6"
+            onSubmit={addImage}
+          >
+            <div className="mb-3 ">
+              <label className="form-label">
+                Tải file ảnh<span className="text-danger">*</span>
+              </label>
+              <input
+                className={
+                  imageFileError === ""
+                    ? "form-control"
+                    : "form-control border-danger"
+                }
+                type="file"
+                name="file"
+                accept="video/*, image/*"
+                multiple
+              />
+              <span className="text-danger">{imageFileError}</span>
+            </div>
 
-          <button type="submit" className="col-2 btn btn-dark">
-            Lưu ảnh
-          </button>
-          {console.log(isLoading)}
-          {isLoading && (
-            <div className="spinner-border text-dark" role="status"></div>
-          )}
-        </form>
-        <div id="select-background" className="bg mt-3">
-          <h4>Ảnh nền</h4>
+            <button type="submit" className=" btn btn-dark">
+              Tải lên
+            </button>
+            {isLoading && <LoadingSprinner />}
+          </form>
 
-          <div className="mt-3">
-            {imageBackground.endsWith(".mp4") ? (
-              <video width="250px" controls>
-                <source src={imageBackground} type="video/mp4" />
-              </video>
-            ) : (
-              <img src={imageBackground} width="150px" alt="" />
-            )}
+          <div id="select-background" className="">
+            <h4>Ảnh nền</h4>
+
+            <div className="mt-3">
+              {imageBackground.endsWith(".mp4") ? (
+                <video width="250px" controls>
+                  <source src={imageBackground} type="video/mp4" />
+                </video>
+              ) : (
+                <img src={imageBackground} width="150px" alt="" />
+              )}
+            </div>
           </div>
         </div>
-
-        <h2 className="m-5">Danh sách hình ảnh</h2>
+      </div>
+      <div className="mt-3 bg-white p-5 shadow border">
+        <h2 className="">Danh sách hình ảnh</h2>
+        <hr />
         <div className="d-flex flex-wrap justify-content-start">
-          <ul className="d-flex flex-wrap">
+          <ul
+            className="d-flex flex-wrap overflow-auto"
+            style={{ maxHeight: "100vh" }}
+          >
             {listImages.map((i) => (
               <li key={i.fileImg} className=" m-4">
                 {i.fileImg.endsWith(".mp4") ? (
@@ -153,7 +180,11 @@ export default function ImageProduct() {
                 )}
 
                 <div className="mt-3 d-flex flex-wrap justify-content-between">
-                  <button className="btn btn-warning  " type="button">
+                  <button
+                    className={i.fileImg === imageBackground ? "btn btn-secondary" : "btn btn-warning"}
+                    disabled={i.fileImg === imageBackground}
+                    onClick={() => handleUpdateBackground(i.fileImg)}
+                  >
                     Đặt làm ảnh nền
                   </button>
                   <button

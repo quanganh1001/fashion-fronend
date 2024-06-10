@@ -5,9 +5,10 @@ import { useNavigate, useParams, Link } from "react-router-dom";
 import {
   deleteProductDetail,
   getAllProductsDetails,
-} from "../../../Services/ProductDetail";
+} from "../../../Services/ProductDetailService";
 import { Dropdown } from "react-bootstrap";
 import useModal from "../../../CustomHooks/useModal";
+import { getImagesSize } from "../../../Services/ImageSizeService";
 
 export default function EditProduct() {
   const { id } = useParams();
@@ -33,21 +34,25 @@ export default function EditProduct() {
   const [imgSizeError, setImgSizeError] = useState("");
   const [discountPriceError, setDiscountPriceError] = useState("");
 
-  const imgSizeOptions = [
-    { value: "IMAGE_1", label: "Size áo polo" },
-    { value: "IMAGE_2", label: "Size áo sơ mi" },
-    { value: "IMAGE_3", label: "Size quần âu" },
-    { value: "IMAGE_4", label: "Size quần jean + kaki" },
-    { value: "IMAGE_5", label: "Size áo khoác" },
-  ];
+  const [imgSizeOptions, setImgSizeOptions] = useState([]);
 
   const { openModal, closeModal } = useModal();
 
   useEffect(() => {
     fetchProduct();
     fetchProductDetail();
+    fetchImgSize();
   }, []);
 
+  const fetchImgSize = async () => {
+    await getImagesSize()
+      .then((res) => {
+        setImgSizeOptions(res.data);
+      })
+      .catch((error) => {
+        console.error(error);
+      });
+  };
   const fetchProduct = async () => {
     try {
       const response = await getProduct(id);
@@ -162,9 +167,9 @@ export default function EditProduct() {
     <>
       <h2>Sửa sản phẩm</h2>
       <hr />
-      <div className="mt-5 d-flex flex-wrap justify-content-between">
-        <div className="mb-3 col-12">
-          <Link to={"/admin/products/" + id +"/images"}>
+      <div className="mt-4 d-flex flex-wrap justify-content-between">
+        <div className="mb-4 col-12">
+          <Link to={"/admin/products/" + id + "/images"}>
             <button className="btn btn-dark bg-gradient">
               Quản lý ảnh sản phẩm
             </button>
@@ -296,8 +301,8 @@ export default function EditProduct() {
                 >
                   <option value="">--Chọn size--</option>
                   {imgSizeOptions.map((option) => (
-                    <option key={option.value} value={option.value}>
-                      {option.label}
+                    <option key={option.key} value={option.key}>
+                      {option.value}
                     </option>
                   ))}
                 </select>
@@ -330,10 +335,10 @@ export default function EditProduct() {
           </form>
         </div>
 
-        <div className=" col-5 bg-white p-5 shadow border">
+        <div className=" col-5 bg-white p-3 pt-5 shadow border">
           <h3>Mã phân loại chi tiết sản phẩm</h3>
           <div className="col my-4">
-            <Link>
+            <Link to={`/admin/products/${id}/productDetail/add`}>
               <button className="btn btn-dark bg-gradient">Thêm mã</button>
             </Link>
           </div>
@@ -342,7 +347,7 @@ export default function EditProduct() {
           ) : null}
           <div
             className="overflow-auto border ps-3 mt-3"
-            style={{ maxHeight: "80vh" }}
+            style={{ maxHeight: "700px" }}
           >
             {listProductsDetails.map((pd) => (
               <div key={pd.id} className="d-flex align-items-center mt-3">
@@ -353,7 +358,7 @@ export default function EditProduct() {
                   <Dropdown.Menu>
                     <Dropdown.Item
                       as={Link}
-                      // to={`/admin/productDetail/${pd.id}/edit`}
+                      to={`/admin/products/${id}/productDetail/edit/${pd.id}`}
                     >
                       Xem/Sửa
                     </Dropdown.Item>

@@ -3,7 +3,8 @@ import { getAllCategories } from "../../../Services/CategoryService";
 import { createProduct } from "../../../Services/ProductService";
 import { toast } from "react-toastify";
 import { useNavigate, Link } from "react-router-dom";
-
+import { getImagesSize } from "../../../Services/ImageSizeService";
+  
 export default function AddProduct() {
   const [product, setProduct] = useState({
     productCode: "",
@@ -25,17 +26,24 @@ export default function AddProduct() {
   const [imgSizeError, setImgSizeError] = useState("");
   const [listCategories, setListCategories] = useState([]);
 
-  const imgSizeOptions = [
-    { value: "IMAGE_1", label: "Size áo polo" },
-    { value: "IMAGE_2", label: "Size áo sơ mi" },
-    { value: "IMAGE_3", label: "Size quần âu" },
-    { value: "IMAGE_4", label: "Size quần jean + kaki" },
-    { value: "IMAGE_5", label: "Size áo khoác" },
-  ];
+  const [imgSizeOptions, setImgSizeOptions] = useState([])
+
 
   useEffect(() => {
     fetchListCategories();
+    fetchImgSize();
   }, []);
+
+  const fetchImgSize = async () => {
+    await getImagesSize()
+      .then((res) => {
+      setImgSizeOptions(res.data)
+      })
+      .catch((error) => {
+      console.error(error)
+    })
+
+  }
 
   const fetchListCategories = async () => {
     try {
@@ -278,8 +286,8 @@ export default function AddProduct() {
                 >
                   <option value="">--Chọn size--</option>
                   {imgSizeOptions.map((option) => (
-                    <option key={option.value} value={option.value}>
-                      {option.label}
+                    <option key={option.key} value={option.key}>
+                      {option.value}
                     </option>
                   ))}
                 </select>

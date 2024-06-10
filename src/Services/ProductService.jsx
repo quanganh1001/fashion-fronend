@@ -1,3 +1,4 @@
+import { data } from "jquery";
 import { apiPublic, apiPrivate } from "../Ultils/AxiosCustomize"
 
 const getAllProducts = async (searchParams) => {
@@ -46,6 +47,19 @@ const createImage = async (productId,formData) => {
   return response;
 }; 
 
+const updateImageBackground = async (productId, imageUrl) => {
+  const response = await apiPrivate.put(
+    `products/${productId}/updateProductBackground`,
+    imageUrl,
+    {
+      headers: {
+        "Content-Type": "text/plain",
+      },
+    }
+  );
+  return response;
+}; 
+
 export {
   getAllProducts,
   createProduct,
@@ -54,4 +68,5 @@ export {
   updateProduct,
   getAllImageProducts,
   createImage,
+  updateImageBackground,
 };

@@ -1,5 +1,5 @@
 import { Pagination } from "react-bootstrap";
-import usePagination from "../../CustomHooks/userPagination";
+import usePagination from "../../CustomHooks/usePagination";
 import { useMemo } from "react";
 
 export default function CustomPagination({

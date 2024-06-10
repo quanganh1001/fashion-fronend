@@ -11,6 +11,8 @@ import AddProduct from "../Components/Admin/Products/AddProduct";
 import EditProduct from "../Components/Admin/Products/EditProduct";
 import AddCategory from "../Components/Admin/Categories/AddCategory.jsx";
 import ImageProduct from "../Components/Admin/Products/ImageProduct.jsx";
+import EditProductDetail from "../Components/Admin/ProductsDetails/EditProductDetail.jsx";
+import AddProductDetail from "../Components/Admin/ProductsDetails/AddProductDetail.jsx";
 
 export const router = createBrowserRouter([
   {
@@ -63,7 +65,15 @@ export const router = createBrowserRouter([
               },
               {
                 path: ":id/images",
-                element: <ImageProduct/>,
+                element: <ImageProduct />,
+              },
+              {
+                path: ":id/productDetail/add",
+                element: <AddProductDetail />,
+              },
+              {
+                path: ":id/productDetail/edit/:pdid",
+                element: <EditProductDetail />,
               },
             ],
           },

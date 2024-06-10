@@ -3,6 +3,7 @@ import { useState } from "react";
 import $ from "jquery";
 import useAuth from "../../CustomHooks/useAuth";
 import { toast } from "react-toastify";
+import LoadingSprinner from "../Fragments/LoadingSpinner";
 
 export default function Login() {
   const [username, setUsername] = useState("");
@@ -10,7 +11,10 @@ export default function Login() {
   const [passBlank, setPassBlank] = useState("");
   const [usernameBlank, setUsernameBlank] = useState("");
   const [error, setError] = useState("");
+    const [isLoading, setIsLoading] = useState(false);
+
   const { handleLogin } = useAuth();
+  
 
   const submitForm = async (event) => {
     event.preventDefault();
@@ -37,9 +41,11 @@ export default function Login() {
 
     if (valid) {
       try {
+        setIsLoading(true);
         await handleLogin({ username, password });
         toast.success("Đăng nhập thành công!")
       } catch (error) {
+        setIsLoading(false);
         if (error.response.data === "Invalid username or password") {
           toast.error("Sai tên đăng nhập hoặc mật khẩu");
           setError("Sai tên đăng nhập hoặc mật khẩu");
@@ -81,10 +87,11 @@ export default function Login() {
               <span className="text-danger">{error}</span>
             </div>
             <div className="row">
-              <div className="col-4">
+              <div className="col-4 d-flex align-items-center">
                 <button type="submit" className="btn btn-dark">
                   Đăng nhập
                 </button>
+                {isLoading && <LoadingSprinner />}
               </div>
             </div>
           </form>

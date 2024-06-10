@@ -130,7 +130,7 @@ export default function Category() {
                 <td>{cat.isActivated ? "Kích hoạt" : "Ẩn"}</td>
                 <td>
                   <Dropdown data-bs-theme="dark">
-                    <Dropdown.Toggle variant="dark bg-gradient">
+                    <Dropdown.Toggle variant="dark bg-gradient btn-sm">
                       Hành động
                     </Dropdown.Toggle>
                     <Dropdown.Menu>

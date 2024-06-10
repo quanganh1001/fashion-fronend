@@ -78,6 +78,7 @@ export default function AddCategory() {
   return (
     <>
       <h2>Thêm mới danh mục</h2>
+      <hr/>
       <div className="mt-5 bg-white p-5 shadow border">
         <form onSubmit={addCategoryForm}>
           <div className="row">

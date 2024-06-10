@@ -11,10 +11,10 @@ export default function CustomModal() {
         <Modal.Body>{modal.content}</Modal.Body>
         <Modal.Footer>
           <Button variant="secondary" onClick={closeModal}>
-            Đóng
+            Hủy
           </Button>
           <Button variant="dark bg-gradient" onClick={modal.onAccept}>
-            Lưu
+            Xác nhận
           </Button>
         </Modal.Footer>
       </Modal>

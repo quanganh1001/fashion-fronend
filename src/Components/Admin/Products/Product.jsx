@@ -2,9 +2,12 @@ import { Dropdown } from "react-bootstrap";
 import { Link } from "react-router-dom";
 import React, { useEffect, useState } from "react";
 import CustomPagination from "../../Fragments/CustomPagination";
-import usePagination from "../../../CustomHooks/userPagination";
+import usePagination from "../../../CustomHooks/usePagination";
 import SearchForm from "../../Fragments/SearchForm";
-import { deleteProduct, getAllProducts } from "../../../Services/ProductService";
+import {
+  deleteProduct,
+  getAllProducts,
+} from "../../../Services/ProductService";
 import useModal from "../../../CustomHooks/useModal";
 import { toast } from "react-toastify";
 
@@ -15,7 +18,7 @@ export default function Product() {
   const [currentPage, setCurrentPage] = useState();
   const { searchParams } = usePagination();
   const { openModal, closeModal } = useModal();
-  
+
   useEffect(() => {
     fetchProducts();
   }, [searchParams]);
@@ -33,21 +36,17 @@ export default function Product() {
   };
 
   const handleDelete = (productId) => {
-      openModal(
-          'Xóa sản phẩm',
-          `Bạn có chắc muốn xóa sản phẩm này?`,
-          () => {
-              deleteProduct(productId)
-                .then(() => {
-                    toast.success("Xóa sản phẩm thành công!")
-                    fetchProducts();
-                  })
-                  .catch((err => {
-                      toast.error("Xảy ra lỗi!");
-                  }));
-              closeModal();
-          },
-      );
+    openModal("Xóa sản phẩm", `Bạn có chắc muốn xóa sản phẩm này?`, () => {
+      deleteProduct(productId)
+        .then(() => {
+          toast.success("Xóa sản phẩm thành công!");
+          fetchProducts();
+        })
+        .catch((err) => {
+          toast.error("Xảy ra lỗi!");
+        });
+      closeModal();
+    });
   };
 
   return (
@@ -87,7 +86,7 @@ export default function Product() {
               <td>{p.isActivated ? "Kích hoạt" : "Ẩn"}</td>
               <td>
                 <Dropdown data-bs-theme="dark">
-                  <Dropdown.Toggle variant="dark bg-gradient">
+                  <Dropdown.Toggle variant="dark bg-gradient btn-sm">
                     Hành động
                   </Dropdown.Toggle>
                   <Dropdown.Menu>
