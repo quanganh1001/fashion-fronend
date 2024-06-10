@@ -192,8 +192,8 @@ export default function AddProductDetail() {
               <span className="text-danger">{sizeError}</span>
             </div>
 
-            <button type="submit" className="col-2 btn btn-dark">
-              Lưu
+            <button type="submit" className="col-2 btn btn-dark bg-gradient">
+              Thêm mới
             </button>
           </div>
         </form>

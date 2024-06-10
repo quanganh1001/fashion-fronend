@@ -54,21 +54,24 @@ export default function EditProduct() {
       });
   };
   const fetchProduct = async () => {
-    try {
-      const response = await getProduct(id);
-
+    await getProduct(id)
+    .then((res) => {
       setProduct({
-        productCode: response.data.productCode,
-        productName: response.data.productName,
-        price: response.data.price,
-        discountPrice: response.data.discountPrice,
-        brand: response.data.brand,
-        description: response.data.description,
-        imageChooseSize: response.data.imageChooseSize,
-        isActivated: response.data.isActivated,
+        productCode: res.data.productCode,
+        productName: res.data.productName,
+        price: res.data.price,
+        discountPrice: res.data.discountPrice,
+        brand: res.data.brand,
+        description: res.data.description,
+        imageChooseSize: res.data.imageChooseSize,
+        isActivated: res.data.isActivated,
       });
-    } catch (error) {}
-  };
+    })
+      .catch((error) => {
+       console.error(error)
+      })
+  }
+ 
 
   const fetchProductDetail = async () => {
     await getAllProductsDetails(id).then((res) => {
@@ -346,7 +349,7 @@ export default function EditProduct() {
             <div>Chưa có mã phân loại sản phẩm</div>
           ) : null}
           <div
-            className="overflow-auto border ps-3 mt-3"
+            className="overflow-auto border ps-3 pb-3 mt-3"
             style={{ maxHeight: "700px" }}
           >
             {listProductsDetails.map((pd) => (

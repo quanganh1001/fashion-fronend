@@ -1,59 +1,39 @@
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { getSize } from "../../../Services/SizeService.jsx";
 import {
   updateProductDetail,
   getProductDetail,
 } from "../../../Services/ProductDetailService";
 import { toast } from "react-toastify";
-import { getAllColors } from "../../../Services/ColorService";
+
 
 export default function EditProductDetail() {
   const { id, pdid } = useParams();
 
   const navigate = useNavigate();
 
-  const [listSize, setListSize] = useState([]);
-
-  const [listColor, setListColor] = useState([]);
-
-  const [sizeError, setSizeError] = useState("");
-
   const [codeError, setCodeError] = useState("");
-
-  const [colorError, setColorError] = useState("");
 
   const [quantityError, setQuantityError] = useState("");
 
   const [productDetail, setProductDetail] = useState({
     code: "",
     quantity: "",
-    size: "",
-    colorId: "",
-    productId: id,
+    isActivated: "",
   });
 
   useEffect(() => {
-    fetchListSize();
-    fetchListColor();
     fetchProductDetail();
   }, []);
 
-  const fetchListSize = async () => {
-    await getSize().then((res) => {
-      setListSize(res.data);
-    });
-  };
-
-  const fetchListColor = async () => {
-    await getAllColors().then((res) => {
-      setListColor(res.data);
-    });
-  };
 
   const fetchProductDetail = async () => {
       await getProductDetail(pdid).then((res) => {
-      setProductDetail(res.data);
+        setProductDetail({
+          code: res.data.code,
+          quantity: res.data.quantity,
+          isActivated: res.data.isActivated,
+        });
     });
   };
 
@@ -88,23 +68,9 @@ export default function EditProductDetail() {
       setQuantityError("");
     }
 
-    if (productDetail.size === "") {
-      isValid = false;
-      setSizeError("Chưa chọn size");
-    } else {
-      setSizeError("");
-    }
-
-    if (productDetail.color === "") {
-      isValid = false;
-      setColorError("Chưa chọn màu");
-    } else {
-      setColorError("");
-    }
-
     if (isValid) {
       console.log(productDetail);
-      await updateProductDetail(productDetail)
+      await updateProductDetail(pdid,productDetail)
         .then((res) => {
           toast.success("Sửa thành công");
           navigate(`/admin/products/${id}/edit`);
@@ -159,54 +125,23 @@ export default function EditProductDetail() {
               />
               <span className="text-danger">{quantityError}</span>
             </div>
-
-            <div className="mb-3 col-6">
+            <div className="mb-3">
               <label className="form-label">
-                Màu sắc<span style={{ color: "red" }}>*</span>
+                Trạng thái<span style={{ color: "red" }}>*</span>
               </label>
-              <select
-                className={
-                  sizeError !== ""
-                    ? "border-danger form-control"
-                    : "form-control"
+              <input
+                className="form-check-input bg-dark border-dark mx-2"
+                type="checkbox"
+                name="isActivated"
+                checked={productDetail.isActivated ?? true}
+                onChange={(e) =>
+                  setProductDetail({
+                    ...productDetail,
+                    isActivated: e.target.checked,
+                  })
                 }
-                              
-                name="colorId"
-                value={productDetail.colorId ?? ""}
-                onChange={handleInputChange}
-              >
-                <option value="">--Chọn màu--</option>
-                {listColor.map((c) => (
-                  <option key={c.id} value={c.id}>
-                    {c.colorCode} - {c.name}
-                  </option>
-                ))}
-              </select>
-              <span className="text-danger">{colorError}</span>
-            </div>
-
-            <div className="mb-3 col-6">
-              <label className="form-label">
-                Size<span style={{ color: "red" }}>*</span>
-              </label>
-              <select
-                className={
-                  sizeError !== ""
-                    ? "border-danger form-control"
-                    : "form-control"
-                }
-                value={productDetail.size ?? ""}
-                name="size"
-                onChange={handleInputChange}
-              >
-                <option value="">--Chọn size--</option>
-                {listSize.map((option) => (
-                  <option key={option.key} value={option.key}>
-                    {option.value}
-                  </option>
-                ))}
-              </select>
-              <span className="text-danger">{sizeError}</span>
+              />
+              {productDetail.isActivated ? "Kích hoạt" : "Ẩn"}
             </div>
 
             <button type="submit" className="col-2 btn btn-dark">

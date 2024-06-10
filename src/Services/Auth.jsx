@@ -21,7 +21,19 @@ export const getAuth = () => {
     return auth ? JSON.parse(auth) : {};
 }
 
-
+export const refreshToken = (refreshToken) => {
+  return apiPublic
+    .put(
+      "/auth/refreshToken",
+      {},
+      {
+        headers: {
+          Authorization: "RefreshToken " + refreshToken,
+        },
+      }
+    )
+    .then((res) => res.data);
+};
 
 export const isTokenExpired = (token) => {
     const userPayload = jwtDecode(token);

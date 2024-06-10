@@ -11,8 +11,8 @@ const addProductDetail = async (data) => {
   return await apiPrivate.post("productsDetail", data);
 };
 
-const updateProductDetail = async (data) => {
-  return await apiPrivate.post("productsDetail", data);
+const updateProductDetail = async (id,data) => {
+  return await apiPrivate.put("productsDetail/"+id, data);
 };
 
 const deleteProductDetail = async (id) => {

@@ -88,7 +88,7 @@ export default function Login() {
             </div>
             <div className="row">
               <div className="col-4 d-flex align-items-center">
-                <button type="submit" className="btn btn-dark">
+                <button type="submit" className="btn btn-dark bg-gradient">
                   Đăng nhập
                 </button>
                 {isLoading && <LoadingSprinner />}
