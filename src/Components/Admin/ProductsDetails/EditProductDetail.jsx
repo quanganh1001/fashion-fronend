@@ -16,11 +16,15 @@ export default function EditProductDetail() {
 
   const [quantityError, setQuantityError] = useState("");
 
+  const [isActivatedError, setIsActivatedError] = useState("");
+
   const [productDetail, setProductDetail] = useState({
     code: "",
     quantity: "",
     isActivated: "",
   });
+
+  
 
   useEffect(() => {
     fetchProductDetail();
@@ -69,15 +73,25 @@ export default function EditProductDetail() {
     }
 
     if (isValid) {
-      console.log(productDetail);
       await updateProductDetail(pdid,productDetail)
         .then((res) => {
           toast.success("Sửa thành công");
           navigate(`/admin/products/${id}/edit`);
         })
         .catch((error) => {
-          toast.error("Có lỗi xảy ra, không thể sửa");
-          console.error(error);
+          if (error.response.status === 409) {
+            setCodeError("Mã danh mục đã tồn tại");
+            toast.error("Mã danh mục đã tồn tại");
+          }else setCodeError("");
+
+          if (error.response.status === 400) {
+            setIsActivatedError("Sản phẩm đang ẩn nên không thể kích hoạt mã phân loại");
+            toast.error(
+              "Sản phẩm đang ẩn nên không thể kích hoạt mã phân loại"
+            );
+          } else
+             setIsActivatedError("");
+          
         });
     }
   };
@@ -145,7 +159,7 @@ export default function EditProductDetail() {
               />
               {productDetail.isActivated ? "Kích hoạt" : "Ẩn"}
             </div>
-
+            <span className="text-danger">{isActivatedError}</span>
             <button type="submit" className="col-2 button">
               Lưu
             </button>
