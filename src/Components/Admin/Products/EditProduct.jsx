@@ -9,6 +9,7 @@ import {
 import { Dropdown } from "react-bootstrap";
 import useModal from "../../../CustomHooks/useModal";
 import { getImagesSize } from "../../../Services/ImageSizeService";
+import Tittle from "../../Fragments/Tittle";
 
 export default function EditProduct() {
   const { id } = useParams();
@@ -168,14 +169,12 @@ export default function EditProduct() {
 
   return (
     <>
-      <h2>Sửa sản phẩm</h2>
-      <hr />
+      <Tittle tittle="Sửa sản phẩm" />
+
       <div className="mt-4 d-flex flex-wrap justify-content-between">
         <div className="mb-4 col-12">
           <Link to={"/admin/products/" + id + "/images"}>
-            <button className="btn btn-dark bg-gradient">
-              Quản lý ảnh sản phẩm
-            </button>
+            <button className="button">Quản lý ảnh sản phẩm</button>
           </Link>
         </div>
         <div className=" col-6 bg-white p-5 shadow border">
@@ -330,7 +329,7 @@ export default function EditProduct() {
               <button
                 type="submit"
                 id="submit"
-                className="col-4 btn btn-dark bg-gradient text-align-center"
+                className="col-4 button text-align-center"
               >
                 Lưu lại
               </button>
@@ -342,7 +341,7 @@ export default function EditProduct() {
           <h3>Mã phân loại chi tiết sản phẩm</h3>
           <div className="col my-4">
             <Link to={`/admin/products/${id}/productDetail/add`}>
-              <button className="btn btn-dark bg-gradient">Thêm mã</button>
+              <button className="button">Thêm mã</button>
             </Link>
           </div>
           {listProductsDetails.length === 0 ? (

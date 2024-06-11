@@ -13,6 +13,7 @@ import AddCategory from "../Components/Admin/Categories/AddCategory.jsx";
 import ImageProduct from "../Components/Admin/Products/ImageProduct.jsx";
 import EditProductDetail from "../Components/Admin/ProductsDetails/EditProductDetail.jsx";
 import AddProductDetail from "../Components/Admin/ProductsDetails/AddProductDetail.jsx";
+import EditCategory from "../Components/Admin/Categories/EditCategory.jsx";
 
 export const router = createBrowserRouter([
   {
@@ -89,6 +90,10 @@ export const router = createBrowserRouter([
               {
                 path: "add",
                 element: <AddCategory />,
+              },
+              {
+                path: ":id/edit",
+                element: <EditCategory />,
               },
             ],
           },

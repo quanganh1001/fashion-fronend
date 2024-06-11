@@ -4,6 +4,7 @@ import { createProduct } from "../../../Services/ProductService";
 import { toast } from "react-toastify";
 import { useNavigate, Link } from "react-router-dom";
 import { getImagesSize } from "../../../Services/ImageSizeService";
+import Tittle from "../../Fragments/Tittle";
   
 export default function AddProduct() {
   const [product, setProduct] = useState({
@@ -133,8 +134,7 @@ export default function AddProduct() {
   
     return (
       <>
-        <h2>Thêm mới sản phẩm</h2>
-        <hr />
+        <Tittle tittle="Thêm mới sản phẩm" />
         <div className="mt-5 bg-white p-5 shadow border">
           <form onSubmit={addProductForm}>
             <div className="row">
@@ -297,7 +297,7 @@ export default function AddProduct() {
               <button
                 type="submit"
                 id="submit"
-                className="col-2 btn btn-dark bg-gradient text-align-center"
+                className="col-2 button text-align-center"
               >
                 Thêm sản phẩm
               </button>

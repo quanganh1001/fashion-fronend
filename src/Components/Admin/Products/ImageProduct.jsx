@@ -10,6 +10,7 @@ import {
 } from "../../../Services/ProductService";
 import { deleteImage } from "../../../Services/ImageProductService";
 import LoadingSprinner from "../../Fragments/LoadingSpinner";
+import Tittle from "../../Fragments/Tittle";
 
 export default function ImageProduct() {
   const { id } = useParams();
@@ -113,8 +114,8 @@ export default function ImageProduct() {
 
   return (
     <>
-      <h1>Thêm ảnh sản phẩm</h1>
-      <hr />
+      <Tittle tittle="Quản lý hình ảnh sản phẩm" />
+
       <div className="mt-5 bg-white p-5 shadow border">
         <div className="d-flex justify-content-between mb-5">
           <form
@@ -140,7 +141,7 @@ export default function ImageProduct() {
               <span className="text-danger">{imageFileError}</span>
             </div>
 
-            <button type="submit" className=" btn btn-dark">
+            <button type="submit" className=" button">
               Tải lên
             </button>
             {isLoading && <LoadingSprinner />}
@@ -162,8 +163,7 @@ export default function ImageProduct() {
         </div>
       </div>
       <div className="mt-3 bg-white p-5 shadow border">
-        <h2 className="">Danh sách hình ảnh</h2>
-        <hr />
+        <Tittle tittle="Danh sách hình ảnh" />
         <div className="d-flex flex-wrap justify-content-start">
           <ul
             className="d-flex flex-wrap overflow-auto"
@@ -181,7 +181,11 @@ export default function ImageProduct() {
 
                 <div className="mt-3 d-flex flex-wrap justify-content-between">
                   <button
-                    className={i.fileImg === imageBackground ? "btn btn-secondary" : "btn btn-warning"}
+                    className={
+                      i.fileImg === imageBackground
+                        ? "btn btn-secondary"
+                        : "btn btn-warning"
+                    }
                     disabled={i.fileImg === imageBackground}
                     onClick={() => handleUpdateBackground(i.fileImg)}
                   >

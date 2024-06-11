@@ -1,30 +1,45 @@
 import { apiPrivate } from "../Ultils/AxiosCustomize";
 
 const getAllCategories = async () => {
-    const response = await apiPrivate.get("categories");
-    return response;
+    return await apiPrivate.get("categories");
 };
 
 const getChildCategories = async (catParentId) => {
-  const response = await apiPrivate.get("categories/childCategories", {
+  return await apiPrivate.get("categories/childCategories", {
     params: { catParentId: catParentId },
   });
-    return response;
+    
 };
 
 const getCategory = async (id) => {
-  const response = await apiPrivate.get("categories/"+id);
-  return response;
+  return await apiPrivate.get("categories/" + id);
+
 };
 
 const createCategory = async (category) => {
-  const response = await apiPrivate.post("categories", category);
-  return response;
+  return await apiPrivate.post("categories", category);
+  
 }
 
 const deleteCategory = async (id) => {
-  const response = await apiPrivate.delete("categories/" + id);
-  return response;
+  return await apiPrivate.delete("categories/" + id);
+  
+};
+
+const updateCategory = async (id, category) => {
+  return await apiPrivate.put("categories/" + id, category);
+}
+
+const updateBackgroundCategory = async (id, formData) => {
+  return await apiPrivate.post(
+    "categories/upBackgroundImgCategory/" + id,
+    formData,
+    {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    }
+  );
 };
 
 export {
@@ -33,4 +48,6 @@ export {
   getCategory,
   deleteCategory,
   createCategory,
+  updateCategory,
+  updateBackgroundCategory,
 };

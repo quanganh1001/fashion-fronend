@@ -10,6 +10,7 @@ import {
 } from "../../../Services/ProductService";
 import useModal from "../../../CustomHooks/useModal";
 import { toast } from "react-toastify";
+import Tittle from "../../Fragments/Tittle";
 
 export default function Product() {
   const [products, setProducts] = useState([]);
@@ -51,15 +52,12 @@ export default function Product() {
 
   return (
     <>
-      <div className="d-flex flex-wrap justify-content-between align-items-center">
-        <h1 className="">Sản phẩm</h1>
-      </div>
-      <hr />
+      <Tittle tittle="Sản phẩm" />
 
       <div className="d-flex flex-wrap my-5 justify-content-between align-items-center">
         <div className="col">
           <Link to="/admin/products/add">
-            <button className="btn btn-dark bg-gradient">Thêm sản phẩm</button>
+            <button className="button">Thêm sản phẩm</button>
           </Link>
         </div>
 

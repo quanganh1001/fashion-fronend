@@ -9,6 +9,7 @@ import { AlertLink, Dropdown } from "react-bootstrap";
 import { Link } from "react-router-dom";
 import useModal from "../../../CustomHooks/useModal";
 import { toast } from "react-toastify";
+import Tittle from "../../Fragments/Tittle";
 
 export default function Category() {
   const [id, setId] = useState("");
@@ -26,6 +27,7 @@ export default function Category() {
   const fetchListCategories = async () => {
     await getChildCategories(id)
       .then((res) => {
+        console.log(res);
         setCategories(res.data);
       })
       .catch((error) => {
@@ -60,8 +62,7 @@ export default function Category() {
 
   return (
     <>
-      <h1>Danh mục sản phẩm </h1>
-      <hr />
+      <Tittle tittle="Danh mục sản phẩm" />
       <div className="mt-5 bg-white p-5 shadow border">
         <div>
           <span className="text-dark link-underline-dark link-underline-opacity-0 link-underline-opacity-100-hover">
@@ -74,9 +75,7 @@ export default function Category() {
           <div className="mt-3 mb-5">
             <span>
               <Link to="/admin/categories/add">
-                <button className="btn btn-dark bg-gradient">
-                  Thêm danh mục
-                </button>
+                <button className="button">Thêm danh mục</button>
               </Link>
             </span>
           </div>
@@ -100,7 +99,6 @@ export default function Category() {
               <th>Mã danh mục</th>
               <th>Tên danh mục</th>
               <th>Nằm trong danh mục</th>
-              <th>Trạng thái</th>
             </tr>
           </thead>
           <tbody>
@@ -127,7 +125,6 @@ export default function Category() {
                 </td>
                 <td>{cat.catName}</td>
                 <td>{cat.catParentName ?? "Không"}</td>
-                <td>{cat.isActivated ? "Kích hoạt" : "Ẩn"}</td>
                 <td>
                   <Dropdown data-bs-theme="dark">
                     <Dropdown.Toggle variant="dark bg-gradient btn-sm">

@@ -1,36 +1,48 @@
 import { useState, useEffect } from "react";
 import {
-  createCategory,
-  getAllCategories,
+  getCategory,
+  updateBackgroundCategory,
+  updateCategory,
 } from "../../../Services/CategoryService";
+import { useNavigate, useParams } from "react-router-dom";
 import { toast } from "react-toastify";
-import { useNavigate } from "react-router-dom";
 import Tittle from "../../Fragments/Tittle";
+import LoadingSprinner from "../../Fragments/LoadingSpinner";
 
-export default function AddCategory() {
+export default function EditCategory() {
   const [category, setCategory] = useState({
     categoryCode: "",
     catName: "",
-    catParent: "",
   });
 
-  const [listCategories, setListCategories] = useState([]);
+  const [catBackground, setCatBackground] = useState(null);
+
+  const [currentBackgound, setCurrentBackgound] = useState("");
+
+  const { id } = useParams();
 
   const navigator = useNavigate();
+
   const [categoryCodeErorr, setCategoryCodeErorr] = useState("");
+
   const [catNameErorr, setCatNameErorr] = useState("");
 
+  const [isLoading, setIsLoading] = useState(false);
+
   useEffect(() => {
-    fetchListCategories();
+    fetchCategory();
   }, []);
 
-  const fetchListCategories = async () => {
-    try {
-      const response = await getAllCategories();
-      setListCategories(response.data);
-    } catch (error) {
-      console.error("Error fetching list categories:", error);
-    }
+  const fetchCategory = async () => {
+    await getCategory(id).then((res) => {
+      setIsLoading(false);
+      setCategory({
+        categoryCode: res.data.categoryCode,
+        catName: res.data.catName,
+      });
+
+      setCurrentBackgound(res.data.catBackground);
+    });
   };
 
   const handleInputChange = (e) => {
@@ -38,7 +50,11 @@ export default function AddCategory() {
     setCategory({ ...category, [name]: value });
   };
 
-  const addCategoryForm = async (e) => {
+  const handleFileChange = (event) => {
+    setCatBackground(event.target.files[0]);
+  };
+
+  const editCategoryForm = async (e) => {
     e.preventDefault();
     let isValid = true;
 
@@ -57,25 +73,42 @@ export default function AddCategory() {
     }
 
     if (isValid) {
-      await createCategory(category)
+      await updateCategory(id, category)
         .then(() => {
-          navigator("/admin/categories");
-          toast.success("Thêm mới thành công");
+          setIsLoading(true);
+          // navigator("/admin/categories");
+          toast.success("Sửa thành công thành công");
         })
         .catch((error) => {
           if (error.response.status === 409) {
             setCategoryCodeErorr("Mã danh mục đã tồn tại");
             toast.error("Mã danh mục đã tồn tại");
           }
+          return;
         });
+
+      if (catBackground != null) {
+        const formData = new FormData();
+        formData.append("file", catBackground);
+        await updateBackgroundCategory(id, formData)
+          .then(() => {
+            fetchCategory();
+          })
+          .catch((err) => {
+            console.error(err);
+          });
+      } else {
+        setIsLoading(false)
+      }
     }
   };
 
   return (
     <>
-      <Tittle tittle="Thêm mới danh mục" />
+      <Tittle tittle="Sửa danh mục" />
+
       <div className="mt-5 bg-white p-5 shadow border">
-        <form onSubmit={addCategoryForm}>
+        <form onSubmit={editCategoryForm}>
           <div className="row">
             <div className="mb-3 col-6">
               <label className="form-label">
@@ -114,25 +147,29 @@ export default function AddCategory() {
             </div>
 
             <div className="mb-3 col-6">
-              <label className="form-label">Nằm trong danh mục</label>
-              <select
+              <label className="form-label">
+                Tải ảnh nền<span className="text-danger">*</span>
+              </label>
+              <input
                 className="form-control"
-                value={category.catParent}
-                name="catParent"
-                onChange={handleInputChange}
-              >
-                <option value="">Không</option>
-                {listCategories.map((option) => (
-                  <option key={option.id} value={option.id}>
-                    {option.categoryCode} - {option.catName}
-                  </option>
-                ))}
-              </select>
+                type="file"
+                name="catBackground"
+                accept="image/*"
+                onChange={handleFileChange}
+              />
             </div>
+            
+            {isLoading ? (
+              <LoadingSprinner />
+            ) : (
+              <div className="mb-3 col-6 mt-3">
+                <img src={currentBackgound} width="150px" alt="" />
+              </div>
+            )}
 
             <div className="col-12 mt-3">
               <button type="submit" className="col-2 button text-align-center">
-                Thêm danh mục
+                Sửa danh mục
               </button>
             </div>
           </div>

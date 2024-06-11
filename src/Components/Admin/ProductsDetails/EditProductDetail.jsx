@@ -82,6 +82,8 @@ export default function EditProductDetail() {
     }
   };
 
+ 
+
   return (
     <>
       <h1>Sửa mã phân loại</h1>
@@ -144,7 +146,7 @@ export default function EditProductDetail() {
               {productDetail.isActivated ? "Kích hoạt" : "Ẩn"}
             </div>
 
-            <button type="submit" className="col-2 btn btn-dark">
+            <button type="submit" className="col-2 button">
               Lưu
             </button>
           </div>

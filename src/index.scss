@@ -1,4 +1,5 @@
 @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Quicksand:wght@300..700&display=swap');
+@import 'bootstrap/scss/bootstrap';
 
 *{
     font-family: "Quicksand", sans-serif;
@@ -20,3 +21,8 @@ li{
   color: rgba(0, 0, 0, 0.871) !important;
 }
 
+.button{
+  @extend .btn;
+  @extend .btn-dark;
+  @extend .bg-gradient;
+}

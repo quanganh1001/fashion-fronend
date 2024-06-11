@@ -33,7 +33,6 @@ export default function AuthProvider({ children }) {
                     });
                   })
                   .catch((e) => {
-                    console.log(e);
                     setAuth({});
                     toast.error(
                       "Phiên đăng nhập đã hết hạn!"
@@ -42,7 +41,7 @@ export default function AuthProvider({ children }) {
                   });
             }
 
-        }, 1000 * 60 * 59);
+        }, 1000 * 10 * 59);
         return () => clearInterval(interval);
     }, [auth]);
 
