@@ -1,72 +1,72 @@
-import { data } from "jquery";
-import { apiPublic, apiPrivate } from "../Ultils/AxiosCustomize"
+import { data } from 'jquery';
+import { apiPublic, apiPrivate } from '../Ultils/AxiosCustomize';
 
 const getAllProducts = async (searchParams) => {
-    const response = await apiPublic.get("products", {
-      params: {
-        keyword: searchParams.get("keyword"),
-        page: searchParams.get("page"),
-        limit: searchParams.get("limit"),
-      },
+    const response = await apiPublic.get('products', {
+        params: {
+            keyword: searchParams.get('keyword'),
+            page: searchParams.get('page'),
+            limit: searchParams.get('limit'),
+        },
     });
 
     return response;
 };
 
 const createProduct = async (data) => {
-  return await apiPrivate.post("products", data)
-}
+    return await apiPrivate.post('products', data);
+};
 
- const deleteProduct = async (productId) => {
-  return await apiPrivate.delete(`/products/${productId}`)
-}
+const deleteProduct = async (productId) => {
+    return await apiPrivate.delete(`/products/${productId}`);
+};
 
 const getProduct = async (id) => {
-  return await apiPublic.get('/products/'+id)
-}
+    return await apiPublic.get('/products/' + id);
+};
 
 const updateProduct = async (id, product) => {
-  return await apiPrivate.put("/products/" + id, product);
+    return await apiPrivate.put('/products/' + id, product);
 };
 
 const getAllImageProducts = async (id) => {
-  const response = await apiPublic.get("products/" +id+"/images");
-  return response;
+    const response = await apiPublic.get('products/' + id + '/images');
+    return response;
 };
 
-const createImage = async (productId,formData) => {
-  const response = await apiPrivate.post(
-    `products/${productId}/createImage`,
-    formData,
-    {
-      headers: {
-        "Content-Type": "multipart/form-data",
-      },
-    }
-  );
-  return response;
-}; 
+const createImage = async (productId, formData) => {
+    const response = await apiPrivate.post(
+        `products/${productId}/createImage`,
+        formData,
+        {
+            headers: {
+                'Content-Type': 'multipart/form-data',
+            },
+        }
+    );
+    return response;
+};
 
 const updateImageBackground = async (productId, imageUrl) => {
-  const response = await apiPrivate.put(
-    `products/${productId}/updateProductBackground`,
-    imageUrl,
-    {
-      headers: {
-        "Content-Type": "text/plain",
-      },
-    }
-  );
-  return response;
-}; 
+    const response = await apiPrivate.put(
+        `products/${productId}/updateProductBackground`,
+        imageUrl,
+        {
+            headers: {
+                'Content-Type': 'text/plain',
+            },
+        }
+    );
+    return response;
+};
 
 export {
-  getAllProducts,
-  createProduct,
-  deleteProduct,
-  getProduct,
-  updateProduct,
-  getAllImageProducts,
-  createImage,
-  updateImageBackground,
+    getAllProducts,
+    createProduct,
+    deleteProduct,
+    getProduct,
+    updateProduct,
+    getAllImageProducts,
+    createImage,
+    updateImageBackground,
 };

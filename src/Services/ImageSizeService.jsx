@@ -1,8 +1,8 @@
-import { apiPublic } from "../Ultils/AxiosCustomize";
+import { apiPublic } from '../Ultils/AxiosCustomize';
 
 const getImagesSize = async () => {
-  const response = await apiPublic.get("enums/sizeImage");
-  return response;
+    const response = await apiPublic.get('enums/sizeImage');
+    return response;
 };
 
-export {getImagesSize}
+export { getImagesSize };

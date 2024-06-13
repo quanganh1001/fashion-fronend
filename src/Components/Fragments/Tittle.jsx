@@ -1,10 +1,10 @@
-import { useState } from "react";
+import { useState } from 'react';
 
 export default function Tittle({ tittle }) {
-  return (
-    <>
-      <h1>{tittle}</h1>
-      <hr />
-    </>
-  );
+    return (
+        <>
+            <h1>{tittle}</h1>
+            <hr />
+        </>
+    );
 }

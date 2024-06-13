@@ -1,28 +1,28 @@
 @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Quicksand:wght@300..700&display=swap');
 @import 'bootstrap/scss/bootstrap';
 
-*{
-    font-family: "Quicksand", sans-serif;
+* {
+    font-family: 'Quicksand', sans-serif;
     font-size: 1rem;
 }
 
-li{
-  list-style-type: none;
+li {
+    list-style-type: none;
 }
 
-.btn-active{
-  background-color: rgba(0, 0, 0, 0.871) !important;
-  color: white !important;
-  border-color: rgba(0, 0, 0, 0.871)  !important;
+.btn-active {
+    background-color: rgba(0, 0, 0, 0.871) !important;
+    color: white !important;
+    border-color: rgba(0, 0, 0, 0.871) !important;
 }
 
-.btn-non-active{
-  background-color: white  !important;
-  color: rgba(0, 0, 0, 0.871) !important;
+.btn-non-active {
+    background-color: white !important;
+    color: rgba(0, 0, 0, 0.871) !important;
 }
 
-.button{
-  @extend .btn;
-  @extend .btn-dark;
-  @extend .bg-gradient;
+.button {
+    @extend .btn;
+    @extend .btn-dark;
+    @extend .bg-gradient;
 }

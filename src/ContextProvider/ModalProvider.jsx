@@ -1,14 +1,13 @@
-import { useState } from "react"
-import CustomModal from "../Components/Fragments/CustomModal";
-import { ModalContext } from "./Context";
-
+import { useState } from 'react';
+import CustomModal from '../Components/Fragments/CustomModal';
+import { ModalContext } from './Context';
 
 export default function ModalProvider({ children }) {
     const [modal, setModal] = useState({
         isOpen: false,
         title: '',
         content: '',
-        onAccept: () => { }
+        onAccept: () => {},
     });
 
     const openModal = (title, content, onAccept) => {
@@ -16,7 +15,7 @@ export default function ModalProvider({ children }) {
             isOpen: true,
             title,
             content,
-            onAccept
+            onAccept,
         });
     };
 
@@ -25,7 +24,7 @@ export default function ModalProvider({ children }) {
             isOpen: false,
             title: '',
             content: '',
-            onAccept: () => { }
+            onAccept: () => {},
         });
     };
 
@@ -34,5 +33,5 @@ export default function ModalProvider({ children }) {
             {modal.isOpen && <CustomModal />}
             {children}
         </ModalContext.Provider>
-    )
+    );
 }

@@ -1,19 +1,18 @@
-import Menu from "../Admin/Menu";
+import Menu from '../Admin/Menu';
 
 export default function AdminLayout({ children }) {
     return (
-        <div className='container-fluid g-0'>
-            <div className='row g-0'>
-                <div className='col-2 position-fixed bg-dark sidebar'>
+        <div className="container-fluid g-0">
+            <div className="row g-0">
+                <div className="col-2 position-fixed bg-dark sidebar">
                     <Menu />
                 </div>
-                <div className='col offset-2'>
-                    <div className='m-3 mt-5 bg-white p-5 shadow border'>
+                <div className="col offset-2">
+                    <div className="m-3 mt-5 bg-white p-5 shadow border">
                         {children}
                     </div>
                 </div>
             </div>
         </div>
-
-    )
+    );
 }
