@@ -113,12 +113,18 @@ export const router = createBrowserRouter([
             element: <Outlet />,
             children: [
               {
-                index: true,
+                
                 element: (
-                  <ProtectedRoute hasAnyRoles={["ROLE_MANAGER"]}>
-                    <Account />
-                  </ProtectedRoute>
+                  
+                    <ProtectedRoute hasAnyRoles={["ROLE_MANAGER"]} />
+                  
                 ),
+                children: [
+                  {
+                    index: true,
+                    element: <Account />,
+                  },
+                ],
               },
               {
                 path: "edit/:id",
