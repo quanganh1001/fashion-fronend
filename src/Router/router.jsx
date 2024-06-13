@@ -14,6 +14,8 @@ import ImageProduct from "../Components/Admin/Products/ImageProduct.jsx";
 import EditProductDetail from "../Components/Admin/ProductsDetails/EditProductDetail.jsx";
 import AddProductDetail from "../Components/Admin/ProductsDetails/AddProductDetail.jsx";
 import EditCategory from "../Components/Admin/Categories/EditCategory.jsx";
+import Account from "../Components/Admin/Accounts/Account.jsx";
+import EditAccount from "../Components/Admin/Accounts/EditAccount.jsx";
 
 export const router = createBrowserRouter([
   {
@@ -46,7 +48,11 @@ export const router = createBrowserRouter([
 
           {
             path: "products",
-            element: <Outlet />,
+            element: (
+              <ProtectedRoute hasAnyRoles={["ROLE_MANAGER"]}>
+                <Outlet />
+              </ProtectedRoute>
+            ),
             children: [
               {
                 index: true,
@@ -81,7 +87,11 @@ export const router = createBrowserRouter([
 
           {
             path: "categories",
-            element: <Outlet />,
+            element: (
+              <ProtectedRoute hasAnyRoles={["ROLE_MANAGER"]}>
+                <Outlet />
+              </ProtectedRoute>
+            ),
             children: [
               {
                 index: true,
@@ -94,6 +104,25 @@ export const router = createBrowserRouter([
               {
                 path: ":id/edit",
                 element: <EditCategory />,
+              },
+            ],
+          },
+
+          {
+            path: "accounts",
+            element: <Outlet />,
+            children: [
+              {
+                index: true,
+                element: (
+                  <ProtectedRoute hasAnyRoles={["ROLE_MANAGER"]}>
+                    <Account />
+                  </ProtectedRoute>
+                ),
+              },
+              {
+                path: "edit/:id",
+                element: <EditAccount />,
               },
             ],
           },

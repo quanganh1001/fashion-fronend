@@ -27,7 +27,6 @@ export default function Category() {
   const fetchListCategories = async () => {
     await getChildCategories(id)
       .then((res) => {
-        console.log(res);
         setCategories(res.data);
       })
       .catch((error) => {

@@ -52,8 +52,16 @@ export default function AuthProvider({ children }) {
                 setAuth({
                   token: res.data.token,
                   refreshToken: res.data.refreshToken,
-                  role: res.data.role,
-                  username: res.data.username
+                  account: {
+                    id: res.data.account.id,
+                    username: res.data.account.username,
+                    name: res.data.account.name,
+                    phone: res.data.account.phone,
+                    email: res.data.account.email,
+                    address: res.data.account.address,
+                    isActivated: res.data.account.isActivated,
+                    role: res.data.account.role,
+                  },
                 });
                 navigate(redirectTo, { replace: true });
             })

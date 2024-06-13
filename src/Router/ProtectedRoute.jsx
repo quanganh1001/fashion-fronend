@@ -1,18 +1,27 @@
-import { Navigate, Outlet, useLocation } from "react-router-dom";
+import { Navigate, Outlet, useLocation, useParams } from "react-router-dom";
 import useAuth from "../CustomHooks/useAuth";
-
 
 export const ProtectedRoute = ({ hasAnyRoles }) => {
     const location = useLocation();
-
+    const { id } = useParams();
     const { auth } = useAuth();
-    if (auth.token && hasAnyRoles?.includes(auth.role)) {
-        
+    const isEditAccountAdminPage =
+        location.pathname.startsWith("/admin/accounts/edit/");
+
+    if (auth.token && hasAnyRoles?.includes(auth.account.role)) {
+        if (isEditAccountAdminPage) {
+            if (auth.account.id === Number(id)) {
+                return <Outlet />;
+            } else {
+                console.log("Bạn không có quyền truy cập");
+                return <Navigate to="/login"/>;
+            }
+        }
+
         return <Outlet />;
-    }
-    
-    return <Navigate to="/login" replace state={{ redirectTo: location }} />;
+  
+    };
 
-    
+    console.log("Bạn không có quyền truy cập");
+    return <Navigate to="/login" />
 }
-
