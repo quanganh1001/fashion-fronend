@@ -8,7 +8,7 @@ import {
 } from '../../../Services/ProductDetailService';
 import { Dropdown } from 'react-bootstrap';
 import useModal from '../../../CustomHooks/useModal';
-import { getImagesSize } from '../../../Services/ImageSizeService';
+import { getImagesSize } from '../../../Services/EnumService';
 import Tittle from '../../Fragments/Tittle';
 
 export default function EditProduct() {

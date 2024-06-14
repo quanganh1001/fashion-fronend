@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { getSize } from '../../../Services/SizeService.jsx';
+import { getSize } from '../../../Services/EnumService';
 import { addProductDetail } from '../../../Services/ProductDetailService';
 import { toast } from 'react-toastify';
 import { getAllColors } from '../../../Services/ColorService';

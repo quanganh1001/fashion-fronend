@@ -2,8 +2,8 @@ import { useState, useEffect } from 'react';
 import { getAllCategories } from '../../../Services/CategoryService';
 import { createProduct } from '../../../Services/ProductService';
 import { toast } from 'react-toastify';
-import { useNavigate, Link } from 'react-router-dom';
-import { getImagesSize } from '../../../Services/ImageSizeService';
+import { useNavigate } from 'react-router-dom';
+import { getImagesSize } from '../../../Services/EnumService';
 import Tittle from '../../Fragments/Tittle';
 
 export default function AddProduct() {

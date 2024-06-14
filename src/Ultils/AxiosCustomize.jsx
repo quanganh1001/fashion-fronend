@@ -2,7 +2,10 @@ import axios from 'axios';
 import { getAuth, isTokenExpired } from '../Services/Auth';
 
 const apiPrivate = axios.create({
-    baseURL: 'http://localhost:8080/',
+  baseURL: "http://localhost:8080/",
+  headers: {
+    "Content-Type": "application/json",
+  },
 });
 
 const apiPublic = axios.create({

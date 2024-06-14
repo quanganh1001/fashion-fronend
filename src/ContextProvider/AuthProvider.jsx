@@ -46,7 +46,6 @@ export default function AuthProvider({ children }) {
                 refreshToken: res.data.refreshToken,
                 account: {
                     id: res.data.account.id,
-                    username: res.data.account.username,
                     name: res.data.account.name,
                     phone: res.data.account.phone,
                     email: res.data.account.email,

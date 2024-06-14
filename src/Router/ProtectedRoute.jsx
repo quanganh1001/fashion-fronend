@@ -1,27 +1,36 @@
-import { Navigate, Outlet, useLocation, useParams } from 'react-router-dom';
-import useAuth from '../CustomHooks/useAuth';
+import { Navigate, Outlet, useLocation, useParams } from "react-router-dom";
+import useAuth from "../CustomHooks/useAuth";
+import AdminLayout from "../Components/Layout/AdminLayout";
 
 export const ProtectedRoute = ({ hasAnyRoles }) => {
     const location = useLocation();
-    const { id } = useParams();
+
     const { auth } = useAuth();
-    const isEditAccountAdminPage = location.pathname.startsWith(
-        '/admin/accounts/edit/'
-    );
-
-    if (auth.token && hasAnyRoles?.includes(auth.account.role)) {
-        if (isEditAccountAdminPage) {
-            if (auth.account.id === Number(id)) {
-                return <Outlet />;
-            } else {
-                console.log('Bạn không có quyền truy cập');
-                return <Navigate to="/login" />;
-            }
-        }
-
-        return <Outlet />;
+    
+    if (!auth.token) {
+        console.log("Bạn không có quyền truy cập");
+        return <Navigate to="/login" />;
+    }
+    
+    if (
+      (location.pathname.startsWith("/admin/products") ||
+        location.pathname.startsWith("/admin/categories") ||
+        (location.pathname.startsWith("/admin/accounts") &&
+          !location.pathname.endsWith("/edit"))) &&
+      auth.account.role !== "ROLE_MANAGER"
+    ) {
+      console.log("Bạn không có quyền truy cập");
+      return <Navigate to="/login" />;
     }
 
-    console.log('Bạn không có quyền truy cập');
-    return <Navigate to="/login" />;
+  if (auth.token && hasAnyRoles?.includes(auth.account.role)) {
+      return (
+        <AdminLayout>
+          <Outlet />
+        </AdminLayout>
+      );
+  }
+
+  console.log("Bạn không có quyền truy cập");
+  return <Navigate to="/login"/>;
 };
