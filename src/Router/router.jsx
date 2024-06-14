@@ -16,98 +16,105 @@ import AddProductDetail from "../Components/Admin/ProductsDetails/AddProductDeta
 import EditCategory from "../Components/Admin/Categories/EditCategory.jsx";
 import Account from "../Components/Admin/Accounts/Account.jsx";
 import EditAccount from "../Components/Admin/Accounts/EditAccount.jsx";
+import AddAccount from "../Components/Admin/Accounts/AddAccount.jsx";
 
 export const router = createBrowserRouter([
-  {
-    path: "",
-    element: <App />,
-    children: [
-      {
-        path: "login",
-        element: <Login />,
-      },
-
-      {
-        path: "admin",
-        element: (
-          <ProtectedRoute hasAnyRoles={["ROLE_MANAGER", "ROLE_EMPLOYEE"]} />
-        ),
+    {
+        path: '',
+        element: <App />,
         children: [
-          {
-            path: "home" || "",
-            element: <HomeAdmin />,
-          },
+            {
+                path: 'login',
+                element: <Login />,
+            },
 
-          {
-            path: "products",
-            element: <Outlet />,
-            children: [
-              {
-                index: true,
+            {
+                path: 'admin',
                 element: (
-                  <PaginationProvider>
-                    <Product />
-                  </PaginationProvider>
+                    <ProtectedRoute
+                        hasAnyRoles={['ROLE_MANAGER', 'ROLE_EMPLOYEE']}
+                    />
                 ),
-              },
-              {
-                path: "add",
-                element: <AddProduct />,
-              },
-              {
-                path: ":id/edit",
-                element: <EditProduct />,
-              },
-              {
-                path: ":id/images",
-                element: <ImageProduct />,
-              },
-              {
-                path: ":id/productDetail/add",
-                element: <AddProductDetail />,
-              },
-              {
-                path: ":id/productDetail/edit/:pdid",
-                element: <EditProductDetail />,
-              },
-            ],
-          },
+                children: [
+                    {
+                        path: 'home' || '',
+                        element: <HomeAdmin />,
+                    },
 
-          {
-            path: "categories",
-            element: <Outlet />,
-            children: [
-              {
-                index: true,
-                element: <Category />,
-              },
-              {
-                path: "add",
-                element: <AddCategory />,
-              },
-              {
-                path: ":id/edit",
-                element: <EditCategory />,
-              },
-            ],
-          },
+                    {
+                        path: 'products',
+                        element: <Outlet />,
+                        children: [
+                            {
+                                index: true,
+                                element: (
+                                    <PaginationProvider>
+                                        <Product />
+                                    </PaginationProvider>
+                                ),
+                            },
+                            {
+                                path: 'add',
+                                element: <AddProduct />,
+                            },
+                            {
+                                path: ':id/edit',
+                                element: <EditProduct />,
+                            },
+                            {
+                                path: ':id/images',
+                                element: <ImageProduct />,
+                            },
+                            {
+                                path: ':id/productDetail/add',
+                                element: <AddProductDetail />,
+                            },
+                            {
+                                path: ':id/productDetail/edit/:pdid',
+                                element: <EditProductDetail />,
+                            },
+                        ],
+                    },
 
-          {
-            path: "accounts",
-            element: <Outlet />,
-            children: [
-              {
-                index: true,
-                element: <Account />,
-              },
-              {
-                path: "edit",
-                element: <EditAccount />,
-              },
-            ],
-          },
+                    {
+                        path: 'categories',
+                        element: <Outlet />,
+                        children: [
+                            {
+                                index: true,
+                                element: <Category />,
+                            },
+                            {
+                                path: 'add',
+                                element: <AddCategory />,
+                            },
+                            {
+                                path: ':id/edit',
+                                element: <EditCategory />,
+                            },
+                        ],
+                    },
+
+                    {
+                        path: 'accounts',
+                        element: <Outlet />,
+                        children: [
+                            {
+                                index: true,
+                                element: <Account />,
+                            },
+                            {
+                                path: 'edit',
+                                element: <EditAccount />,
+                            },
+                            {
+                                path: 'add',
+                                element: <AddAccount />,
+                            },
+                        ],
+                    },
+                ],
+            },
         ],
-      },
-    ],
-  },
+    },
 ]);

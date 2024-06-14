@@ -21,6 +21,9 @@ export const updateRole = async (id, role) => {
   return await apiPrivate.put("accounts/" + id + "/updateRole", role );
 };
 
+export const createAccount = async (account) => {
+    return await apiPrivate.post('accounts', account);
+};
 
 export const activation = async (id) => {
     return await apiPrivate.put('accounts/'+id+'/activated');
