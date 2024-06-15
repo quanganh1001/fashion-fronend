@@ -38,6 +38,7 @@ const Menu = (props) => {
             path: '/admin/invoices',
             label: 'QUẢN LÝ HÓA ĐƠN',
         },
+        
     ];
 
     const location = useLocation();
