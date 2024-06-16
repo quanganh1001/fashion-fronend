@@ -1,7 +1,8 @@
-import { apiPrivate, apiPublic } from "../Ultils/AxiosCustomize";
+
+import { apiPrivate } from "../Ultils/AxiosCustomize";
 
 const getSize = async () => {
-  const response = await apiPrivate.get("enums/sizes");
+  const response = await apiPrivate.get('enums/sizes');
   return response;
 };
 
@@ -15,4 +16,9 @@ const getAllRoles = async () => {
     const response = await apiPrivate.get('enums/roles');
     return response;
 }
-export { getSize, getImagesSize, getAllRoles };
+
+const getAllInvoiceStatus = async () => {
+    const response = await apiPrivate.get('enums/invoiceStatus');
+    return response;
+};
+export { getSize, getImagesSize, getAllRoles, getAllInvoiceStatus };
