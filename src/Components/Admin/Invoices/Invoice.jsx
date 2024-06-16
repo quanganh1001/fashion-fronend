@@ -1,3 +1,9 @@
+import Tittle from "../../Fragments/Tittle";
+
 export default function Invoice() {
-  return <></>;
+  return (
+    <>
+      <Tittle tittle="Danh sách đơn hàng" />
+    </>
+  );
 }
