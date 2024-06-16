@@ -5,7 +5,7 @@ import { useMemo } from 'react';
 export default function CustomPagination({
     totalPages,
     currentPage,
-    totalProducts,
+    totalItems,
 }) {
     const { searchParams, setPage, setPageLimit } = usePagination();
 
@@ -31,7 +31,7 @@ export default function CustomPagination({
                 </div>
 
                 <div>
-                    Tổng: <span className="text-danger"> {totalProducts} </span>
+                    Tổng: <span className="text-danger"> {totalItems} </span>
                     sản phẩm
                 </div>
 

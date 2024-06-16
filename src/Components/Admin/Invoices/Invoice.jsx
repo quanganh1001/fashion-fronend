@@ -1,17 +1,25 @@
-
 import { useEffect, useState } from 'react';
 import { getAllInvoice } from '../../../Services/InvoiceService';
 import usePagination from '../../../CustomHooks/usePagination';
 import Tittle from '../../Fragments/Tittle';
 import useAuth from '../../../CustomHooks/useAuth';
 import { getAllInvoiceStatus } from '../../../Services/EnumService';
+import { getAllEmployees } from '../../../Services/AccountService';
+import CustomPagination from '../../Fragments/CustomPagination';
+import SearchForm from '../../Fragments/SearchForm';
+import { Dropdown } from 'react-bootstrap';
+import { Link } from 'react-router-dom';
+import { parseISO, format } from 'date-fns';
+
 
 export default function Invoice() {
-    const { listInvoices, setListInvoice } = useState([]);
+    const [listInvoice, setListInvoice] = useState([]);
 
-    const { listInvoiceStatus, setListInvoiceStatus } = useState([]);
+    const [invoiceStatus, setInvoiceStatus] = useState(null);
 
-    const { listEmployees, setListEmployees } = useState([]);
+    const [listInvoiceStatus, setListInvoiceStatus] = useState([]);
+
+    const [listEmployees, setListEmployees] = useState([]);
 
     const [totalPages, setTotalPages] = useState(1);
 
@@ -19,168 +27,244 @@ export default function Invoice() {
 
     const [currentPage, setCurrentPage] = useState();
 
-    const { searchParams } = usePagination();
+    const { searchParams, setPage } = usePagination();
 
     const [accountId, setAccountId] = useState(0);
 
     const { auth } = useAuth();
 
+
     useEffect(() => {
-        fetchListInvoiceStatus();
         fetchGetAllInvoices();
-        
+        fetchGetAllInvoicesStatus();
         if (auth.account.role === 'ROLE_MANAGER') {
             fetchGetAllEmployee();
-        }
-    }, [searchParams, accountId]);
+      }
+     
+    }, [searchParams, accountId, invoiceStatus, auth.account.role]);
 
 
-    const fetchListInvoiceStatus = async () => {
-        await getAllInvoiceStatus()
-            .then((res) => {
-            setListEmployees(res.data)
-        })
-    }
 
-
-    const fetchGetAllInvoices = async () => {
-        await getAllInvoice(searchParams, accountId).then((res) => {
-            setListInvoice(res.data.productsRes);
+  const fetchGetAllInvoices = async () => {
+      console.log("a"+accountId);
+    await getAllInvoice(searchParams, accountId, invoiceStatus).then((res) => {
+        
+            setListInvoice(res.data.invoices);
             setTotalPages(res.data.totalPages);
             setCurrentPage(res.data.currentPage);
             setTotalInvoices(res.data.totalInvoices);
-        });
+        })
+          .catch((err) => {
+            console.error(err)
+          });
+    };
+
+    const fetchGetAllInvoicesStatus = async () => {
+        await getAllInvoiceStatus()
+            .then((res) => {
+                setListInvoiceStatus(res.data);
+            })
+            .catch((err) => {
+                console.error(err);
+            });
     };
 
     const fetchGetAllEmployee = async () => {
-        await getAllInvoice().then((res) => {
-            setListEmployees(res.data);
-        });
+        await getAllEmployees()
+            .then((res) => {
+                setListEmployees(res.data);
+            })
+            .catch((err) => {
+                console.error(err);
+            });
     };
+
+  const handleAccountIdChange = (e) => {
+    setPage(1);
+        const selectedValue = e.target.value === 'null' ? null : e.target.value;
+        setAccountId(selectedValue);
+  };
+
+  const handleSelectInvoiceStatus = (value) => {
+    setPage(1);
+    setInvoiceStatus(value)
+  };
+  
+
     return (
         <>
             <Tittle tittle="Danh sách đơn hàng" />
-
             <div className="mt-5 bg-white p-5 shadow border">
-                <div className="col-2 mt-2 mb-2">
-                    <span>Chọn nhân viên lên đơn</span>
-                    <select
-                        className="form-control"
-                        onChange={setAccountId((e) => e.target)}
-                    >
-                        <option value="0">Tất cả</option>
-                        <option value="-1">Chưa chia</option>
-                        {listEmployees.map((empl) => (
-                            <option key={empl.id} value={empl.id}>
-                                {empl.name}
-                            </option>
-                        ))}
-                    </select>
-                </div>
-                <div class=" d-flex flex-wrap justify-content-start">
-                    {}
+                
+                    <Link>
+                        <button className="button">Tạo đơn hàng</button>
+                    </Link>
+                
+                <div className="mt-5  d-flex flex-wrap justify-content-start">
                     <div
-                        class="filter btn border-dark bg-dark text-white  text-white-hover text-dark m-3 btn col-2 d-flex align-items-center justify-content-around py-3"
-                        id="-1"
-                        th:data-filter-status="-1"
+                        onClick={() => handleSelectInvoiceStatus(null)}
+                        className={
+                            invoiceStatus == null
+                                ? 'button m-3 col-2 d-flex align-items-center justify-content-around py-3'
+                                : 'button-non-active m-3 col-2 d-flex align-items-center justify-content-around py-3'
+                        }
                     >
-                        <i
-                            th:data-filter-status="-1"
-                            class=" fa-2xl fa-solid fa-file-invoice-dollar"
-                        ></i>
                         Tất cả đơn hàng
                     </div>
 
                     <div
-                        class="filter btn border-dark text-dark  m-3 btn col-2 d-flex align-items-center justify-content-around py-3"
-                        id="0"
-                        th:data-filter-status="0"
+                        onClick={() => handleSelectInvoiceStatus('CANCEL')}
+                        className={
+                            invoiceStatus === 'CANCEL'
+                                ? 'button m-3 col-2 d-flex align-items-center justify-content-around py-3'
+                                : 'button-non-active m-3 col-2 d-flex align-items-center justify-content-around py-3'
+                        }
                     >
-                        <i
-                            th:data-filter-status="0"
-                            class=" fa-2xl fa-solid fa-xmark"
-                        ></i>
                         Đơn đã hủy
                     </div>
 
                     <div
-                        class="filter btn border-dark text-dark m-3 btn col-2 d-flex align-items-center justify-content-around py-3"
-                        id="1"
-                        th:data-filter-status="1"
+                        onClick={() => handleSelectInvoiceStatus('NEW')}
+                        className={
+                            invoiceStatus === 'NEW'
+                                ? 'button m-3 col-2 d-flex align-items-center justify-content-around py-3'
+                                : 'button-non-active m-3 col-2 d-flex align-items-center justify-content-around py-3'
+                        }
                     >
-                        <i
-                            th:data-filter-status="1"
-                            class=" fa-2xl fa-solid fa-cart-plus"
-                        ></i>
                         Đơn mới
                     </div>
 
                     <div
-                        class="filter btn border-dark text-dark m-3 btn col-2 d-flex align-items-center justify-content-around py-3"
-                        id="2"
-                        th:data-filter-status="2"
+                        onClick={() => handleSelectInvoiceStatus('PROCESS')}
+                        className={
+                            invoiceStatus === 'PROCESS'
+                                ? 'button m-3 col-2 d-flex align-items-center justify-content-around py-3'
+                                : 'button-non-active m-3 col-2 d-flex align-items-center justify-content-around py-3'
+                        }
                     >
-                        <i
-                            th:data-filter-status="2"
-                            class=" fa-2xl fa-solid fa-hourglass-half"
-                        ></i>
                         Đơn đang xử lý
                     </div>
 
                     <div
-                        class="filter btn border-dark text-dark m-3 btn col-2 d-flex align-items-center justify-content-around py-3"
-                        id="3"
-                        th:data-filter-status="3"
+                        onClick={() =>
+                            handleSelectInvoiceStatus('ORDER_CREATED')
+                        }
+                        className={
+                            invoiceStatus === 'ORDER_CREATED'
+                                ? 'button m-3 col-2 d-flex align-items-center justify-content-around py-3'
+                                : 'button-non-active m-3 col-2 d-flex align-items-center justify-content-around py-3'
+                        }
                     >
-                        <i
-                            th:data-filter-status="3"
-                            class=" fa-2xl fa-solid fa-check"
-                        ></i>
                         Đã lên đơn
                     </div>
 
                     <div
-                        class="filter btn border-dark text-dark m-3 btn col-2 d-flex align-items-center justify-content-around py-3"
-                        id="4"
-                        th:data-filter-status="4"
+                        onClick={() => handleSelectInvoiceStatus('DELIVERING')}
+                        className={
+                            invoiceStatus === 'DELIVERING'
+                                ? 'button m-3 col-2 d-flex align-items-center justify-content-around py-3'
+                                : 'button-non-active m-3 col-2 d-flex align-items-center justify-content-around py-3'
+                        }
                     >
-                        <i
-                            th:data-filter-status="4"
-                            class=" fa-2xl fa-solid fa-truck-fast"
-                        ></i>
                         Đơn đang giao
                     </div>
 
                     <div
-                        class="filter btn border-dark text-dark m-3 btn col-2 d-flex align-items-center justify-content-around py-3"
-                        id="5"
-                        th:data-filter-status="5"
+                        onClick={() => handleSelectInvoiceStatus('SUCCESS')}
+                        className={
+                            invoiceStatus === 'SUCCESS'
+                                ? 'button m-3 col-2 d-flex align-items-center justify-content-around py-3'
+                                : 'button-non-active m-3 col-2 d-flex align-items-center justify-content-around py-3'
+                        }
                     >
-                        <i
-                            th:data-filter-status="5"
-                            class=" fa-2xl fa-solid fa-circle-check"
-                        ></i>
                         Đơn thành công
                     </div>
 
                     <div
-                        class="filter btn border-dark text-dark m-3 btn col-2 d-flex align-items-center justify-content-around py-3"
-                        id="6"
-                        th:data-filter-status="6"
+                        onClick={() => handleSelectInvoiceStatus('RETURN')}
+                        className={
+                            invoiceStatus === 'RETURN'
+                                ? 'button m-3 col-2 d-flex align-items-center justify-content-around py-3'
+                                : 'button-non-active m-3 col-2 d-flex align-items-center justify-content-around py-3'
+                        }
                     >
-                        <i
-                            th:data-filter-status="6"
-                            class=" fa-2xl fa-solid fa-ban"
-                        ></i>
                         Đơn hoàn
                     </div>
                 </div>
+                <div className=' mt-5 d-flex flex-wrap justify-content-between align-items-center'>
+                    {auth.account.role === 'ROLE_MANAGER' ? (
+                        <div className="col-2">
+                            <span>Lọc nhân viên</span>
+                            <select
+                                className="form-control mt-1"
+                                onChange={handleAccountIdChange}
+                            >
+                                <option value="0">Tất cả</option>
+                                <option value="null">Chưa chia</option>
+                                {listEmployees.map((empl) => (
+                                    <option key={empl.id} value={empl.id}>
+                                        {empl.name}
+                                    </option>
+                                ))}
+                            </select>
+                        </div>
+                    ) : null}
+                    <div className="col-5">
+                        <SearchForm placeholder="Nhập mã đơn hàng hoặc số điện thoại" />
+                    </div>
+                </div>
+                <div className="mt-5">
+                    <table className="mt-5 table table-striped table-hover table-bordered border">
+                        <thead>
+                            <tr>
+                                <th>Mã đơn hàng</th>
+                                <th>Tên khách hàng</th>
+                                <th>Số điện thoại</th>
+                                <th>Trạng thái</th>
+                                <th>Ngày đặt hàng</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {listInvoice.map((invoice) => (
+                                <tr key={invoice.id}>
+                                    <td>{invoice.invoiceCode}</td>
+                                    <td>{invoice.name}</td>
+                                    <td>{invoice.phone}</td>
+                                    <td>{invoice.invoiceStatus}</td>
+                                    <td>
+                                        {format(
+                                            parseISO(invoice.createdAt),
+                                            'HH:mm:ss - d/M/yyyy'
+                                        )}
+                                    </td>
+                                    <Dropdown data-bs-theme="dark">
+                                        <Dropdown.Toggle variant="dark bg-gradient btn-sm">
+                                            Hành động
+                                        </Dropdown.Toggle>
+                                        <Dropdown.Menu>
+                                            <Dropdown.Item
+                                                as={Link}
+                                                to={
+                                                    `/admin/invoices/${invoice.id}/invoicesDetail`
+                                                }
+                                            >
+                                                Xem/Sửa
+                                            </Dropdown.Item>
+                                            <Dropdown.Item>Xóa</Dropdown.Item>
+                                        </Dropdown.Menu>
+                                    </Dropdown>
+                                </tr>
+                            ))}
+                        </tbody>
+                    </table>
 
-                <div
-                    id="list-invoice"
-                    th:include="~{admin/component/ListInvoice::ListInvoice}"
-                ></div>
+                    <CustomPagination
+                        totalPages={totalPages}
+                        currentPage={currentPage}
+                        totalItems={totalInvoices}
+                    />
+                </div>
             </div>
         </>
     );
-  }
+}

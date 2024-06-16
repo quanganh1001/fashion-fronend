@@ -14,7 +14,7 @@ export default function SearchForm({ placeholder }) {
             <input
                 name="keyword"
                 type="search"
-                placeholder="Nhập tên sản phẩm hoặc mã sản phẩm"
+                placeholder={placeholder}
                 className="form-control me-2 col"
             />
             <button className="btn btn-dark bg-gradient col-4">Tìm kiếm</button>

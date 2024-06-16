@@ -34,5 +34,5 @@ export const deleteAccount = async (id) => {
 };
 
 export const getAllEmployees = async () => {
-  return await apiPrivate.get('accounts/getAllEmployee');
+  return await apiPrivate.get('accounts/getAllEmployees');
 }

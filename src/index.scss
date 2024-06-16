@@ -21,6 +21,10 @@ li {
     color: rgba(0, 0, 0, 0.871) !important;
 }
 
+.button-non-active{
+     @extend .btn;
+      @extend .border-dark;
+}
 .button {
     @extend .btn;
     @extend .btn-dark;
