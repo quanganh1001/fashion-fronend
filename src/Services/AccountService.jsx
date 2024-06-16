@@ -32,3 +32,7 @@ export const activation = async (id) => {
 export const deleteAccount = async (id) => {
     return await apiPrivate.delete('accounts/'+id);
 };
+
+export const getAllEmployees = async () => {
+  return await apiPrivate.get('accounts/getAllEmployee');
+}
