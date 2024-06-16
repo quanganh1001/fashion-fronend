@@ -17,8 +17,6 @@ export default function Invoice() {
 
     const [invoiceStatus, setInvoiceStatus] = useState(null);
 
-    const [listInvoiceStatus, setListInvoiceStatus] = useState([]);
-
     const [listEmployees, setListEmployees] = useState([]);
 
     const [totalPages, setTotalPages] = useState(1);
@@ -36,7 +34,6 @@ export default function Invoice() {
 
     useEffect(() => {
         fetchGetAllInvoices();
-        fetchGetAllInvoicesStatus();
         if (auth.account.role === 'ROLE_MANAGER') {
             fetchGetAllEmployee();
       }
@@ -46,7 +43,6 @@ export default function Invoice() {
 
 
   const fetchGetAllInvoices = async () => {
-      console.log("a"+accountId);
     await getAllInvoice(searchParams, accountId, invoiceStatus).then((res) => {
         
             setListInvoice(res.data.invoices);
@@ -59,15 +55,6 @@ export default function Invoice() {
           });
     };
 
-    const fetchGetAllInvoicesStatus = async () => {
-        await getAllInvoiceStatus()
-            .then((res) => {
-                setListInvoiceStatus(res.data);
-            })
-            .catch((err) => {
-                console.error(err);
-            });
-    };
 
     const fetchGetAllEmployee = async () => {
         await getAllEmployees()
@@ -95,11 +82,10 @@ export default function Invoice() {
         <>
             <Tittle tittle="Danh sách đơn hàng" />
             <div className="mt-5 bg-white p-5 shadow border">
-                
-                    <Link>
-                        <button className="button">Tạo đơn hàng</button>
-                    </Link>
-                
+                <Link>
+                    <button className="button">Tạo đơn hàng</button>
+                </Link>
+
                 <div className="mt-5  d-flex flex-wrap justify-content-start">
                     <div
                         onClick={() => handleSelectInvoiceStatus(null)}
@@ -191,7 +177,7 @@ export default function Invoice() {
                         Đơn hoàn
                     </div>
                 </div>
-                <div className=' mt-5 d-flex flex-wrap justify-content-between align-items-center'>
+                <div className=" mt-5 d-flex flex-wrap justify-content-between align-items-center">
                     {auth.account.role === 'ROLE_MANAGER' ? (
                         <div className="col-2">
                             <span>Lọc nhân viên</span>
@@ -221,6 +207,7 @@ export default function Invoice() {
                                 <th>Tên khách hàng</th>
                                 <th>Số điện thoại</th>
                                 <th>Trạng thái</th>
+                                <th>Nhân viên phụ trách</th>
                                 <th>Ngày đặt hàng</th>
                             </tr>
                         </thead>
@@ -231,6 +218,7 @@ export default function Invoice() {
                                     <td>{invoice.name}</td>
                                     <td>{invoice.phone}</td>
                                     <td>{invoice.invoiceStatus}</td>
+                                    <td>{invoice.accountName}</td>
                                     <td>
                                         {format(
                                             parseISO(invoice.createdAt),
@@ -244,9 +232,7 @@ export default function Invoice() {
                                         <Dropdown.Menu>
                                             <Dropdown.Item
                                                 as={Link}
-                                                to={
-                                                    `/admin/invoices/${invoice.id}/invoicesDetail`
-                                                }
+                                                to={`/admin/invoices/${invoice.id}/invoicesDetail`}
                                             >
                                                 Xem/Sửa
                                             </Dropdown.Item>
