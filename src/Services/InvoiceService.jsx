@@ -16,6 +16,7 @@ export const getInvoice = async (id) => {
     return await apiPrivate.get('invoices/'+id)
 }
 
-export const updateInvoice = async (id,invoice) => {
+export const updateInvoice = async (id, invoice) => {
+    console.log(invoice);
     return await apiPrivate.put('invoices/' + id, invoice);
 };

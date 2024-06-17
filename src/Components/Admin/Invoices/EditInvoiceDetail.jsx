@@ -1,12 +1,11 @@
-import { Link } from 'react-router-dom';
 import Tittle from '../../Fragments/Tittle';
 import { useParams } from 'react-router-dom';
 import { useEffect, useState } from 'react';
-import { getInvoice } from '../../../Services/InvoiceService';
+import { getInvoice, updateInvoice } from '../../../Services/InvoiceService';
 import { parseISO, format } from 'date-fns';
 import { getAllInvoiceStatus } from '../../../Services/EnumService';
 import { getAllEmployees } from '../../../Services/AccountService';
-import { logout } from '../../../Services/Auth';
+import { toast } from 'react-toastify';
 
 export default function EditInvoiceDetail() {
     const { id } = useParams();
@@ -17,31 +16,39 @@ export default function EditInvoiceDetail() {
         address: '',
         note: '',
         accountId: '',
+        invoiceStatus: '',
     });
+    const [invoice, setInvoice] = useState('');
 
-    const [invoice, setInvoice] = useState();
+    const [nameError, setNameError] = useState('');
+    const [phoneError, setPhoneError] = useState('');
+    const [addressError, setAddressError] = useState('');
+    const [accountId, setAccountId] = useState();
 
     const [listInvoiceStatus, setListInvoiceStatus] = useState([]);
 
     const [listEmployees, setListEmployees] = useState([]);
 
     useEffect(() => {
-        fetchInvoice();
         fetchGetAllInvoicesStatus();
         fetchGetAllEmployee();
     }, [inputInvoice]);
 
+    useEffect(() => {
+        fetchInvoice();
+    }, []);
 
     const fetchInvoice = async () => {
-      await getInvoice(id).then((res) => {
+        await getInvoice(id).then((res) => {
             setInputInvoice({
                 name: res.data.name,
                 phone: res.data.phone,
                 address: res.data.address,
                 note: res.data.note,
                 accountId: res.data.accountId,
+                invoiceStatus: res.data.invoiceStatus,
             });
-        
+            console.log(')');
             setInvoice(res.data);
         });
     };
@@ -65,16 +72,63 @@ export default function EditInvoiceDetail() {
                 console.error(err);
             });
     };
+
     const handleInputChange = (e) => {
         const { name, value } = e.target;
         setInputInvoice({ ...inputInvoice, [name]: value });
     };
+
+    const updateForm = async (e) => {
+        e.preventDefault();
+        let isValid = true;
+
+        if (inputInvoice.name === '') {
+            isValid = false;
+            setNameError('Tên không được để trống');
+        } else {
+            setNameError('');
+        }
+
+        if (inputInvoice.phone === '') {
+            isValid = false;
+            setPhoneError('Số điện thoại không được để trống');
+        } else if (isNaN(inputInvoice.phone)) {
+            isValid = false;
+            setPhoneError('Số điện thoại không đúng');
+        } else {
+            setPhoneError('');
+        }
+
+        if (inputInvoice.address === '') {
+            isValid = false;
+            setAddressError('Địa chỉ không được để trống');
+        } else {
+            setAddressError('');
+        }
+
+        if (inputInvoice.accountId === 'null') {
+            isValid = false;
+            setAccountId('Vui lòng chọn nhân viên');
+        } else {
+            setAccountId('');
+        }
+
+        if (isValid) {
+            await updateInvoice(id, inputInvoice).then(() => {
+                toast.success('Cập nhập thành công');
+            });
+        }
+    };
+
     return (
         <>
             <Tittle tittle="Chi tiết đơn hàng" />
             <div className="mt-5 bg-white p-5 shadow border">
-                <div class="col-12 mt-3 mb-3">
-                    <form className="d-flex flex-wrap justify-content-between align-items-center row">
+                <div className="col-12 mb-3">
+                    <form
+                        onSubmit={updateForm}
+                        className="d-flex flex-wrap justify-content-between align-items-center row"
+                    >
                         <div className="mb-5 d-flex flex-wrap justify-content-between align-items-center">
                             {invoice ? (
                                 <div className="col-3">
@@ -87,18 +141,15 @@ export default function EditInvoiceDetail() {
                                     </span>
                                 </div>
                             ) : (
-                                'Loading...'
+                                ''
                             )}
 
                             <div className=" col-3 d-flex">
                                 <label className="form-label">
                                     Mã đơn hàng:{' '}
                                 </label>
-                                {invoice ? (
-                                    <div>{invoice.invoiceCode}</div>
-                                ) : (
-                                    'Loading...'
-                                )}
+
+                                <div>{invoice.invoiceCode}</div>
                             </div>
 
                             <div className="mb-3 col-3">
@@ -120,6 +171,7 @@ export default function EditInvoiceDetail() {
                                         </option>
                                     ))}
                                 </select>
+                                <span className="text-danger">{accountId}</span>
                             </div>
                         </div>
 
@@ -129,11 +181,12 @@ export default function EditInvoiceDetail() {
                                 <span style={{ color: 'red' }}>*</span>
                             </label>
                             <input
+                                value={inputInvoice.name}
                                 name="name"
                                 onChange={handleInputChange}
                                 className=" form-control"
                             />
-                            <span className="text-danger"></span>
+                            <span className="text-danger">{nameError}</span>
                         </div>
 
                         <div className="mb-3 col-6">
@@ -142,13 +195,14 @@ export default function EditInvoiceDetail() {
                                 <span style={{ color: 'red' }}>*</span>
                             </label>
                             <input
+                                value={inputInvoice.phone}
                                 name="phone"
                                 onChange={handleInputChange}
                                 type="text"
                                 className=" form-control"
                             />
 
-                            <span className="text-danger"></span>
+                            <span className="text-danger">{phoneError}</span>
                         </div>
 
                         <div className="mb-3 col-12">
@@ -157,18 +211,20 @@ export default function EditInvoiceDetail() {
                                 <span style={{ color: 'red' }}>*</span>
                             </label>
                             <input
+                                value={inputInvoice.address}
                                 name="address"
                                 onChange={handleInputChange}
                                 className="address form-control"
                             />
 
-                            <span className="text-danger"></span>
+                            <span className="text-danger">{addressError}</span>
                         </div>
 
                         <div className="mb-3 col-6">
                             <label className="form-label">Ghi chú nội bộ</label>
                             <textarea
                                 name="note"
+                                value={inputInvoice.note}
                                 onChange={handleInputChange}
                                 className="form-control"
                                 rows="4"
@@ -178,21 +234,31 @@ export default function EditInvoiceDetail() {
 
                         <div className="mb-3 col-6">
                             <label className="form-label">
-                                Ghi chú của khách hàng: {"  "}
+                                Ghi chú của khách hàng: {'  '}
                             </label>
-                            {invoice ? (
-                                <span className="bg-warning">
-                                    {invoice.customerNote}
-                                </span>
-                            ) : (
-                                'Loading...'
-                            )}
+
+                            <span className="bg-warning">
+                                {invoice.customerNote}
+                            </span>
                         </div>
 
+                        <div className="mb-3 col-6">
+                            <label className="form-label">
+                                Trạng thái đơn hàng: {'  '}
+                            </label>
+                            <select
+                                className="form-control"
+                                onChange={handleInputChange}
+                                name="invoiceStatus"
+                                value={}
+                            ></select>
+                        </div>
+
+                        <div></div>
                         <button
                             style={{ textAlign: 'center' }}
                             type="submit"
-                            className="mt-3 col-2 button"
+                            className="mt-3 button col-4"
                         >
                             Cập nhập đơn hàng
                         </button>

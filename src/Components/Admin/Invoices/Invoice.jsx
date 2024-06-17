@@ -10,12 +10,15 @@ import SearchForm from '../../Fragments/SearchForm';
 import { Dropdown } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 import { parseISO, format } from 'date-fns';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 
 export default function Invoice() {
     const [listInvoice, setListInvoice] = useState([]);
 
     const [invoiceStatus, setInvoiceStatus] = useState(null);
+
+    const [listInvoiceStatus, setListInvoiceStatus] = useState([]);
 
     const [listEmployees, setListEmployees] = useState([]);
 
@@ -33,6 +36,7 @@ export default function Invoice() {
 
 
     useEffect(() => {
+        fetchGetAllInvoicesStatus();
         fetchGetAllInvoices();
         if (auth.account.role === 'ROLE_MANAGER') {
             fetchGetAllEmployee();
@@ -41,7 +45,16 @@ export default function Invoice() {
     }, [searchParams, accountId, invoiceStatus, auth.account.role]);
 
 
-
+const fetchGetAllInvoicesStatus = async () => {
+    await getAllInvoiceStatus()
+        .then((res) => {
+            setListInvoiceStatus(res.data);
+        })
+        .catch((err) => {
+            console.error(err);
+        });
+};
+    
   const fetchGetAllInvoices = async () => {
     await getAllInvoice(searchParams, accountId, invoiceStatus).then((res) => {
         
@@ -86,7 +99,7 @@ export default function Invoice() {
                     <button className="button">Tạo đơn hàng</button>
                 </Link>
 
-                <div className="mt-5  d-flex flex-wrap justify-content-start">
+                <div className="mt-5 d-flex flex-wrap justify-content-between">
                     <div
                         onClick={() => handleSelectInvoiceStatus(null)}
                         className={
@@ -97,85 +110,21 @@ export default function Invoice() {
                     >
                         Tất cả đơn hàng
                     </div>
-
-                    <div
-                        onClick={() => handleSelectInvoiceStatus('CANCEL')}
-                        className={
-                            invoiceStatus === 'CANCEL'
-                                ? 'button m-3 col-2 d-flex align-items-center justify-content-around py-3'
-                                : 'button-non-active m-3 col-2 d-flex align-items-center justify-content-around py-3'
-                        }
-                    >
-                        Đơn đã hủy
-                    </div>
-
-                    <div
-                        onClick={() => handleSelectInvoiceStatus('NEW')}
-                        className={
-                            invoiceStatus === 'NEW'
-                                ? 'button m-3 col-2 d-flex align-items-center justify-content-around py-3'
-                                : 'button-non-active m-3 col-2 d-flex align-items-center justify-content-around py-3'
-                        }
-                    >
-                        Đơn mới
-                    </div>
-
-                    <div
-                        onClick={() => handleSelectInvoiceStatus('PROCESS')}
-                        className={
-                            invoiceStatus === 'PROCESS'
-                                ? 'button m-3 col-2 d-flex align-items-center justify-content-around py-3'
-                                : 'button-non-active m-3 col-2 d-flex align-items-center justify-content-around py-3'
-                        }
-                    >
-                        Đơn đang xử lý
-                    </div>
-
-                    <div
-                        onClick={() =>
-                            handleSelectInvoiceStatus('ORDER_CREATED')
-                        }
-                        className={
-                            invoiceStatus === 'ORDER_CREATED'
-                                ? 'button m-3 col-2 d-flex align-items-center justify-content-around py-3'
-                                : 'button-non-active m-3 col-2 d-flex align-items-center justify-content-around py-3'
-                        }
-                    >
-                        Đã lên đơn
-                    </div>
-
-                    <div
-                        onClick={() => handleSelectInvoiceStatus('DELIVERING')}
-                        className={
-                            invoiceStatus === 'DELIVERING'
-                                ? 'button m-3 col-2 d-flex align-items-center justify-content-around py-3'
-                                : 'button-non-active m-3 col-2 d-flex align-items-center justify-content-around py-3'
-                        }
-                    >
-                        Đơn đang giao
-                    </div>
-
-                    <div
-                        onClick={() => handleSelectInvoiceStatus('SUCCESS')}
-                        className={
-                            invoiceStatus === 'SUCCESS'
-                                ? 'button m-3 col-2 d-flex align-items-center justify-content-around py-3'
-                                : 'button-non-active m-3 col-2 d-flex align-items-center justify-content-around py-3'
-                        }
-                    >
-                        Đơn thành công
-                    </div>
-
-                    <div
-                        onClick={() => handleSelectInvoiceStatus('RETURN')}
-                        className={
-                            invoiceStatus === 'RETURN'
-                                ? 'button m-3 col-2 d-flex align-items-center justify-content-around py-3'
-                                : 'button-non-active m-3 col-2 d-flex align-items-center justify-content-around py-3'
-                        }
-                    >
-                        Đơn hoàn
-                    </div>
+                    {listInvoiceStatus.map((status) => (
+                        <div
+                            key={status.key}
+                            onClick={() =>
+                                handleSelectInvoiceStatus(status.key)
+                            }
+                            className={
+                                invoiceStatus === status.key
+                                    ? 'button m-3 col-2 d-flex align-items-center justify-content-around py-3'
+                                    : 'button-non-active m-3 col-2 d-flex align-items-center justify-content-around py-3'
+                            }
+                        >
+                            {status.value}
+                        </div>
+                    ))}
                 </div>
                 <div className=" mt-5 d-flex flex-wrap justify-content-between align-items-center">
                     {auth.account.role === 'ROLE_MANAGER' ? (
@@ -225,20 +174,24 @@ export default function Invoice() {
                                             'HH:mm:ss - d/M/yyyy'
                                         )}
                                     </td>
-                                    <Dropdown data-bs-theme="dark">
-                                        <Dropdown.Toggle variant="dark bg-gradient btn-sm">
-                                            Hành động
-                                        </Dropdown.Toggle>
-                                        <Dropdown.Menu>
-                                            <Dropdown.Item
-                                                as={Link}
-                                                to={`/admin/invoices/${invoice.id}/invoicesDetail`}
-                                            >
-                                                Xem/Sửa
-                                            </Dropdown.Item>
-                                            <Dropdown.Item>Xóa</Dropdown.Item>
-                                        </Dropdown.Menu>
-                                    </Dropdown>
+                                    <td>
+                                        <Dropdown data-bs-theme="dark">
+                                            <Dropdown.Toggle variant="dark bg-gradient btn-sm">
+                                                Hành động
+                                            </Dropdown.Toggle>
+                                            <Dropdown.Menu>
+                                                <Dropdown.Item
+                                                    as={Link}
+                                                    to={`/admin/invoices/${invoice.id}/invoicesDetail`}
+                                                >
+                                                    Xem/Sửa
+                                                </Dropdown.Item>
+                                                <Dropdown.Item>
+                                                    Xóa
+                                                </Dropdown.Item>
+                                            </Dropdown.Menu>
+                                        </Dropdown>
+                                    </td>
                                 </tr>
                             ))}
                         </tbody>
