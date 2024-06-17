@@ -6,6 +6,7 @@ import { parseISO, format } from 'date-fns';
 import { getAllInvoiceStatus } from '../../../Services/EnumService';
 import { getAllEmployees } from '../../../Services/AccountService';
 import { toast } from 'react-toastify';
+import InvoicesDetails from './InvoiceDetail';
 
 export default function EditInvoiceDetail() {
     const { id } = useParams();
@@ -18,6 +19,9 @@ export default function EditInvoiceDetail() {
         accountId: '',
         invoiceStatus: '',
     });
+
+    const [listInvoicesDetail, setListInvoicesDetail] = useState([]);
+
     const [invoice, setInvoice] = useState('');
 
     const [nameError, setNameError] = useState('');
@@ -48,8 +52,10 @@ export default function EditInvoiceDetail() {
                 accountId: res.data.accountId,
                 invoiceStatus: res.data.invoiceStatus,
             });
-            console.log(')');
             setInvoice(res.data);
+            setListInvoicesDetail(res.data.invoicesDetails);
+        }).catch((err) => {
+            console.error(err)
         });
     };
 
@@ -133,24 +139,22 @@ export default function EditInvoiceDetail() {
                             {invoice ? (
                                 <div className="col-3">
                                     Ngày tạo:{' '}
-                                    <span>
+                                    <span className="fw-bolder">
                                         {format(
                                             parseISO(invoice.createdAt),
                                             'HH:mm:ss -d/M/yyyy'
                                         )}
                                     </span>
+                                    <div className=" d-flex mt-3">
+                                        Mã đơn hàng:{'   '}
+                                        <span className="fw-bolder">
+                                            {invoice.invoiceCode}
+                                        </span>
+                                    </div>
                                 </div>
                             ) : (
                                 ''
                             )}
-
-                            <div className=" col-3 d-flex">
-                                <label className="form-label">
-                                    Mã đơn hàng:{' '}
-                                </label>
-
-                                <div>{invoice.invoiceCode}</div>
-                            </div>
 
                             <div className="mb-3 col-3">
                                 <label className="form-label">
@@ -241,17 +245,26 @@ export default function EditInvoiceDetail() {
                                 {invoice.customerNote}
                             </span>
                         </div>
-
                         <div className="mb-3 col-6">
                             <label className="form-label">
                                 Trạng thái đơn hàng: {'  '}
                             </label>
+
                             <select
                                 className="form-control"
                                 onChange={handleInputChange}
                                 name="invoiceStatus"
-                                value={}
-                            ></select>
+                                value={inputInvoice.invoiceStatus}
+                            >
+                                {listInvoiceStatus.map((status) => (
+                                    <option
+                                        key={status.key}
+                                        value={status.value}
+                                    >
+                                        {status.value}
+                                    </option>
+                                ))}
+                            </select>
                         </div>
 
                         <div></div>
@@ -264,6 +277,12 @@ export default function EditInvoiceDetail() {
                         </button>
                     </form>
                 </div>
+            </div>
+            <div className="col-12">
+                <InvoicesDetails
+                    id={id}
+                    listInvoicesDetail={listInvoicesDetail}
+                />
             </div>
         </>
     );

@@ -17,6 +17,17 @@ export const getInvoice = async (id) => {
 }
 
 export const updateInvoice = async (id, invoice) => {
-    console.log(invoice);
     return await apiPrivate.put('invoices/' + id, invoice);
+};
+
+export const updateStatusInvoice = async (id, invoiceStatus) => {
+    console.log(invoiceStatus);
+    return await apiPrivate.put(
+        'invoices/' + id + '/updateStatus',
+        invoiceStatus
+    );
+};
+
+export const getAllInvoicesDetail = async (id) => {
+    return await apiPrivate.get('invoices/'+id + '/invoicesDetail');
 };

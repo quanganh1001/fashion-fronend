@@ -1,5 +1,8 @@
 import { useEffect, useState } from 'react';
-import { getAllInvoice } from '../../../Services/InvoiceService';
+import {
+    getAllInvoice,
+    updateStatusInvoice,
+} from '../../../Services/InvoiceService';
 import usePagination from '../../../CustomHooks/usePagination';
 import Tittle from '../../Fragments/Tittle';
 import useAuth from '../../../CustomHooks/useAuth';
@@ -10,87 +13,122 @@ import SearchForm from '../../Fragments/SearchForm';
 import { Dropdown } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 import { parseISO, format } from 'date-fns';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-
+import useModal from '../../../CustomHooks/useModal';
+import { toast } from 'react-toastify';
 
 export default function Invoice() {
     const [listInvoice, setListInvoice] = useState([]);
-
     const [invoiceStatus, setInvoiceStatus] = useState(null);
-
     const [listInvoiceStatus, setListInvoiceStatus] = useState([]);
-
     const [listEmployees, setListEmployees] = useState([]);
-
     const [totalPages, setTotalPages] = useState(1);
-
     const [totalInvoices, setTotalInvoices] = useState();
-
     const [currentPage, setCurrentPage] = useState();
-
     const { searchParams, setPage } = usePagination();
-
     const [accountId, setAccountId] = useState(0);
-
+    const [invoiceId, setInvoiceId] = useState('');
     const { auth } = useAuth();
-
+    const { openModal, closeModal } = useModal();
+    const [newStatus, setNewStatus] = useState('');
 
     useEffect(() => {
         fetchGetAllInvoicesStatus();
         fetchGetAllInvoices();
         if (auth.account.role === 'ROLE_MANAGER') {
             fetchGetAllEmployee();
-      }
-     
+        }
     }, [searchParams, accountId, invoiceStatus, auth.account.role]);
 
+    useEffect(() => {
+        if (newStatus !== "") {
+            openModal(
+                'Đổi trạng thái',
+                <>
+                    <select
+                        className="form-control"
+                        name="statusInvoice"
+                        status={newStatus}
+                        onChange={(e) => {
+                            setNewStatus(e.target.value);
+                        }}
+                    >
+                        {listInvoiceStatus.map((status) => (
+                            <option key={status.key} value={status.value}>
+                                {status.value}
+                            </option>
+                        ))}
+                    </select>
+                </>,
+                () => {
+                    updateStatusInvoice(invoiceId, newStatus)
+                        .then(() => {
+                            toast.success('Cập nhật trạng thái thành công!');
+                            fetchGetAllInvoices();
+                        })
+                        .catch((err) => {
+                            console.error(err);
+                        });
 
-const fetchGetAllInvoicesStatus = async () => {
-    await getAllInvoiceStatus()
-        .then((res) => {
-            setListInvoiceStatus(res.data);
-        })
-        .catch((err) => {
-            console.error(err);
-        });
-};
+                    closeModal();
+                    
+                }
+            );
+        }
+        setNewStatus('');
+    }, [invoiceId, newStatus])
     
-  const fetchGetAllInvoices = async () => {
-    await getAllInvoice(searchParams, accountId, invoiceStatus).then((res) => {
-        
+    
+    const fetchGetAllInvoicesStatus = async () => {
+        try {
+            const res = await getAllInvoiceStatus();
+            setListInvoiceStatus(res.data);
+        } catch (err) {
+            console.error(err);
+        }
+    };
+
+    const fetchGetAllInvoices = async () => {
+        try {
+            const res = await getAllInvoice(
+                searchParams,
+                accountId,
+                invoiceStatus
+            );
             setListInvoice(res.data.invoices);
             setTotalPages(res.data.totalPages);
             setCurrentPage(res.data.currentPage);
             setTotalInvoices(res.data.totalInvoices);
-        })
-          .catch((err) => {
-            console.error(err)
-          });
+        } catch (err) {
+            console.error(err);
+        }
     };
-
 
     const fetchGetAllEmployee = async () => {
-        await getAllEmployees()
-            .then((res) => {
-                setListEmployees(res.data);
-            })
-            .catch((err) => {
-                console.error(err);
-            });
+        try {
+            const res = await getAllEmployees();
+            setListEmployees(res.data);
+        } catch (err) {
+            console.error(err);
+        }
     };
 
-  const handleAccountIdChange = (e) => {
-    setPage(1);
+    const handleAccountIdChange = (e) => {
+        setPage(1);
         const selectedValue = e.target.value === 'null' ? null : e.target.value;
         setAccountId(selectedValue);
-  };
+    };
 
-  const handleSelectInvoiceStatus = (value) => {
-    setPage(1);
-    setInvoiceStatus(value)
-  };
-  
+    const handleSelectInvoiceStatus = (value) => {
+        setPage(1);
+        setInvoiceStatus(value);
+    };
 
+    const handleShowModalStatus = (id, status) => {
+        setInvoiceId(id);
+        setNewStatus(status); // Đảm bảo newStatus được cập nhật khi mở modal
+
+        
+    };
     return (
         <>
             <Tittle tittle="Danh sách đơn hàng" />
@@ -99,7 +137,7 @@ const fetchGetAllInvoicesStatus = async () => {
                     <button className="button">Tạo đơn hàng</button>
                 </Link>
 
-                <div className="mt-5 d-flex flex-wrap justify-content-between">
+                <div className="mt-5 d-flex flex-wrap justify-content-start">
                     <div
                         onClick={() => handleSelectInvoiceStatus(null)}
                         className={
@@ -186,8 +224,15 @@ const fetchGetAllInvoicesStatus = async () => {
                                                 >
                                                     Xem/Sửa
                                                 </Dropdown.Item>
-                                                <Dropdown.Item>
-                                                    Xóa
+                                                <Dropdown.Item
+                                                    onClick={() =>
+                                                        handleShowModalStatus(
+                                                            invoice.id,
+                                                            invoice.invoiceStatus
+                                                        )
+                                                    }
+                                                >
+                                                    Đổi trạng thái
                                                 </Dropdown.Item>
                                             </Dropdown.Menu>
                                         </Dropdown>
