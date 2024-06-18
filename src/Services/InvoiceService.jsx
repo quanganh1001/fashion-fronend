@@ -39,3 +39,13 @@ export const addInvoiceDetail = async (invoiceId, productDetailId) => {
         }
     );
 };
+
+export const editShippingFee = async (invoiceId, shippingFee) => {
+    return await apiPrivate.put(
+        'invoices/' + invoiceId + '/updateShippingFee',
+        null,
+        {
+            params: { shippingFee: shippingFee },
+        }
+    );
+};

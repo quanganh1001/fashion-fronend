@@ -18,6 +18,7 @@ export default function EditInvoiceDetail() {
         note: '',
         accountId: '',
         invoiceStatus: '',
+        isPaid: ''
     });
 
     const [listInvoicesDetail, setListInvoicesDetail] = useState([]);
@@ -51,6 +52,7 @@ export default function EditInvoiceDetail() {
                 note: res.data.note,
                 accountId: res.data.accountId,
                 invoiceStatus: res.data.invoiceStatus,
+                isPaid: res.data.isPaid,
             });
             setInvoice(res.data);
             setListInvoicesDetail(res.data.invoicesDetails);
@@ -121,10 +123,17 @@ export default function EditInvoiceDetail() {
 
         if (isValid) {
             await updateInvoice(id, inputInvoice).then(() => {
+                fetchInvoice();
                 toast.success('Cập nhập thành công');
             });
         }
     };
+
+    const checkStatusInvoice = (status) => {
+        if (status === "Đơn đã lên" || status === "Đơn đang chuyển" || status === "Đơn thành công" || status === "Đơn hoàn") {
+            return true;
+        } else return false;
+    }
 
     return (
         <>
@@ -184,13 +193,26 @@ export default function EditInvoiceDetail() {
                                 Tên khách hàng
                                 <span style={{ color: 'red' }}>*</span>
                             </label>
-                            <input
-                                value={inputInvoice.name}
-                                name="name"
-                                onChange={handleInputChange}
-                                className=" form-control"
-                            />
-                            <span className="text-danger">{nameError}</span>
+                            {!checkStatusInvoice(invoice.invoiceStatus) ? (
+                                <>
+                                    <input
+                                        value={inputInvoice.name}
+                                        name="name"
+                                        onChange={handleInputChange}
+                                        className=" form-control"
+                                    />
+                                    <span className="text-danger">
+                                        {nameError}
+                                    </span>
+                                </>
+                            ) : (
+                                <input
+                                    type="text"
+                                    className="form-control"
+                                    disabled
+                                    value={inputInvoice.name}
+                                />
+                            )}
                         </div>
 
                         <div className="mb-3 col-6">
@@ -198,13 +220,24 @@ export default function EditInvoiceDetail() {
                                 Số điện thoại
                                 <span style={{ color: 'red' }}>*</span>
                             </label>
-                            <input
-                                value={inputInvoice.phone}
-                                name="phone"
-                                onChange={handleInputChange}
-                                type="text"
-                                className=" form-control"
-                            />
+                            {!checkStatusInvoice(invoice.invoiceStatus) ? (
+                                <>
+                                    <input
+                                        value={inputInvoice.phone}
+                                        name="phone"
+                                        onChange={handleInputChange}
+                                        type="text"
+                                        className=" form-control"
+                                    />
+                                </>
+                            ) : (
+                                <input
+                                    type="text"
+                                    className="form-control"
+                                    disabled
+                                    value={inputInvoice.phone}
+                                />
+                            )}
 
                             <span className="text-danger">{phoneError}</span>
                         </div>
@@ -214,12 +247,23 @@ export default function EditInvoiceDetail() {
                                 Địa chỉ
                                 <span style={{ color: 'red' }}>*</span>
                             </label>
-                            <input
-                                value={inputInvoice.address}
-                                name="address"
-                                onChange={handleInputChange}
-                                className="address form-control"
-                            />
+                            {!checkStatusInvoice(invoice.invoiceStatus) ? (
+                                <>
+                                    <input
+                                        value={inputInvoice.address}
+                                        name="address"
+                                        onChange={handleInputChange}
+                                        className="address form-control"
+                                    />
+                                </>
+                            ) : (
+                                <input
+                                    type="text"
+                                    className="form-control"
+                                    disabled
+                                    value={inputInvoice.address}
+                                />
+                            )}
 
                             <span className="text-danger">{addressError}</span>
                         </div>
@@ -245,6 +289,7 @@ export default function EditInvoiceDetail() {
                                 {invoice.customerNote}
                             </span>
                         </div>
+
                         <div className="mb-3 col-6">
                             <label className="form-label">
                                 Trạng thái đơn hàng: {'  '}
@@ -267,7 +312,26 @@ export default function EditInvoiceDetail() {
                             </select>
                         </div>
 
-                        <div></div>
+                        <div className="mb-3">
+                            <input
+                                className="form-check-input bg-dark border-dark mx-2"
+                                type="checkbox"
+                                name="isPaid"
+                                checked={inputInvoice.isPaid ?? false}
+                                onChange={(e) =>
+                                    setInputInvoice({
+                                        ...inputInvoice,
+                                        isPaid: e.target.checked,
+                                    })
+                                }
+                            />
+                            {inputInvoice.isPaid ? (
+                                <span>'Đã thanh toán'</span>
+                            ) : (
+                                <span>'Chưa thanh toán'</span>
+                            )}
+                        </div>
+
                         <button
                             style={{ textAlign: 'center' }}
                             type="submit"
@@ -280,6 +344,7 @@ export default function EditInvoiceDetail() {
             </div>
             <div className="col-12">
                 <InvoicesDetails
+                    checkStatusInvoice={checkStatusInvoice}
                     id={id}
                     listInvoicesDetail={listInvoicesDetail}
                 />

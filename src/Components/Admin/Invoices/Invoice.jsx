@@ -132,7 +132,7 @@ export default function Invoice() {
         <>
             <Tittle tittle="Danh sách đơn hàng" />
             <div className="mt-5 bg-white p-5 shadow border">
-                <Link>
+                <Link to={"/admin/invoices/add"}>
                     <button className="button">Tạo đơn hàng</button>
                 </Link>
 

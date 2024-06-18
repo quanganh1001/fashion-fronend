@@ -19,6 +19,7 @@ import EditAccount from "../Components/Admin/Accounts/EditAccount.jsx";
 import AddAccount from "../Components/Admin/Accounts/AddAccount.jsx";
 import Invoice from "../Components/Admin/Invoices/Invoice.jsx";
 import EditInvoiceDetail from "../Components/Admin/Invoices/EditInvoiceDetail.jsx";
+import { AddInvoice } from "../Components/Admin/Invoices/AddInvoice.jsx";
 
 export const router = createBrowserRouter([
     {
@@ -131,6 +132,10 @@ export const router = createBrowserRouter([
                             {
                                 path: ':id/invoicesDetail',
                                 element: <EditInvoiceDetail />,
+                            },
+                            {
+                                path: 'add',
+                                element: <AddInvoice />,
                             },
                         ],
                     },
