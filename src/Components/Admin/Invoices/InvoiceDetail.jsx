@@ -485,7 +485,7 @@ export default function InvoicesDetails({
                                 <td colSpan={7} className="fw-bolder">
                                     Thành tiền
                                 </td>
-                                <td colSpan={7} className=" text-danger  fs-3">
+                                <td colSpan={7} className="d-flex flex-wrap text-danger fw-semibold fs-3">
                                     {invoice
                                         ? invoice.totalBill.toLocaleString(
                                               'vi-VN',
@@ -495,12 +495,22 @@ export default function InvoicesDetails({
                                               }
                                           )
                                         : null}
+                                    <span className='text-danger'>{invoice.isPaid === true ? 'Đã thanh toán' :'' }</span>
                                 </td>
                             </tr>
                         </>
                     ) : null}
                 </tbody>
             </table>
+
+            <div>
+                <span>
+                    Ghi chú:
+                    <br />- Đơn đã thanh toán thì không thể chỉnh sửa sản phẩm
+                    mua, phí ship
+                    <br />- Đơn đã chốt thì không thể sửa thông tin đơn hàng
+                </span>
+            </div>
         </div>
     );
 }

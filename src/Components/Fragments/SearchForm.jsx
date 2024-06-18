@@ -10,7 +10,7 @@ export default function SearchForm({ placeholder }) {
     };
 
     return (
-        <form className="d-flex " onSubmit={searchForm}>
+        <form className="d-flex" onSubmit={searchForm}>
             <input
                 name="keyword"
                 type="search"

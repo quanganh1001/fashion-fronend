@@ -13,10 +13,12 @@ import useModal from '../../../CustomHooks/useModal';
 import useAuth from '../../../CustomHooks/useAuth';
 import { Link } from 'react-router-dom';
 import { getAllRoles } from '../../../Services/EnumService';
+import SearchForm from '../../Fragments/SearchForm';
+import CustomPagination from '../../Fragments/CustomPagination';
+import usePagination from '../../../CustomHooks/usePagination';
 
 export default function Account() {
     const [listAccount, setListAccount] = useState([]);
-
     const [account, setAccount] = useState({
         phone: '',
         email: '',
@@ -24,17 +26,17 @@ export default function Account() {
         name: '',
     });
     const { openModal, closeModal } = useModal();
-
     const { auth } = useAuth();
-
     const [show, setShow] = useState(false);
-
     const [listRoles, setListRoles] = useState([]);
-
     const [newIdRole, setNewIdRole] = useState({
         id: '',
         role: '',
     });
+    const { searchParams } = usePagination();
+    const [totalPages, setTotalPages] = useState(1);
+    const [totalProducts, setTotalProducts] = useState();
+    const [currentPage, setCurrentPage] = useState();
 
     const handleClose = () => setShow(false);
 
@@ -51,9 +53,12 @@ export default function Account() {
     };
 
     useEffect(() => {
-        fetchGetAllAccount();
         fetchGetAllRoles();
     }, []);
+
+     useEffect(() => {
+         fetchGetAllAccount();
+     }, [searchParams]);
 
     useEffect(() => {
         if (newIdRole.role !== '') {
@@ -91,8 +96,11 @@ export default function Account() {
     }, [newIdRole]);
 
     const fetchGetAllAccount = async () => {
-        await getAllAccount().then((res) => {
+        await getAllAccount(searchParams).then((res) => {
             setListAccount(res.data.accountsRes);
+            setTotalPages(res.data.totalPages);
+            setCurrentPage(res.data.currentPage);
+            setTotalProducts(res.data.totalProduct);
         });
     };
 
@@ -148,9 +156,15 @@ export default function Account() {
     return (
         <>
             <Tittle tittle="Quản lý tài khoản" />
-            <Link to="/admin/accounts/add" >
-                <button className='button mt-3'>Tạo tài khoản mới</button>
-            </Link>
+
+            <div className="d-flex justify-content-between align-items-center mt-5">
+                <Link to="/admin/accounts/add">
+                    <button className="button">Tạo tài khoản mới</button>
+                </Link>
+                <div className='col-4'>
+                    <SearchForm placeholder={'Nhập tên hoặc số điện thoại'} />
+                </div>
+            </div>
             <div className="mt-5 bg-white p-5 shadow border">
                 <table className="table table-striped table-hover table-bordered border">
                     <thead>
@@ -239,6 +253,11 @@ export default function Account() {
                         ))}
                     </tbody>
                 </table>
+                <CustomPagination
+                    totalPages={totalPages}
+                    currentPage={currentPage}
+                    totalProducts={totalProducts}
+                />
             </div>
 
             <Modal size="lg" show={show}>
@@ -246,18 +265,18 @@ export default function Account() {
                     <Modal.Title>Thông tin tài khoản</Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
-                    <div>
+                    <div className="m-5">
                         Tên: <span className="fw-bolder">{account.name}</span>
                     </div>
-                    <div>
+                    <div className="m-5">
                         Số điện thoại:{' '}
                         <span className="fw-bolder">{account.phone}</span>
                     </div>
-                    <div>
+                    <div className="m-5">
                         Email:{' '}
                         <span className="fw-bolder">{account.email}</span>
                     </div>
-                    <div>
+                    <div className="m-5">
                         Địa chỉ:{' '}
                         <span className="fw-bolder">{account.address}</span>
                     </div>
