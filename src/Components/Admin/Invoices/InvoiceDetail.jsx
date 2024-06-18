@@ -1,10 +1,13 @@
 import { useEffect, useState } from 'react';
 import { Dropdown } from 'react-bootstrap';
 import useModal from '../../../CustomHooks/useModal';
-import { updateQuantity } from '../../../Services/InvoiceDetailService';
+import {
+    deleteInvoiceDetail,
+    updateQuantity,
+} from '../../../Services/InvoiceDetailService';
 import { toast } from 'react-toastify';
-import { GetAllInvoicesDetail, getAllInvoicesDetail, getInvoice } from '../../../Services/InvoiceService';
-import EditInvoiceDetail from './EditInvoiceDetail';
+import { getAllInvoicesDetail } from '../../../Services/InvoiceService';
+import { findAllProductsDetailByKey } from '../../../Services/ProductDetailService';
 
 export default function InvoicesDetails({ id, listInvoicesDetail }) {
     const { openModal, closeModal } = useModal();
@@ -13,62 +16,216 @@ export default function InvoicesDetails({ id, listInvoicesDetail }) {
         id: '',
         quantity: '',
     });
-  const [details, setDetails] = useState([]);
-  useEffect(() => {
-    if (newIdQuantity.quantity !== "") {
-        openModal(
-            'Thay đổi số lượng',
-            <>
-                <input
-                    value={newIdQuantity.quantity}
-                    className="form-control"
-                    onChange={(e) =>
-                        setNewIdQuantity({
-                            ...newIdQuantity,
-                            quantity: e.target.value,
-                        })
+    const [isShowAddDetail, setIsShowAddDetail] = useState(false);
+    const [details, setDetails] = useState([]);
+    const [listProductsDetail, setListProductsDetail] = useState([]);
+
+    const [key, setKey] = useState('');
+
+    useEffect(() => {
+        if (newIdQuantity.quantity !== '') {
+            openModal(
+                'Thay đổi số lượng',
+                <>
+                    <input
+                        type="text"
+                        value={newIdQuantity.quantity}
+                        className="form-control"
+                        onChange={(e) =>
+                            setNewIdQuantity({
+                                ...newIdQuantity,
+                                quantity: e.target.value,
+                            })
+                        }
+                    />
+                    <span className="text-danger">{quantityError}</span>
+                </>,
+                (e) => {
+                    e.preventDefault();
+                    let isValid = true;
+
+                    if (newIdQuantity.quantity === '') {
+                        isValid = false;
+                        console.log('Số lượng không được để trống');
+                        setQuantityError('Số lượng không được để trống');
+                    } else if (
+                        newIdQuantity.quantity !== '' &&
+                        isNaN(newIdQuantity.quantity)
+                    ) {
+                        isValid = false;
+                        setQuantityError('Số lượng không đúng định dạng');
+                    } else if (
+                        newIdQuantity.quantity !== '' &&
+                        newIdQuantity.quantity < 0
+                    ) {
+                        isValid = false;
+                        setQuantityError('Số lượng không đúng định dạng');
+                    } else {
+                        setQuantityError('');
                     }
-                />
-                <span className="text-danger">{quantityError}</span>
-            </>,
-            () => {
-                updateQuantity(newIdQuantity.id, newIdQuantity.quantity)
-                    .then(() => {
-                      toast.success('Cập nhật số lượng thành công!');
-                      fetchDetail();
-                    })
-                    .catch((err) => {
-                        console.error(err);
-                        toast.error('Cập nhật số lượng thất bại.');
-                    });
 
-                closeModal();
-            }
-        );
-    }
-  }, [newIdQuantity]);
+                    if (isValid) {
+                        updateQuantity(newIdQuantity.id, newIdQuantity.quantity)
+                            .then(() => {
+                                toast.success('Cập nhật số lượng thành công!');
+                                fetchDetail();
+                            })
+                            .catch((err) => {
+                                console.error(err);
+                                toast.error('Cập nhật số lượng thất bại.');
+                            });
 
-  useEffect(() => {  
-      setDetails(listInvoicesDetail);
-  }, [listInvoicesDetail]);
-  
+                        closeModal();
+                    }
+                }
+            );
+        }
+    }, [newIdQuantity, quantityError]);
+
+    useEffect(() => {
+        setDetails(listInvoicesDetail);
+    }, [listInvoicesDetail]);
+
+    useEffect(() => {
+        if (key !== '') {
+            fetchProductsDetail();
+        }
+    }, [key]);
+
     const handleShowModalQuantity = (id, quantity) => {
         setNewIdQuantity({ id, quantity });
-  };
-  
-  const fetchDetail = async () => {
-    await getAllInvoicesDetail(id)
-        .then((res) => {
-            setDetails(res.data);
-        })
-        .catch((err) => {
-            console.error(err);
-            toast.error(err);
-        });
-  }
+    };
+
+    const fetchProductsDetail = async () => {
+        console.log(key);
+        if (key !== '') {
+            await findAllProductsDetailByKey(key).then((res) => {
+                setListProductsDetail(res.data);
+            });
+        } else {
+            setListProductsDetail([]);
+        }
+    };
+
+    const fetchDetail = async () => {
+        await getAllInvoicesDetail(id)
+            .then((res) => {
+                setDetails(res.data);
+            })
+            .catch((err) => {
+                console.error(err);
+                toast.error(err);
+            });
+    };
+
+    const handleDelete = async (detailId) => {
+        await deleteInvoiceDetail(detailId)
+            .then((res) => {
+                toast.success('Xóa thành công!');
+                fetchDetail();
+            })
+            .catch((err) => {
+                console.error(err);
+                toast.error('Có lỗi xảy ra!');
+            });
+    };
+
+    const handleInputChange = (e) => {
+        setKey(e.target.value);
+    };
 
     return (
         <div className="mt-2 bg-white p-5 shadow border">
+            <div className="d-flex flex-wrap">
+                {!isShowAddDetail ? (
+                    <button
+                        className="mb-3 button"
+                        onClick={() => setIsShowAddDetail(true)}
+                    >
+                        Thêm
+                    </button>
+                ) : (
+                    <>
+                        <button
+                            className="button me-3 mb-3"
+                            onClick={() => setIsShowAddDetail(false)}
+                        >
+                            Đóng
+                        </button>
+                        <div className="col-6 position-relative">
+                            <input
+                                onChange={handleInputChange}
+                                type="text"
+                                placeholder="Nhập mã sản phẩm hoặc tên sản phẩm..."
+                                className="col-6 form-control"
+                            />
+                            {isShowAddDetail && key !== '' ? (
+                                <>
+                                    <ul
+                                        className="list-group position-absolute overflow-auto"
+                                        style={{
+                                            bottom: '60px',
+                                            maxHeight: '70vh',
+                                        }}
+                                    >
+                                        {listProductsDetail.map((pd) => (
+                                            <li
+                                                className="d-flex list-group-item"
+                                                key={pd.id}
+                                            >
+                                                {pd.imageBackground.endsWith(
+                                                    '.mp4'
+                                                ) ? (
+                                                    <video
+                                                        width="150px"
+                                                        controls
+                                                    >
+                                                        <source
+                                                            src={
+                                                                pd.imageBackground
+                                                            }
+                                                            type="video/mp4"
+                                                        />
+                                                    </video>
+                                                ) : (
+                                                    <img
+                                                        src={pd.imageBackground}
+                                                        width="50px"
+                                                        alt=""
+                                                    />
+                                                )}
+                                                <div>
+                                                    <span>
+                                                        {pd.productName} " | "{' '}
+                                                        {pd.size} " | "{' '}
+                                                        {pd.color}
+                                                    </span>
+
+                                                    <div className="d-flex justify-content-between">
+                                                        <span>
+                                                            {pd.discountPrice !=
+                                                            null
+                                                                ? pd.discountPrice
+                                                                : pd.price}
+                                                        </span>
+
+                                                        <span className="fw-lighter">
+                                                            Số lượng:{' '}
+                                                            {pd.quantity}
+                                                        </span>
+                                                    </div>
+                                                </div>
+                                            </li>
+                                        ))}
+                                    </ul>
+                                </>
+                            ) : (
+                                <></>
+                            )}
+                        </div>
+                    </>
+                )}
+            </div>
             <table className="table table-striped table-hover table-bordered border">
                 <thead>
                     <tr>
@@ -83,63 +240,77 @@ export default function InvoicesDetails({ id, listInvoicesDetail }) {
                     </tr>
                 </thead>
                 <tbody>
-                    {details ? details.map((detail) => (
-                        <tr key={detail.id}>
-                            <td>
-                                {detail.imgUrl.endsWith('.mp4') ? (
-                                    <video width="250px" controls>
-                                        <source
-                                            src={detail.imgUrl}
-                                            type="video/mp4"
-                                        />
-                                    </video>
-                                ) : (
-                                    <img
-                                        src={detail.imgUrl}
-                                        width="100px"
-                                        alt=""
-                                    />
-                                )}
-                            </td>
-                            <td>{detail.code}</td>
-                            <td>{detail.productName}</td>
-                            <td>{detail.color}</td>
-                            <td>{detail.size}</td>
-                            <td>
-                                {detail.price.toLocaleString('vi-VN', {
-                                    style: 'currency',
-                                    currency: 'VND',
-                                })}
-                            </td>
-                            <td>{detail.quantity}</td>
-                            <td>
-                                {detail.totalPrice.toLocaleString('vi-VN', {
-                                    style: 'currency',
-                                    currency: 'VND',
-                                })}
-                            </td>
-                            <td>
-                                <Dropdown data-bs-theme="dark" className="me-3">
-                                    <Dropdown.Toggle variant="dark bg-gradient btn-sm">
-                                        Hành động
-                                    </Dropdown.Toggle>
-                                    <Dropdown.Menu>
-                                        <Dropdown.Item
-                                            onClick={() =>
-                                                handleShowModalQuantity(
-                                                    detail.id,
-                                                    detail.quantity
-                                                )
-                                            }
-                                        >
-                                            Sửa số lượng
-                                        </Dropdown.Item>
-                                        <Dropdown.Item>Xóa</Dropdown.Item>
-                                    </Dropdown.Menu>
-                                </Dropdown>
-                            </td>
-                        </tr>
-                    )): ""}
+                    {details
+                        ? details.map((detail) => (
+                              <tr key={detail.id}>
+                                  <td>
+                                      {detail.imgUrl.endsWith('.mp4') ? (
+                                          <video width="250px" controls>
+                                              <source
+                                                  src={detail.imgUrl}
+                                                  type="video/mp4"
+                                              />
+                                          </video>
+                                      ) : (
+                                          <img
+                                              src={detail.imgUrl}
+                                              width="100px"
+                                              alt=""
+                                          />
+                                      )}
+                                  </td>
+                                  <td>{detail.code}</td>
+                                  <td>{detail.productName}</td>
+                                  <td>{detail.color}</td>
+                                  <td>{detail.size}</td>
+                                  <td>
+                                      {detail.price.toLocaleString('vi-VN', {
+                                          style: 'currency',
+                                          currency: 'VND',
+                                      })}
+                                  </td>
+                                  <td>{detail.quantity}</td>
+                                  <td>
+                                      {detail.totalPrice.toLocaleString(
+                                          'vi-VN',
+                                          {
+                                              style: 'currency',
+                                              currency: 'VND',
+                                          }
+                                      )}
+                                  </td>
+                                  <td>
+                                      <Dropdown
+                                          data-bs-theme="dark"
+                                          className="me-3"
+                                      >
+                                          <Dropdown.Toggle variant="dark bg-gradient btn-sm">
+                                              Hành động
+                                          </Dropdown.Toggle>
+                                          <Dropdown.Menu>
+                                              <Dropdown.Item
+                                                  onClick={() =>
+                                                      handleShowModalQuantity(
+                                                          detail.id,
+                                                          detail.quantity
+                                                      )
+                                                  }
+                                              >
+                                                  Sửa số lượng
+                                              </Dropdown.Item>
+                                              <Dropdown.Item
+                                                  onClick={() => {
+                                                      handleDelete(detail.id);
+                                                  }}
+                                              >
+                                                  Xóa
+                                              </Dropdown.Item>
+                                          </Dropdown.Menu>
+                                      </Dropdown>
+                                  </td>
+                              </tr>
+                          ))
+                        : ''}
                 </tbody>
             </table>
         </div>

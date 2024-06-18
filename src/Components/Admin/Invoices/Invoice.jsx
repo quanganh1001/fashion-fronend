@@ -47,7 +47,7 @@ export default function Invoice() {
                     <select
                         className="form-control"
                         name="statusInvoice"
-                        status={newStatus}
+                        value={newStatus}
                         onChange={(e) => {
                             setNewStatus(e.target.value);
                         }}
@@ -125,8 +125,7 @@ export default function Invoice() {
 
     const handleShowModalStatus = (id, status) => {
         setInvoiceId(id);
-        setNewStatus(status); // Đảm bảo newStatus được cập nhật khi mở modal
-
+        setNewStatus(status);
         
     };
     return (
