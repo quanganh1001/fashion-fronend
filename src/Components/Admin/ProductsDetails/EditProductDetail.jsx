@@ -23,6 +23,9 @@ export default function EditProductDetail() {
         isActivated: '',
     });
 
+    const [color ,setColor] = useState("")
+    const [size, setSize] = useState("")
+    
     useEffect(() => {
         fetchProductDetail();
     }, []);
@@ -34,6 +37,8 @@ export default function EditProductDetail() {
                 quantity: res.data.quantity,
                 isActivated: res.data.isActivated,
             });
+            setColor(res.data.color);
+            setSize(res.data.size);
         });
     };
 
@@ -141,6 +146,14 @@ export default function EditProductDetail() {
                             />
                             <span className="text-danger">{quantityError}</span>
                         </div>
+
+                        <div className="my-4 col-6 d-flex justify-content-between">
+                            <span>Màu sắc: {color}</span>
+                        </div>
+                        <div className="my-4 col-6 d-flex justify-content-between">
+                            <span>Kích cỡ: {size}</span>
+                        </div>
+
                         <div className="mb-3">
                             <label className="form-label">
                                 Trạng thái

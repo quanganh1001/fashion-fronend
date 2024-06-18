@@ -6,7 +6,10 @@ import {
     updateQuantity,
 } from '../../../Services/InvoiceDetailService';
 import { toast } from 'react-toastify';
-import { getAllInvoicesDetail } from '../../../Services/InvoiceService';
+import {
+    addInvoiceDetail,
+    getAllInvoicesDetail,
+} from '../../../Services/InvoiceService';
 import { findAllProductsDetailByKey } from '../../../Services/ProductDetailService';
 
 export default function InvoicesDetails({ id, listInvoicesDetail }) {
@@ -87,6 +90,11 @@ export default function InvoicesDetails({ id, listInvoicesDetail }) {
     }, [listInvoicesDetail]);
 
     useEffect(() => {
+        setKey("")
+        setIsShowAddDetail(false);
+    }, [details])
+    
+    useEffect(() => {
         if (key !== '') {
             fetchProductsDetail();
         }
@@ -97,7 +105,6 @@ export default function InvoicesDetails({ id, listInvoicesDetail }) {
     };
 
     const fetchProductsDetail = async () => {
-        console.log(key);
         if (key !== '') {
             await findAllProductsDetailByKey(key).then((res) => {
                 setListProductsDetail(res.data);
@@ -134,6 +141,22 @@ export default function InvoicesDetails({ id, listInvoicesDetail }) {
         setKey(e.target.value);
     };
 
+    const handleAdd = async (productDetailId, quantity) => {
+        if (quantity > 0) {
+            await addInvoiceDetail(id, productDetailId)
+                .then(() => {
+                    toast.success('Thêm thành công!');
+                    fetchDetail();
+                })
+                .catch((err) => {
+                    toast.error(err);
+                    console.log(err);
+                });
+        } else {
+            toast.error("Sản phẩm đã hết hàng")
+        }
+        
+    };
     return (
         <div className="mt-2 bg-white p-5 shadow border">
             <div className="d-flex flex-wrap">
@@ -147,22 +170,25 @@ export default function InvoicesDetails({ id, listInvoicesDetail }) {
                 ) : (
                     <>
                         <button
-                            className="button me-3 mb-3"
-                            onClick={() => setIsShowAddDetail(false)}
+                            className="btn btn-danger me-3 mb-3"
+                            onClick={() => {
+                                setKey('');
+                                setIsShowAddDetail(false);
+                            }}
                         >
                             Đóng
                         </button>
-                        <div className="col-6 position-relative">
+                        <div className="col-10 position-relative">
                             <input
                                 onChange={handleInputChange}
                                 type="text"
                                 placeholder="Nhập mã sản phẩm hoặc tên sản phẩm..."
-                                className="col-6 form-control"
+                                className=" form-control"
                             />
                             {isShowAddDetail && key !== '' ? (
                                 <>
                                     <ul
-                                        className="list-group position-absolute overflow-auto"
+                                        className="col-12 border list-group position-absolute overflow-auto"
                                         style={{
                                             bottom: '60px',
                                             maxHeight: '70vh',
@@ -170,7 +196,12 @@ export default function InvoicesDetails({ id, listInvoicesDetail }) {
                                     >
                                         {listProductsDetail.map((pd) => (
                                             <li
-                                                className="d-flex list-group-item"
+                                                onClick={() => handleAdd(pd.id,pd.quantity)}
+                                                className={
+                                                    pd.quantity > 0
+                                                        ? 'd-flex align-items-center list-group-item'
+                                                        : 'text-decoration-line-through d-flex align-items-center list-group-item'
+                                                }
                                                 key={pd.id}
                                             >
                                                 {pd.imageBackground.endsWith(
@@ -196,9 +227,8 @@ export default function InvoicesDetails({ id, listInvoicesDetail }) {
                                                 )}
                                                 <div>
                                                     <span>
-                                                        {pd.productName} " | "{' '}
-                                                        {pd.size} " | "{' '}
-                                                        {pd.color}
+                                                        {pd.productName} |{' '}
+                                                        {pd.size} | {pd.color}
                                                     </span>
 
                                                     <div className="d-flex justify-content-between">
@@ -313,6 +343,10 @@ export default function InvoicesDetails({ id, listInvoicesDetail }) {
                         : ''}
                 </tbody>
             </table>
+
+            <div className='justify-content-end'>
+                <div>Tổng: <span></span></div>
+            </div>
         </div>
     );
 }

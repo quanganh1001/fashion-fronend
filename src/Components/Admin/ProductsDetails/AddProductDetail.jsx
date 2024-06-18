@@ -190,7 +190,7 @@ export default function AddProductDetail() {
                             >
                                 <option value="">--Chọn size--</option>
                                 {listSize.map((option) => (
-                                    <option key={option.key} value={option.key}>
+                                    <option key={option.key} value={option.value}>
                                         {option.value}
                                     </option>
                                 ))}
