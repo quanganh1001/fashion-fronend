@@ -67,6 +67,7 @@ export default function Invoice() {
                         })
                         .catch((err) => {
                             console.error(err);
+                            toast.error(err.response.data);
                         });
 
                     closeModal();

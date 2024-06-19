@@ -1,7 +1,7 @@
-import { apiPrivate } from '../Ultils/AxiosCustomize';
+import { apiPrivate, apiPublic } from '../Ultils/AxiosCustomize';
 
 const getAllCategories = async () => {
-    return await apiPrivate.get('categories');
+    return await apiPublic.get('categories');
 };
 
 const getChildCategories = async (catParentId) => {

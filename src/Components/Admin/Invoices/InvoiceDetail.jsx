@@ -485,17 +485,23 @@ export default function InvoicesDetails({
                                 <td colSpan={7} className="fw-bolder">
                                     Thành tiền
                                 </td>
-                                <td colSpan={7} className="d-flex flex-wrap text-danger fw-semibold fs-3">
-                                    {invoice
-                                        ? invoice.totalBill.toLocaleString(
-                                              'vi-VN',
-                                              {
-                                                  style: 'currency',
-                                                  currency: 'VND',
-                                              }
-                                          )
-                                        : null}
-                                    <span className='text-danger'>{invoice.isPaid === true ? 'Đã thanh toán' :'' }</span>
+                                <td colSpan={7} className="">
+                                    {invoice ? (
+                                        <div className="d-flex flex-wrap text-danger fw-semibold fs-3">
+                                            {invoice.totalBill.toLocaleString(
+                                                'vi-VN',
+                                                {
+                                                    style: 'currency',
+                                                    currency: 'VND',
+                                                }
+                                            )}{' '}
+                                            <span className="text-danger">
+                                                {invoice.isPaid === true
+                                                    ? 'Đã thanh toán'
+                                                    : ''}
+                                            </span>
+                                        </div>
+                                    ) : null}
                                 </td>
                             </tr>
                         </>

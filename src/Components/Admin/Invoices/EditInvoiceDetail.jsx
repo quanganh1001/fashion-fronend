@@ -125,6 +125,8 @@ export default function EditInvoiceDetail() {
             await updateInvoice(id, inputInvoice).then(() => {
                 fetchInvoice();
                 toast.success('Cập nhập thành công');
+            }).catch((err) => {
+                toast.error(err.response.data);
             });
         }
     };
