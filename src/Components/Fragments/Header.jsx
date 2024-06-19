@@ -1,22 +1,41 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { getAllCategories } from '../../Services/CategoryService';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import useAuth from '../../CustomHooks/useAuth';
+import { toast } from 'react-toastify';
 
 export default function Header() {
     const [listCategoriesF1, setListCategoriesF1] = useState([]);
     const [listCategoriesF2, setListCategoriesF2] = useState([]);
     const [listCategoriesF3, setListCategoriesF3] = useState([]);
-
+    const [hoveredF1, setHoveredF1] = useState(null);
+    const [searchValue, setSearchValue] = useState('');
+    const [searchValid, setSearchValid] = useState(false);
+    const { auth, handleLogout, handleLogin } = useAuth();
+    const [username, setUsername] = useState('');
+    const [password, setPassword] = useState('');
+    const [passBlank, setPassBlank] = useState('');
+    const [usernameBlank, setUsernameBlank] = useState('');
+    const [error, setError] = useState('');
+    const [isShowFormLogin, setIsShowFormLogin] = useState(false);
     useEffect(() => {
         fetchAllCategories();
     }, []);
 
+    const handleMouseEnter = (f1Id) => {
+        setHoveredF1(f1Id);
+    };
+
+    const handleMouseLeave = () => {
+        setHoveredF1(null);
+    };
 
     const fetchAllCategories = async () => {
         await getAllCategories()
             .then((res) => {
                 const categories = res.data;
-                
+
                 const categoriesF1 = categories.filter(
                     (category) => category.catParent === null
                 );
@@ -29,138 +48,305 @@ export default function Header() {
                     )
                 );
                 setListCategoriesF2(categoriesF2);
-                
+
                 // set categories F3
-                 const categoriesF3 = categories.filter((category) =>
-                     categoriesF2.some(
-                         (f2Category) => f2Category.catId === category.parentId
-                     )
-                 );
-                 setListCategoriesF3(categoriesF3);
+                const categoriesF3 = categories.filter((category) =>
+                    categoriesF2.some(
+                        (f2Category) => f2Category.catId === category.parentId
+                    )
+                );
+                setListCategoriesF3(categoriesF3);
             })
             .catch((err) => {
                 console.error(err);
             });
     };
 
-    
+    const searchForm = (e) => {
+        e.preventDefault();
+        let isValid = true;
 
+        if (searchValue === '') {
+            setSearchValid(true);
+            isValid = false;
+        } else setSearchValid(false);
+
+        if (isValid) {
+        }
+    };
+
+    const logoutForm = async () => {
+        await handleLogout();
+        toast.success('Đã đăng xuất!');
+    };
+
+    const formLogin = async (event) => {
+        event.preventDefault();
+
+        let valid = true;
+
+        if (password === '') {
+            setPassBlank('Mật khẩu không được để trống');
+            valid = false;
+        } else {
+            setPassBlank('');
+        }
+        if (username === '') {
+            valid = false;
+            setUsernameBlank('Tên đăng nhập không được để trống');
+        } else {
+            setUsernameBlank('');
+        }
+
+        if (valid) {
+            try {
+                await handleLogin({ username, password });
+                toast.success('Đăng nhập thành công!');
+            } catch (error) {
+                if (error.response.data === 'Invalid username or password') {
+                    toast.error('Sai tên đăng nhập hoặc mật khẩu');
+                    setError('Sai tên đăng nhập hoặc mật khẩu');
+                } else if (
+                    error.response.data === 'Account has been deactivated'
+                ) {
+                    toast.error('Tài khoản không hoạt động');
+                    setError('Tài khoản không hoạt động');
+                }
+            }
+        }
+    };
+
+    const handleToggleFormLogin = () => {
+        setIsShowFormLogin(!isShowFormLogin);
+    };
     return (
         <>
-            <nav className=" pb-2 pt-2 bg-body-tertiary position-relative shadow-sm d-flex">
-                <div className="container-xl d-flex justify-content-between align-sefl">
-                    <div className="col-2 align-self-center">
-                        <Link>
-                            <img src="" style={{ width: '100%' }} alt="" />
-                        </Link>
-                    </div>
+            <nav
+                className=" pb-2 pt-2 bg-body-tertiary position-relative shadow-sm d-flex"
+                onMouseLeave={handleMouseLeave}
+            >
+                <div className="container-xl  d-flex justify-content-between">
+                    <Link className="col-2" to={'/'}>
+                        <img
+                            src={process.env.PUBLIC_URL + '/logo.png'}
+                            style={{ width: '100%' }}
+                            alt=""
+                        />
+                    </Link>
 
-                    <div className=" align-self-end d-flex col-5 justify-content-between">
+                    <div className=" align-self-center d-flex col-5  justify-content-between">
                         {listCategoriesF1.map((f1) => (
-                            <li key={f1.id}>
+                            <div
+                                key={f1.id}
+                                className="menu-item"
+                                onMouseEnter={() => handleMouseEnter(f1.id)}
+                            >
                                 <Link
-                                    to={'/categories/' + f1.id}
-                                    className=" text-decoration-none text-dark fw-bold"
+                                    to={`/category/${f1.id}`}
+                                    className="text-dark fw-bold text-decoration-none"
                                 >
                                     {f1.catName}
                                 </Link>
-                            </li>
+                                {hoveredF1 === f1.id && (
+                                    <div className=" z-3 d-flex flex-wrap f2 pt-3 pb-3 border bg-white position-absolute start-50 top-100 translate-middle-x col-8 rounded-bottom shadow justify-content-around">
+                                        {listCategoriesF2
+                                            .filter(
+                                                (f2) => f2.catParent === f1.id
+                                            )
+                                            .map((f2) => (
+                                                <div
+                                                    key={f2.id}
+                                                    className="my-2 d-flex flex-column"
+                                                >
+                                                    <Link
+                                                        to={`/category/${f2.id}`}
+                                                        className="text-dark fw-bold text-decoration-none"
+                                                    >
+                                                        {f2.catName}
+                                                    </Link>
+
+                                                    {listCategoriesF3
+                                                        .filter(
+                                                            (f3) =>
+                                                                f3.catParent ===
+                                                                f2.id
+                                                        )
+                                                        .map((f3) => (
+                                                            <Link
+                                                                key={f3.catId}
+                                                                to={`/category/${f3.id}`}
+                                                                className="mt-3 text-dark text-decoration-none"
+                                                            >
+                                                                {f3.catName}
+                                                            </Link>
+                                                        ))}
+                                                </div>
+                                            ))}
+                                    </div>
+                                )}
+                            </div>
                         ))}
-                        <li>
+                        <div>
                             <Link className=" text-decoration-none text-dark  fw-bold">
                                 Hệ thống cửa hàng
                             </Link>
-                        </li>
-                    </div>
-
-                    <div className="bg-white">
-                        {listCategoriesF2.map((f2) => (
-                            <li>
-                                <Link className="text-dark nav-link fw-bold"></Link>
-                            </li>
-                            
-                        ))}
-                        
-
-                        <div
-                            className="pb-4 hidden  position-absolute start-50 translate-middle-x col-8"
-                            style={{ zIndex: '999' }}>
-
-                            
-                        </div>
-
-                        <div className="d-flex flex-wrap f2 pt-3 pb-3 border bg-white position-absolute start-50 top-100 translate-middle-x col-12 rounded-bottom shadow justify-content-around">
-                            <Link className="text-dark  fw-bold"></Link>
                         </div>
                     </div>
 
-                   {/* <div className="col-2 align-self-center">
-                        <form>
+                    <div className="col-2 align-self-center">
+                        <form onSubmit={searchForm}>
                             <div className="input-group">
                                 <input
+                                    onChange={(e) =>
+                                        setSearchValue(e.target.value)
+                                    }
                                     type="text"
-                                    className="form-control"
-                                    name="key"
+                                    className={
+                                        searchValid
+                                            ? 'border-danger form-control'
+                                            : ' form-control'
+                                    }
                                     placeholder="Tìm kiếm"
                                 />
                                 <button className="btn border" type="submit">
-                                    <i className="fa-solid fa-magnifying-glass"></i>
+                                    <FontAwesomeIcon icon="fa-solid fa-magnifying-glass" />
                                 </button>
                             </div>
                         </form>
                     </div>
 
                     <div className="align-self-center d-flex">
-                        <a
-                            className="position-relative btn btn-outline-dark align-self-center"
-                            href="/carts"
-                        >
-                            <i className="fa-solid fa-cart-shopping">
-                                <span th:if="${number == 0}"></span>
-                                <span
-                                    th:unless="${number == 0}"
-                                    th:text="${number}"
-                                    className="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger"
-                                ></span>
-                            </i>
-                        </a>
-                          <div className="ms-3 d-flex" th:if="${account != null}">
-                    <div className="d-flex flex-column ">
-                        <span>Xin chào, </span>
-                        <a th:href="@{/info-account(accountId=${account.accountId})}"
-                           th:text="${account.userName} + '!'"
-                           className=" fst-italic text-decoration-underline btn-link"></a>
-                    </div>
-                    <form th:id="form-logout" th:action="@{/logout}" method="post"
-                          className="align-self-center ms-1">
-                        <i id="logout" className="fa-solid fa-arrow-right-from-bracket" style="padding: 5px;"></i>
-                    </form>
-                </div>
+                        <Link className="position-relative btn btn-outline-dark align-self-center">
+                            <FontAwesomeIcon icon="fa-solid fa-cart-shopping" />
+                        </Link>
+                        {auth.account ? (
+                            <div className="ms-3 d-flex align-items-center">
+                                <div className="d-flex flex-column ">
+                                    <span>Xin chào, </span>
+                                    <Link className=" fst-italic text-decoration-underline btn-link text-dark">
+                                        {auth.account.name}
+                                    </Link>
+                                </div>
 
-                <div className="btn-group ms-3" role="group">
-                    <div className="btn btn-outline-dark dropdown-toggle" data-bs-toggle="dropdown"
-                         aria-expanded="false">
-                        <i className="fa-solid fa-user"></i>
-                    </div>
-                    <div className="dropdown-menu p-3 start-0 top-100 translate-middle-x mt-2"
-                         style={{width: '400px',zIndex:'9999'}}>
-                        <div className="fw-bold">Đăng nhập</div>
-                        <form className="mt-3">
-                            <input type="text" name="username" id="name" className="form-control" style="font-size: 0.8rem"
-                                   placeholder="Tên đăng nhập"/>
-                            <input type="password" name="password" id="password" className="form-control mt-3"
-                                   placeholder="Mật khẩu"/>
-                            <div className="d-flex justify-content-between col-12">
-                                <Link className=" fst-italic text-decoration-underline btn-link"
-                                   >Quên mật khẩu?
-                                </Link>
-
-                                <Link href="/register" className="btn-link">Đăng ký tài khoản</Link>
+                                <FontAwesomeIcon
+                                    className="btn-link text-dark"
+                                    onClick={logoutForm}
+                                    style={{ padding: '5px' }}
+                                    icon="fa-solid fa-right-from-bracket"
+                                />
                             </div>
-                            <button className="btn btn-dark mt-3">Đăng nhập</button>
-                        </form>
-                    </div>
-                </div>*/}
+                        ) : (
+                            <div className=" ms-3 position-relative">
+                                <button
+                                    onClick={handleToggleFormLogin}
+                                    type="button"
+                                    className={
+                                        isShowFormLogin === true
+                                            ? 'btn btn-dark'
+                                            : 'btn btn-outline-dark'
+                                    }
+                                >
+                                    <FontAwesomeIcon icon="fa-solid fa-user" />
+                                    {isShowFormLogin === true ? (
+                                        <FontAwesomeIcon
+                                            className="ms-1"
+                                            icon="fa-solid fa-caret-up"
+                                        />
+                                    ) : (
+                                        <FontAwesomeIcon
+                                            className="ms-1"
+                                            icon="fa-solid fa-caret-down"
+                                        />
+                                    )}
+                                </button>
+                                {isShowFormLogin === true ? (
+                                    <div
+                                        className="border rounded-3 p-3 bg-light-subtle bg-gradient position-absolute end-0 top-100 mt-2"
+                                        style={{ width: '400px', zIndex: 9999 }}
+                                    >
+                                        <div className="fw-bold">Đăng nhập</div>
+
+                                        <form
+                                            onSubmit={formLogin}
+                                            method="post"
+                                            className="mt-3"
+                                        >
+                                            <div className="mb-3">
+                                                <input
+                                                    type="text"
+                                                    name="username"
+                                                    className={`form-control ${
+                                                        usernameBlank !== ''
+                                                            ? 'border-danger'
+                                                            : ''
+                                                    }`}
+                                                    placeholder="Tên đăng nhập"
+                                                    onChange={(event) =>
+                                                        setUsername(
+                                                            event.target.value
+                                                        )
+                                                    }
+                                                />
+                                                <span className="text-danger">
+                                                    {usernameBlank}
+                                                </span>
+                                            </div>
+                                            <div className="mb-3">
+                                                <input
+                                                    type="password"
+                                                    name="password"
+                                                    className={`form-control ${
+                                                        passBlank !== ''
+                                                            ? 'border-danger'
+                                                            : ''
+                                                    }`}
+                                                    placeholder="Mật khẩu"
+                                                    onChange={(event) =>
+                                                        setPassword(
+                                                            event.target.value
+                                                        )
+                                                    }
+                                                />
+                                                <span className="text-danger">
+                                                    {passBlank}
+                                                </span>
+                                            </div>
+                                            <span className="text-danger">
+                                                {error}
+                                            </span>
+                                            <div className="d-flex justify-content-between col-12 mt-3">
+                                                <Link
+                                                    to="/forgot-password"
+                                                    className="fst-italic text-decoration-underline btn-link text-dark"
+                                                    style={{
+                                                        fontSize: '0.9rem',
+                                                    }}
+                                                >
+                                                    Quên mật khẩu?
+                                                </Link>
+                                                <Link
+                                                    to="/register"
+                                                    className="btn-link text-dark"
+                                                    style={{
+                                                        fontSize: '0.9rem',
+                                                    }}
+                                                >
+                                                    Đăng ký tài khoản
+                                                </Link>
+                                            </div>
+                                            <button
+                                                type="submit"
+                                                className="btn btn-primary mt-3"
+                                            >
+                                                Đăng nhập
+                                            </button>
+                                        </form>
+                                    </div>
+                                ) : (
+                                    <></>
+                                )}
+                            </div>
+                        )}
                     </div>
                 </div>
             </nav>

@@ -11,7 +11,7 @@ const getChildCategories = async (catParentId) => {
 };
 
 const getCategory = async (id) => {
-    return await apiPrivate.get('categories/' + id);
+    return await apiPrivate.get('/categories/' + id);
 };
 
 const createCategory = async (category) => {

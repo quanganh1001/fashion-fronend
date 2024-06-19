@@ -1,6 +1,5 @@
 /* eslint-disable no-restricted-globals */
 import { useState } from 'react';
-import $ from 'jquery';
 import useAuth from '../../CustomHooks/useAuth';
 import { toast } from 'react-toastify';
 import LoadingSprinner from '../Fragments/LoadingSpinner';
@@ -21,21 +20,17 @@ export default function Login() {
         let valid = true;
 
         if (password === '') {
-            $('#password').addClass('border-danger');
             setPassBlank('Mật khẩu không được để trống');
             valid = false;
         } else {
             setPassBlank('');
-            $('#password').removeClass('border-danger');
         }
 
         if (username === '') {
             valid = false;
-            $('#username').addClass('border-danger');
             setUsernameBlank('Tên đăng nhập không được để trống');
         } else {
             setUsernameBlank('');
-            $('#username').removeClass('border-danger');
         }
 
         if (valid) {
@@ -69,7 +64,11 @@ export default function Login() {
                             <input
                                 id="username"
                                 type="text"
-                                className="form-control"
+                                className={
+                                    usernameBlank === ''
+                                        ? 'form-control'
+                                        : 'border-danger form-control'
+                                }
                                 placeholder="Tên đăng nhập"
                                 onChange={(event) =>
                                     setUsername(event.target.value)
@@ -81,7 +80,11 @@ export default function Login() {
                             <input
                                 id="password"
                                 type="password"
-                                className="form-control"
+                                className={
+                                    passBlank === ''
+                                        ? 'form-control'
+                                        : 'border-danger form-control'
+                                }
                                 placeholder="Mật khẩu"
                                 onChange={(event) =>
                                     setPassword(event.target.value)

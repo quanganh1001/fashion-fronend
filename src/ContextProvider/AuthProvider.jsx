@@ -9,7 +9,7 @@ export default function AuthProvider({ children }) {
 
     const navigate = useNavigate();
 
-    const redirectTo = location.state?.redirectTo?.pathname || '/admin/home';
+    const redirectTo = location.state?.redirectTo?.pathname || '/';
 
     const [auth, setAuth] = useState(getAuth());
 
@@ -60,10 +60,11 @@ export default function AuthProvider({ children }) {
 
     const handleLogout = async () => {
         await logout().then((res) => {
-            if (res.status === 200) {
-                setAuth({});
+            console.log("oke");
+            setAuth({});
+            localStorage.removeItem("auth")
                 navigate('/');
-            }
+            
         });
     };
 

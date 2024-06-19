@@ -12,12 +12,10 @@ import ModalProvider from './ContextProvider/ModalProvider.jsx';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
-    <React.StrictMode>
         <ModalProvider>
             <RouterProvider router={router} />
             <ToastContainer autoClose={2000} />
         </ModalProvider>
-    </React.StrictMode>
 );
 
 reportWebVitals();
