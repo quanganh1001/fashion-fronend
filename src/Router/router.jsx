@@ -2,7 +2,8 @@ import { ProtectedRoute } from './ProtectedRoute.jsx';
 import { Outlet, createBrowserRouter } from 'react-router-dom';
 import App from '../App.jsx';
 import Product from '../Components/Admin/Products/Product';
-import Category from '../Components/Admin/Categories/Category.jsx';
+import CategoryAdmin from '../Components/Admin/Categories/CategoryAdmin.jsx';
+import Category from '../Components/Customer/Category.jsx';
 import Login from '../Components/Auth/Login.jsx';
 import HomeAdmin from '../Components/Admin/HomeAdmin.jsx';
 import PaginationProvider from '../ContextProvider/PaginationProvider.jsx';
@@ -18,7 +19,6 @@ import EditAccount from '../Components/Admin/Accounts/EditAccount.jsx';
 import AddAccount from '../Components/Admin/Accounts/AddAccount.jsx';
 import Invoice from '../Components/Admin/Invoices/Invoice.jsx';
 import EditInvoiceDetail from '../Components/Admin/Invoices/EditInvoiceDetail.jsx';
-import Header from '../Components/Fragments/Header.jsx';
 import Home from '../Components/Customer/Home.jsx';
 import PublicLayout from '../Components/Layout/PublicLayout.jsx';
 
@@ -42,9 +42,13 @@ export const router = createBrowserRouter([
                 children: [
                     {
                         index: true,
-                        element: <Home/>
-                    }
-                ]
+                        element: <Home />,
+                    },
+                    {
+                        path: 'category/:catId',
+                        element: <Category />,
+                    },
+                ],
             },
 
             {
@@ -101,7 +105,7 @@ export const router = createBrowserRouter([
                         children: [
                             {
                                 index: true,
-                                element: <Category />,
+                                element: <CategoryAdmin />,
                             },
                             {
                                 path: 'add',

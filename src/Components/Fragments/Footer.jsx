@@ -194,11 +194,11 @@ export default function Footer(){
                                 <input
                                     id="email-input"
                                     type="email"
-                                    class="form-control"
+                                    className="form-control"
                                     placeholder="Nhập email"
                                     style={{ fontSize: '0.8rem' }}
                                 />
-                                <label for="email-input">
+                                <label>
                                     Nhập email của bạn
                                 </label>
                             </div>
@@ -214,7 +214,7 @@ export default function Footer(){
                 </div>
                 <p className="fs-6 fw-light border-top border-dark-subtle p-2 d-flex justify-content-center">
                     Copyright © 2024{' '}
-                    <Link class="ms-1 text-dark" href="https://torano.vn">
+                    <Link className="ms-1 text-dark" href="https://torano.vn">
                         {' '}
                         Torano
                     </Link>

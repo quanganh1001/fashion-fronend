@@ -146,9 +146,15 @@ export default function Header() {
                 `}
             </style>
 
-            <nav style={ {zIndex:"1"}} className=" bg-body-tertiary position-relative shadow-sm d-flex">
+            <nav
+                style={{ zIndex: '1' }}
+                className=" bg-body-tertiary position-relative shadow-sm d-flex"
+            >
                 <div className="container-xl  d-flex justify-content-between">
-                    <Link className="col-2" to={'/'}>
+                    <Link
+                        className="col-2 menu-item d-flex align-items-center "
+                        to={'/'}
+                    >
                         <img
                             src={process.env.PUBLIC_URL + '/logo.png'}
                             style={{ width: '100%' }}
@@ -157,6 +163,15 @@ export default function Header() {
                     </Link>
 
                     <div className=" d-flex col-5 justify-content-between">
+                        <div className="menu-item py-4 d-flex align-items-center ">
+                            <Link
+                                to={`/category/sale`}
+                                className="   text-dark fw-bold text-decoration-none"
+                            >
+                                Sale
+                            </Link>
+                        </div>
+
                         {listCategoriesF1.map((f1) => (
                             <div
                                 onMouseLeave={() => {
