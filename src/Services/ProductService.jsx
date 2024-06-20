@@ -1,7 +1,6 @@
-import { data } from 'jquery';
 import { apiPublic, apiPrivate } from '../Ultils/AxiosCustomize';
 
-const getAllProducts = async (searchParams) => {
+export const getAllProducts = async (searchParams) => {
     const response = await apiPublic.get('products', {
         params: {
             keyword: searchParams.get('keyword'),
@@ -13,29 +12,28 @@ const getAllProducts = async (searchParams) => {
     return response;
 };
 
-const createProduct = async (data) => {
+export const createProduct = async (data) => {
     return await apiPrivate.post('products', data);
 };
 
-const deleteProduct = async (productId) => {
+export const deleteProduct = async (productId) => {
     return await apiPrivate.delete(`/products/${productId}`);
 };
 
-const getProduct = async (id) => {
+export const getProduct = async (id) => {
     return await apiPublic.get('/products/' + id);
 };
 
-const updateProduct = async (id, product) => {
+export const updateProduct = async (id, product) => {
     return await apiPrivate.put('/products/' + id, product);
 };
 
-const getAllImageProducts = async (id) => {
-    const response = await apiPublic.get('products/' + id + '/images');
-    return response;
+export const getAllImageProducts = async (id) => {
+    return await apiPublic.get('products/' + id + '/images');
 };
 
-const createImage = async (productId, formData) => {
-    const response = await apiPrivate.post(
+export const createImage = async (productId, formData) => {
+    return await apiPrivate.post(
         `products/${productId}/createImage`,
         formData,
         {
@@ -44,11 +42,11 @@ const createImage = async (productId, formData) => {
             },
         }
     );
-    return response;
+   
 };
 
-const updateImageBackground = async (productId, imageUrl) => {
-    const response = await apiPrivate.put(
+export const updateImageBackground = async (productId, imageUrl) => {
+    return await apiPrivate.put(
         `products/${productId}/updateProductBackground`,
         imageUrl,
         {
@@ -57,16 +55,11 @@ const updateImageBackground = async (productId, imageUrl) => {
             },
         }
     );
-    return response;
+    
 };
 
-export {
-    getAllProducts,
-    createProduct,
-    deleteProduct,
-    getProduct,
-    updateProduct,
-    getAllImageProducts,
-    createImage,
-    updateImageBackground,
+export const getAllProductByCategory = async (catId) => {
+    return await apiPublic.get(`products/getByCategory/`+catId);
+    
 };
+

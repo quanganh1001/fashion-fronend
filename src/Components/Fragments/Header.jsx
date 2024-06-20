@@ -9,7 +9,7 @@ export default function Header() {
     const [listCategoriesF1, setListCategoriesF1] = useState([]);
     const [listCategoriesF2, setListCategoriesF2] = useState([]);
     const [listCategoriesF3, setListCategoriesF3] = useState([]);
-    const [hoveredF1, setHoveredF1] = useState(null);
+;
     const [searchValue, setSearchValue] = useState('');
     const [searchValid, setSearchValid] = useState(false);
     const { auth, handleLogout, handleLogin } = useAuth();
@@ -19,17 +19,23 @@ export default function Header() {
     const [usernameBlank, setUsernameBlank] = useState('');
     const [error, setError] = useState('');
     const [isShowFormLogin, setIsShowFormLogin] = useState(false);
+        const [hoveredF1, setHoveredF1] = useState(null);
+    const [activeClass, setActiveClass] = useState('');
+
+    
+    useEffect(() => {
+        if (hoveredF1 !== null) {
+            setTimeout(() => {
+                setActiveClass('show');
+            }, 50); 
+        } else {
+            setActiveClass('');
+        }
+    }, [hoveredF1]);
+
     useEffect(() => {
         fetchAllCategories();
     }, []);
-
-    const handleMouseEnter = (f1Id) => {
-        setHoveredF1(f1Id);
-    };
-
-    const handleMouseLeave = () => {
-        setHoveredF1(null);
-    };
 
     const fetchAllCategories = async () => {
         await getAllCategories()
@@ -44,7 +50,7 @@ export default function Header() {
                 // set categoriesF2
                 const categoriesF2 = categories.filter((category) =>
                     categoriesF1.some(
-                        (f1Category) => f1Category.catId === category.parentId
+                        (f1Category) => f1Category.id === category.catParent
                     )
                 );
                 setListCategoriesF2(categoriesF2);
@@ -52,10 +58,12 @@ export default function Header() {
                 // set categories F3
                 const categoriesF3 = categories.filter((category) =>
                     categoriesF2.some(
-                        (f2Category) => f2Category.catId === category.parentId
+                        (f2Category) => f2Category.id === category.catParent
                     )
                 );
                 setListCategoriesF3(categoriesF3);
+
+
             })
             .catch((err) => {
                 console.error(err);
@@ -116,15 +124,29 @@ export default function Header() {
         }
     };
 
+
     const handleToggleFormLogin = () => {
         setIsShowFormLogin(!isShowFormLogin);
     };
     return (
         <>
-            <nav
-                className=" pb-2 pt-2 bg-body-tertiary position-relative shadow-sm d-flex"
-                onMouseLeave={handleMouseLeave}
-            >
+            <style>
+                {`
+                    .dropdown-content {
+                        opacity: 0;
+                        margin-top: 20px;
+                        transition: margin-top 0.3s,opacity 0.3s;
+                        z-index:1;
+                    }
+                    .dropdown-content.show {
+                        margin-top: 0px;
+                        opacity: 1;
+
+                    }
+                `}
+            </style>
+
+            <nav style={ {zIndex:"1"}} className=" bg-body-tertiary position-relative shadow-sm d-flex">
                 <div className="container-xl  d-flex justify-content-between">
                     <Link className="col-2" to={'/'}>
                         <img
@@ -134,21 +156,26 @@ export default function Header() {
                         />
                     </Link>
 
-                    <div className=" align-self-center d-flex col-5  justify-content-between">
+                    <div className=" d-flex col-5 justify-content-between">
                         {listCategoriesF1.map((f1) => (
                             <div
+                                onMouseLeave={() => {
+                                    setHoveredF1(null);
+                                }}
                                 key={f1.id}
-                                className="menu-item"
-                                onMouseEnter={() => handleMouseEnter(f1.id)}
+                                onMouseEnter={() => setHoveredF1(f1.id)}
+                                className="menu-item py-4 d-flex align-items-center  f1"
                             >
                                 <Link
                                     to={`/category/${f1.id}`}
-                                    className="text-dark fw-bold text-decoration-none"
+                                    className="   text-dark fw-bold text-decoration-none"
                                 >
                                     {f1.catName}
                                 </Link>
                                 {hoveredF1 === f1.id && (
-                                    <div className=" z-3 d-flex flex-wrap f2 pt-3 pb-3 border bg-white position-absolute start-50 top-100 translate-middle-x col-8 rounded-bottom shadow justify-content-around">
+                                    <div
+                                        className={`dropdown-content z-3 d-flex flex-wrap pt-3 pb-3 border bg-white position-absolute start-50 top-100 translate-middle-x col-10 rounded-bottom shadow justify-content-around ${activeClass}`}
+                                    >
                                         {listCategoriesF2
                                             .filter(
                                                 (f2) => f2.catParent === f1.id
@@ -173,7 +200,7 @@ export default function Header() {
                                                         )
                                                         .map((f3) => (
                                                             <Link
-                                                                key={f3.catId}
+                                                                key={f3.id}
                                                                 to={`/category/${f3.id}`}
                                                                 className="mt-3 text-dark text-decoration-none"
                                                             >
@@ -186,7 +213,8 @@ export default function Header() {
                                 )}
                             </div>
                         ))}
-                        <div>
+
+                        <div className="d-flex align-items-center">
                             <Link className=" text-decoration-none text-dark  fw-bold">
                                 Hệ thống cửa hàng
                             </Link>

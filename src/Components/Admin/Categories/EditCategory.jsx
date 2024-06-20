@@ -75,6 +75,7 @@ export default function EditCategory() {
                 .then(() => {
                     setIsLoading(true);
                     // navigator("/admin/categories");
+                    
                     toast.success('Sửa thành công thành công');
                 })
                 .catch((error) => {
