@@ -58,8 +58,11 @@ export const updateImageBackground = async (productId, imageUrl) => {
     
 };
 
-export const getAllProductByCategory = async (catId) => {
-    return await apiPublic.get(`products/getByCategory/`+catId);
-    
+export const getAllProductByCategory = async (catId, key) => {
+    return await apiPublic.get(`products/getByCategory/` + catId, {
+        params: {
+            keyword: key,
+        },
+    });
 };
 

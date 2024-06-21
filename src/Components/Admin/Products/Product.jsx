@@ -30,7 +30,7 @@ export default function Product() {
             setProducts(response.data.productsRes);
             setTotalPages(response.data.totalPages);
             setCurrentPage(response.data.currentPage);
-            setTotalProducts(response.data.totalProduct);
+            setTotalProducts(response.data.totalProducts);
         } catch (error) {
             console.error('Error fetching products:', error);
         }
@@ -112,7 +112,7 @@ export default function Product() {
             <CustomPagination
                 totalPages={totalPages}
                 currentPage={currentPage}
-                totalProducts={totalProducts}
+                totalItems={totalProducts}
             />
         </>
     );

@@ -27,7 +27,7 @@ export default function Home() {
 
     const fetchProductSale = async () => {
         await getAllProductByCategory(0).then((res) => {
-            setListProductSale(res.data.productsRes);
+            setListProductSale(res.data);
         });
     };
 
@@ -359,10 +359,13 @@ export default function Home() {
                         ))}
                     </Slider>
 
-                    <div class=" d-flex justify-content-center">
-                        <Link class="btn-sale btn mt-5 mb-5 pt-2 pb-2 bg-white border border-black rounded d-flex justify-content-center">
+                    <div className=" d-flex justify-content-center">
+                        <Link to="/category/sale" className="btn-sale btn mt-5 mb-5 pt-2 pb-2 bg-white border border-black rounded d-flex justify-content-center">
                             <span>Xem tất cả</span>
-                            <span class="fw-bold" style={{ marginLeft: '3px' }}>
+                            <span
+                                className="fw-bold"
+                                style={{ marginLeft: '3px' }}
+                            >
                                 TẾT NHẤT SALE TẤT
                             </span>{' '}
                         </Link>
@@ -370,73 +373,82 @@ export default function Home() {
                 </div>
             </section>
 
-            <section class="py-5">
-    <div class="container-xxl">
-        <div class=" row">
-            <div class="col-xl-3 col-lg-6 col-md-6 col-12">
-                <div class="d-flex">
-                    <div class="me-3 align-self-center">
-                        <img class=" lazyloaded"
-                             data-src="//theme.hstatic.net/200000690725/1001078549/14/home_policy_icon_1.png?v=281"
-                             src="//theme.hstatic.net/200000690725/1001078549/14/home_policy_icon_1.png?v=281"
-                             alt="Miễn phí vận chuyển"/>
-                    </div>
-                    <div class="align-self-center">
-                        <b>Miễn phí vận chuyển</b>
-                        <div>Áp dụng cho mọi đơn hàng từ 500k</div>
+            <section className="py-5">
+                <div className="container-xxl">
+                    <div className=" row">
+                        <div className="col-xl-3 col-lg-6 col-md-6 col-12">
+                            <div className="d-flex">
+                                <div className="me-3 align-self-center">
+                                    <img
+                                        className=" lazyloaded"
+                                        data-src="//theme.hstatic.net/200000690725/1001078549/14/home_policy_icon_1.png?v=281"
+                                        src="//theme.hstatic.net/200000690725/1001078549/14/home_policy_icon_1.png?v=281"
+                                        alt="Miễn phí vận chuyển"
+                                    />
+                                </div>
+                                <div className="align-self-center">
+                                    <b>Miễn phí vận chuyển</b>
+                                    <div>Áp dụng cho mọi đơn hàng từ 500k</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div className="col-xl-3 col-lg-6 col-md-6 col-12">
+                            <div className="d-flex">
+                                <div className="me-3 align-self-center">
+                                    <img
+                                        className=" ls-is-cached lazyloaded"
+                                        data-src="//theme.hstatic.net/200000690725/1001078549/14/home_policy_icon_2.png?v=281"
+                                        src="//theme.hstatic.net/200000690725/1001078549/14/home_policy_icon_2.png?v=281"
+                                        alt="Đổi trả dễ dàng"
+                                    />
+                                </div>
+                                <div className="align-self-center">
+                                    <b>Đổi trả dễ dàng</b>
+                                    <div>7 ngày đổi trả vì bất kì lí do gì</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div className="col-xl-3 col-lg-6 col-md-6 col-12">
+                            <div className="d-flex">
+                                <div className="me-3 align-self-center">
+                                    <img
+                                        className=" lazyloaded"
+                                        data-src="//theme.hstatic.net/200000690725/1001078549/14/home_policy_icon_3.png?v=281"
+                                        src="//theme.hstatic.net/200000690725/1001078549/14/home_policy_icon_3.png?v=281"
+                                        alt="Hỗ trợ nhanh chóng"
+                                    />
+                                </div>
+                                <div className="align-self-center">
+                                    <b>Hỗ trợ nhanh chóng</b>
+                                    <div>HOTLINE 24/7 : 0364100196</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div className="col-xl-3 col-lg-6 col-md-6 col-12">
+                            <div className="d-flex">
+                                <div className="me-3 align-self-center">
+                                    <img
+                                        className=" ls-is-cached lazyloaded"
+                                        data-src="//theme.hstatic.net/200000690725/1001078549/14/home_policy_icon_4.png?v=281"
+                                        src="//theme.hstatic.net/200000690725/1001078549/14/home_policy_icon_4.png?v=281"
+                                        alt="Thanh toán đa dạng"
+                                    />
+                                </div>
+                                <div className="align-self-center">
+                                    <b>Thanh toán đa dạng</b>
+                                    <div>
+                                        Thanh toán khi nhận hàng, Napas, Visa,
+                                        Chuyển Khoản
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
-            </div>
-
-            <div class="col-xl-3 col-lg-6 col-md-6 col-12">
-                <div class="d-flex">
-                    <div class="me-3 align-self-center">
-                        <img class=" ls-is-cached lazyloaded"
-                             data-src="//theme.hstatic.net/200000690725/1001078549/14/home_policy_icon_2.png?v=281"
-                             src="//theme.hstatic.net/200000690725/1001078549/14/home_policy_icon_2.png?v=281"
-                             alt="Đổi trả dễ dàng"/>
-                    </div>
-                    <div class="align-self-center">
-                        <b>Đổi trả dễ dàng</b>
-                        <div>7 ngày đổi trả vì bất kì lí do gì</div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="col-xl-3 col-lg-6 col-md-6 col-12">
-                <div class="d-flex">
-                    <div class="me-3 align-self-center">
-                        <img class=" lazyloaded"
-                             data-src="//theme.hstatic.net/200000690725/1001078549/14/home_policy_icon_3.png?v=281"
-                             src="//theme.hstatic.net/200000690725/1001078549/14/home_policy_icon_3.png?v=281"
-                             alt="Hỗ trợ nhanh chóng"/>
-                    </div>
-                    <div class="align-self-center">
-                        <b>Hỗ trợ nhanh chóng</b>
-                        <div>HOTLINE 24/7 : 0364100196</div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="col-xl-3 col-lg-6 col-md-6 col-12">
-                <div class="d-flex">
-                    <div class="me-3 align-self-center">
-                        <img class=" ls-is-cached lazyloaded"
-                             data-src="//theme.hstatic.net/200000690725/1001078549/14/home_policy_icon_4.png?v=281"
-                             src="//theme.hstatic.net/200000690725/1001078549/14/home_policy_icon_4.png?v=281"
-                             alt="Thanh toán đa dạng"/>
-                    </div>
-                    <div class="align-self-center">
-                        <b>Thanh toán đa dạng</b>
-                        <div>Thanh toán khi nhận hàng, Napas, Visa, Chuyển Khoản</div>
-                    </div>
-                </div>
-            </div>
-
-        </div>
-    </div>
-</section>
-
+            </section>
         </>
     );
 }

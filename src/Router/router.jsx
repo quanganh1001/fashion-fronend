@@ -46,7 +46,11 @@ export const router = createBrowserRouter([
                     },
                     {
                         path: 'category/:catId',
-                        element: <Category />,
+                        element: (
+                            <PaginationProvider>
+                                <Category />
+                            </PaginationProvider>
+                        ),
                     },
                 ],
             },
