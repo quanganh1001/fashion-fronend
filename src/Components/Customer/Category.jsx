@@ -119,7 +119,7 @@ export default function Category() {
                                             )}
 
                                             <Link
-                                                style={{ width: "80%"}}
+                                                style={{ width: '80%' }}
                                                 class="button border-white shadow fw-bold  add-to-cart-btn"
                                             >
                                                 Chi tiết sản phẩm
@@ -129,36 +129,67 @@ export default function Category() {
                                         <div class="card-body">
                                             <div class="d-flex justify-content-between">
                                                 <span
-                                                    th:text="'+'+ ${pr.totalColor}+' Màu sắc'"
                                                     class="fw-light"
-                                                    style="font-size:14px"
-                                                ></span>
+                                                    style={{ fontSize: '14px' }}
+                                                >
+                                                    +{product.totalColor} Màu
+                                                    sắc
+                                                </span>
                                                 <span
-                                                    th:text="'+' +${pr.totalSize}+ ' Kích thước'"
                                                     class="fw-light"
-                                                    style="font-size:14px"
-                                                ></span>
+                                                    style={{ fontSize: '14px' }}
+                                                >
+                                                    +{product.totalSize} Kích
+                                                    thước
+                                                </span>
                                             </div>
-                                            <h6
-                                                class=" mt-2"
-                                                th:text="${pr.productName}"
-                                            ></h6>
-                                            <div th:if="${pr.isDiscount == true}">
-                                                <span
-                                                    th:text="${#numbers.formatDecimal(pr.price, 0, 'POINT', 0, 'POINT')} +' đ'"
-                                                    style="text-decoration-line: line-through"
-                                                ></span>
-                                                <span
-                                                    th:text="${#numbers.formatDecimal(pr.discountPrice, 0, 'POINT', 0, 'POINT')} +' đ'"
-                                                    style="color: red;font-weight: bold"
-                                                ></span>
-                                            </div>
-                                            <div th:unless="${pr.isDiscount == true}">
-                                                <span
-                                                    th:text="${#numbers.formatDecimal(pr.price, 0, 'POINT', 0, 'POINT')} +' đ'"
-                                                    style="color: red;font-weight: bold"
-                                                ></span>
-                                            </div>
+                                            <h6 class=" mt-2">
+                                                {product.productName}
+                                            </h6>
+                                            {product.discountPrice !== null ? (
+                                                <div>
+                                                    <span
+                                                        style={{
+                                                            textDecorationLine:
+                                                                'line-through',
+                                                        }}
+                                                    >
+                                                        {product.price.toLocaleString(
+                                                            'vi-VN',
+                                                            {
+                                                                style: 'currency',
+                                                                currency: 'VND',
+                                                            }
+                                                        )}
+                                                    </span>
+                                                    <span
+                                                        className="ms-2"
+                                                        style={{
+                                                            color: 'red',
+                                                            fontWeight: 'bold',
+                                                        }}
+                                                    >
+                                                        {product.discountPrice.toLocaleString(
+                                                            'vi-VN',
+                                                            {
+                                                                style: 'currency',
+                                                                currency: 'VND',
+                                                            }
+                                                        )}
+                                                    </span>
+                                                </div>
+                                            ) : (
+                                                <div>
+                                                    <span
+                                                        style={{
+                                                            color: 'red',
+                                                            fontWeight: 'bold',
+                                                        }}
+                                                    >
+                                                        {product.price}
+                                                    </span>
+                                                </div>
+                                            )}
                                         </div>
                                     </div>
                                 </>
