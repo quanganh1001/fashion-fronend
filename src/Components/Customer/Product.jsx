@@ -1,104 +1,255 @@
-import { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
-import { getAllImageProducts, getProduct } from '../../Services/ProductService';
+    import { useEffect, useState } from 'react';
+    import { useParams } from 'react-router-dom';
+    import { getAllImageProducts, getProduct } from '../../Services/ProductService';
 
-export default function Product() {
-    const [listImage, setListImage] = useState([]);
-    const { id } = useParams();
-    const [product, setProduct] = useState('');
-    const [color, setColor] = useState('');
-    const [size, setSize] = useState('');
-    const [listSize, setListSize] = useState([]);
-    const [listColor, setListColor] = useState([]);
+    export default function Product() {
+        const [listImage, setListImage] = useState([]);
+        const { id } = useParams();
+        const [product, setProduct] = useState('');
+        const [color, setColor] = useState('');
+        const [size, setSize] = useState('');
+        const [listSize, setListSize] = useState([]);
+        const [listColor, setListColor] = useState([]);
+        const [selectProductDetail, setSelectProductDetail] = useState('');
+        const [listProductsDetail,setListProductsDetail] = useState([]);
 
-    useEffect(() => {
-        fetchListImage();
-        fetchProduct();
-    }, []);
+        useEffect(() => {
+            fetchListImage();
+            fetchProduct();
+        }, []);
 
-    const fetchListImage = async () => {
-        await getAllImageProducts(id)
-            .then((res) => {
-                setListImage(res.data);
-            })
-            .catch((err) => {
-                console.error(err);
-            });
-    };
+        useEffect(() => {
+            if (color) {
+                setSelectProductDetail('');
+            }
+        }, [color, listProductsDetail]);
 
-    const fetchProduct = async () => {
-        await getProduct(id)
-            .then((res) => {
-                const uniqueSizes = [
-                    ...new Set(
-                        res.data.productsDetails.map((product) => product.size)
-                    ),
-                ];
-                setListSize(uniqueSizes);
+        useEffect(() => {
+            if (size) {
+                const productDetail = product.productsDetails.find(
+                    (pd) => pd.color === color && pd.size === size
+                );
+                setSelectProductDetail(productDetail);
+            }
+        }, [size]);
 
-                const uniqueColors = [
-                    ...new Set(
-                        res.data.productsDetails.map((product) => product.color)
-                    ),
-                ];
-                setListColor(uniqueColors);
+        const fetchListImage = async () => {
+            await getAllImageProducts(id)
+                .then((res) => {
+                    setListImage(res.data);
+                })
+                .catch((err) => {
+                    console.error(err);
+                });
+        };
 
-                setProduct(res.data);
-            })
-            .catch((err) => {
-                console.error(err);
-            });
-    };
+        const fetchProduct = async () => {
+            await getProduct(id)
+                .then((res) => {
+                    const uniqueSizes = [
+                        ...new Set(
+                            res.data.productsDetails.map((product) => product.size)
+                        ),
+                    ];
+                    setListSize(uniqueSizes);
 
-    return (
-        <>
-            <div class="container-xl mb-5">
-                <div class="d-flex mb-5">
-                    <div class="col-4 position-relative img "></div>
+                    const uniqueColors = [
+                        ...new Set(
+                            res.data.productsDetails.map((product) => product.color)
+                        ),
+                    ];
+                    setListColor(uniqueColors);
 
-                    <div class=" col-8 ps-5">
-                        <h4 class="mb-4">{product.productName}</h4>
-                        <div class="d-flex justify-content-between mb-3">
-                            <div>Hãy chọn size</div>
+                    setProduct(res.data);
+                    setListProductsDetail(res.data.productsDetails);
+                })
+                .catch((err) => {
+                    console.error(err);
+                });
+        };
+
+        const handleChangeColor = (cl) => {
+            setColor(cl);
+            setSize('');
+        };
+
+        const handleChangeSize = (sz) => {
+            setSize(sz);
+        };
+
+        const checkProductAvailability = (sz) => {
+            const productDetail = product.productsDetails.find(
+                (pd) => pd.color === color && pd.size === sz
+            );
+
+            return productDetail ? productDetail.quantity > 0 : false;
+        };
+
+        return (
+            <>
+                <div class="container-xl my-5">
+                    <div class="d-flex flex-wrap mb-5">
+                        <div class="col-4 position-relative  ">
+                            <img
+                                src={product.imageBackground}
+                                width={'100%'}
+                                alt=""
+                            />
                         </div>
-                        <div
-                            style={{ backgroundColor: '#d9d7d7' }}
-                            class="p-3 "
-                        >
-                            <div class="d-flex">
-                                <span>Giá: </span>
+
+                        <div class=" col-8 ps-5">
+                            <h4 class="mb-4">{product.productName}</h4>
+
+                            <div class="d-flex justify-content-between mb-3">
+                                {selectProductDetail ? (
+                                    selectProductDetail.code
+                                ) : (
+                                    <div>Hãy chọn màu và size</div>
+                                )}
+                            </div>
+                            <div
+                                style={{ backgroundColor: '#d9d7d7' }}
+                                class="p-3 "
+                            >
+                                <div class="d-flex">
+                                    Giá:{' '}
+                                    {product.discountPrice === null ? (
+                                        <span className="ms-3 fw-semibold text-danger">
+                                            {product &&
+                                                product.price.toLocaleString(
+                                                    'vi-VN',
+                                                    {
+                                                        style: 'currency',
+                                                        currency: 'VND',
+                                                    }
+                                                )}
+                                        </span>
+                                    ) : (
+                                        <>
+                                            <span className=" mx-3 text-decoration-line-through">
+                                                {product &&
+                                                    product.price.toLocaleString(
+                                                        'vi-VN',
+                                                        {
+                                                            style: 'currency',
+                                                            currency: 'VND',
+                                                        }
+                                                    )}
+                                            </span>
+                                            <span className=" fw-semibold text-danger">
+                                                {product &&
+                                                     product.discountPrice.toLocaleString(
+                                                        'vi-VN',
+                                                        {
+                                                            style: 'currency',
+                                                            currency: 'VND',
+                                                        }
+                                                    )}
+                                            </span>
+                                        </>
+                                    )}
+                                </div>
+                            </div>
+
+                            <div class="p-3">
+                                <table>
+                                    <tbody>
+                                        <tr>
+                                            <td className="col-2">Màu sắc:</td>
+                                            <td className="d-flex justify-content-between">
+                                                {listColor.map((cl) => (
+                                                    <label
+                                                        key={cl}
+                                                        class={` m-2  border p-2 ${
+                                                            color === cl
+                                                                ? 'button'
+                                                                : 'button-non-active'
+                                                        }`}
+                                                    >
+                                                        {cl}
+                                                        <input
+                                                            type="radio"
+                                                            name="color"
+                                                            value={cl}
+                                                            hidden
+                                                            onChange={() =>
+                                                                handleChangeColor(
+                                                                    cl
+                                                                )
+                                                            }
+                                                        />
+                                                    </label>
+                                                ))}
+                                            </td>
+                                        </tr>
+
+                                        <tr>
+                                            <td className="col-2">Size:</td>
+                                            <td className="  d-flex justify-content-between">
+                                                {listSize.map((sz) => (
+                                                    <label
+                                                        key={sz}
+                                                        className={` m-2 border p-2 ${
+                                                            !checkProductAvailability(
+                                                                sz
+                                                            )
+                                                                ? 'bg-body-secondary'
+                                                                : ''
+                                                        } ${
+                                                            size === sz
+                                                                ? 'button'
+                                                                : 'button-non-active'
+                                                        }`}
+                                                    >
+                                                        {sz}
+                                                        <input
+                                                            type="radio"
+                                                            name="size"
+                                                            value={sz}
+                                                            hidden
+                                                            onChange={() =>
+                                                                handleChangeSize(
+                                                                    sz
+                                                                )
+                                                            }
+                                                            disabled={
+                                                                !checkProductAvailability(
+                                                                    sz
+                                                                )
+                                                            }
+                                                        />
+                                                    </label>
+                                                ))}
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+
+                                <label class=" d-flex mt-5 align-items-center">
+                                    <span className="col-2">Số lượng: </span>
+                                    <div className="col-2">
+                                        <input
+                                            class="p-2 form-control"
+                                            type="number"
+                                            value="1"
+                                            min="1"
+                                            max="99"
+                                        />
+                                    </div>
+                                </label>
+
+                                <div class="mt-5">
+                                    <button
+                                        type="button"
+                                        disabled={!selectProductDetail}
+                                        class="button p-3"
+                                    >
+                                        Thêm vào giỏ hàng
+                                    </button>
+                                </div>
                             </div>
                         </div>
                     </div>
-                    <div class="p-3">
-                        <form>
-                            <div class="d-flex align-items-center">
-                                <div class="col-1">Màu sắc:</div>
-                            </div>
-
-                            <div class="d-flex align-items-center">
-                                <div class="col-1">Size:</div>
-                            </div>
-
-                            <div class="mt-3">
-                                <label class="col-1">Số lượng: </label>
-                                <input
-                                    class=" m-1 p-1 form-control"
-                                    type="number"
-                                    value="1"
-                                    min="1"
-                                    max="99"
-                                />
-                            </div>
-
-                            <div class="mt-5">
-                                <button type="button" class="button p-3">
-                                    Thêm vào giỏ hàng
-                                </button>
-                            </div>
-                        </form>
-                    </div>
-
                     <div class="mt-5">
                         <div class="fw-bold mb-1">Chính sách bán hàng</div>
                         <div class="row">
@@ -201,9 +352,8 @@ export default function Product() {
                         </div>
                     </div>
                 </div>
-            </div>
 
-            <div class="mt-5 "></div>
-        </>
-    );
-}
+                <div class="mt-5 "></div>
+            </>
+        );
+    }
