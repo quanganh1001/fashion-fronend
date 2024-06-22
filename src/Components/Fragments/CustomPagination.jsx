@@ -20,7 +20,7 @@ export default function CustomPagination({
                     <select
                         className="form-select bg-body-secondary"
                         id="page-size"
-                        value={searchParams.get('limit')}
+                        value={searchParams.get('limit') || ''}
                         onChange={(e) => setPageLimit(e.target.value)}
                     >
                         <option value="10">10 items</option>
@@ -55,6 +55,7 @@ export default function CustomPagination({
                             disabled={currentPage === 1}
                             onClick={() => setPage(currentPage - 1)}
                         />
+
                         {pageList?.map((pageNo, i) => (
                             <Pagination.Item
                                 key={i}

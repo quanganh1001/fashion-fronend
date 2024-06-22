@@ -12,7 +12,7 @@ import useModal from '../../../CustomHooks/useModal';
 import { toast } from 'react-toastify';
 import Tittle from '../../Fragments/Tittle';
 
-export default function Product() {
+export default function ProductAdmin() {
     const [products, setProducts] = useState([]);
     const [totalPages, setTotalPages] = useState(1);
     const [totalProducts, setTotalProducts] = useState();
@@ -30,7 +30,7 @@ export default function Product() {
             setProducts(response.data.productsRes);
             setTotalPages(response.data.totalPages);
             setCurrentPage(response.data.currentPage);
-            setTotalProducts(response.data.totalProduct);
+            setTotalProducts(response.data.totalProducts);
         } catch (error) {
             console.error('Error fetching products:', error);
         }
@@ -112,7 +112,7 @@ export default function Product() {
             <CustomPagination
                 totalPages={totalPages}
                 currentPage={currentPage}
-                totalProducts={totalProducts}
+                totalItems={totalProducts}
             />
         </>
     );

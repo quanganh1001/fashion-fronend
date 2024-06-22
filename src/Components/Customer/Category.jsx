@@ -1,24 +1,111 @@
 import { useEffect, useState } from 'react';
-import { getAllProductByCategory } from '../../Services/ProductService';
-import { Link, useParams } from 'react-router-dom';
-import { error } from 'jquery';
+import {
+    getAllProductByCategory,
+} from '../../Services/ProductService';
+import { Link, useParams, useNavigate, useLocation } from 'react-router-dom';
+import CustomPagination from '../Fragments/CustomPagination';
+import usePagination from '../../CustomHooks/usePagination';
+
 
 export default function Category() {
     let { catId } = useParams();
     const [listProducts, setListProducts] = useState([]);
+    const [totalPages, setTotalPages] = useState(1);
+    const [totalProducts, setTotalProducts] = useState();
+    const [currentPage, setCurrentPage] = useState();
+    const {searchParams } = usePagination();
+    const location = useLocation();
+    const params = new URLSearchParams(location.search);
+    const key = params.get('key') || '';
+    const page = params.get('page') || 1;
+    const [filteredProducts, setFilteredProducts] = useState([]);
+    const [priceRange, setPriceRange] = useState({ min: 0, max: 10000000 });
+    const [sortOption, setSortOption] = useState('');
+    const navigate = useNavigate();
+
 
     useEffect(() => {
         fetchGetProductByCategory();
-    }, []);
+    }, [catId]);
+
+
+    useEffect(() => {
+        filterProducts();
+        window.scrollTo(0, 0);
+    }, [listProducts, sortOption, searchParams]);
+
+    useEffect(() => {
+        params.set('page', 1);
+        navigate({ search: params.toString() });
+        filterProducts();
+        window.scrollTo(0, 0);
+    }, [ priceRange]);
+
+
+    const filterProducts = () => {
+        let filtered = [...listProducts];
+
+        if (priceRange.min || priceRange.max) {
+            filtered = filtered.filter((product) => {
+                const price =
+                    product.discountPrice !== null
+                        ? product.discountPrice
+                        : product.price;
+
+                return (
+                    (!priceRange.min || price >= priceRange.min) &&
+                    (!priceRange.max || price <= priceRange.max)
+                );
+            });
+        }
+
+        if (sortOption) {
+            if (sortOption === 'name-up') {
+                filtered.sort((a, b) =>
+                    a.productName.localeCompare(b.productName)
+                );
+            } else if (sortOption === 'name-down') {
+                filtered.sort((a, b) =>
+                    b.productName.localeCompare(a.productName)
+                );
+            } else if (sortOption === 'price-up') {
+                filtered.sort((a, b) => a.price - b.price);
+            } else if (sortOption === 'price-down') {
+                filtered.sort((a, b) => b.price - a.price);
+            }
+        }
+
+        const limit = parseInt(searchParams.get('limit') || '10', 10); 
+
+         if (limit <= 0) {
+             console.error('Invalid limit value:', limit);
+             return;
+        }
+        
+        const startIndex = (page - 1) * parseInt(limit);
+
+        const endIndex = startIndex + parseInt(limit);
+
+        const productsOnCurrentPage = filtered.slice(startIndex, endIndex);
+
+        setFilteredProducts(productsOnCurrentPage);
+
+        const newTotalPages = Math.ceil(filtered.length / limit);
+
+        setTotalPages(newTotalPages);
+
+        setTotalProducts(filtered.length);
+
+        setCurrentPage(page);
+    };
 
     const fetchGetProductByCategory = async () => {
         if (catId === 'sale') {
             catId = 0;
         }
-        await getAllProductByCategory(catId)
+        await getAllProductByCategory(catId, key)
             .then((res) => {
-                console.log(res.data);
-                setListProducts(res.data.productsRes);
+                setListProducts(res.data);
             })
             .catch((error) => {
                 console.error(error);
@@ -26,19 +113,41 @@ export default function Category() {
     };
     return (
         <>
-            <div className="d-flex flex-wrap container-xl p-0 ">
+            <style>
+                {`
+                .add-to-cart-btn {
+                position: absolute;
+                transform: translate(-50%, -50%);
+                top: 100%;
+                left: 50%;
+                transition: all 0.3s;
+                opacity: 0;
+                }
+                .card:hover .add-to-cart-btn {
+                    opacity: 1;
+                    transition: all 0.3s;
+                    top: 80%;
+                }   
+                `}
+            </style>
+
+            <div className="d-flex flex-wrap container-xl py-5">
                 <div className="col-3 bg-light p-3 align-self-start">
                     <h4 className="fw-bold">Bộ lọc</h4>
 
                     <div className="mt-5">
                         Sắp xếp theo:
-                        <select className="form-control">
+                        <select
+                            className="form-control"
+                            value={sortOption}
+                            onChange={(e) => setSortOption(e.target.value)}
+                        >
                             <option value="">--Chọn--</option>
                             <option value="name-up">
-                                Sắp xếp theo tên tăng dần
+                                Sắp xếp theo tên a-z
                             </option>
                             <option value="name-down">
-                                Sắp xếp theo tên giảm dần
+                                Sắp xếp theo tên z-a
                             </option>
                             <option value="price-up">
                                 Sắp xếp theo giá tăng dần
@@ -51,46 +160,60 @@ export default function Category() {
 
                     <div className="mt-5 mb-3">
                         Chọn khoảng giá:
-                        <input
-                            type="text"
-                            className="form-control"
-                            name="price_range"
-                        />
-                        <div className="d-flex justify-content-between mt-3">
-                            <div>
-                                Từ:<strong></strong>
-                            </div>
-                            <div>
-                                Đến: <strong></strong>
-                            </div>
+                        <div className="input-group">
+                            <input
+                                type="number"
+                                className="form-control"
+                                placeholder="Từ"
+                                value={priceRange.min}
+                                onChange={(e) =>
+                                    setPriceRange({
+                                        ...priceRange,
+                                        min: e.target.value,
+                                    })
+                                }
+                            />
+                            <span className="input-group-text">-</span>
+                            <input
+                                type="number"
+                                className="form-control"
+                                placeholder="Đến"
+                                value={priceRange.max}
+                                onChange={(e) =>
+                                    setPriceRange({
+                                        ...priceRange,
+                                        max: e.target.value,
+                                    })
+                                }
+                            />
                         </div>
                     </div>
                 </div>
 
-                <div class="col d-flex flex-wrap justify-content-around">
+                <div className="col ">
                     {listProducts.length > 0 ? (
                         <>
-                            {listProducts.map((product) => (
-                                <>
+                            <div className="d-flex flex-wrap justify-content-around">
+                                {filteredProducts.map((product) => (
                                     <div
                                         key={product.id}
-                                        class="shadow card hover m-2"
+                                        className="shadow card hover m-2"
                                         style={{ width: '30%' }}
                                     >
-                                        <div class="card  position-relative ">
+                                        <div className="card  position-relative ">
                                             {product.discountPrice && (
                                                 <div
                                                     style={{
-                                                        zIndex: '1',
+                                                        zIndex: '0',
                                                         backgroundColor: 'red',
                                                         width: '50px',
                                                     }}
-                                                    class="position-absolute top-0 start-0 text-white rounded-pill m-2 fw-bold d-flex justify-content-center"
+                                                    className="position-absolute top-0 start-0 text-white rounded-pill m-2 fw-semibold d-flex justify-content-center"
                                                 >
-                                                    {product.discountPrice}
+                                                    -{product.discountPercent}%
                                                 </div>
                                             )}
-                                            {product.imageBackground.endsWith(
+                                            {product.imageBackground && product.imageBackground.endsWith(
                                                 '.mp4'
                                             ) ? (
                                                 <video
@@ -119,31 +242,36 @@ export default function Category() {
                                             )}
 
                                             <Link
+                                                to={"/product/" + product.id}
                                                 style={{ width: '80%' }}
-                                                class="button border-white shadow fw-bold  add-to-cart-btn"
+                                                className="button border-white shadow fw-bold  add-to-cart-btn"
                                             >
                                                 Chi tiết sản phẩm
                                             </Link>
                                         </div>
 
-                                        <div class="card-body">
-                                            <div class="d-flex justify-content-between">
+                                        <div className="card-body">
+                                            <div className="d-flex justify-content-between">
                                                 <span
-                                                    class="fw-light"
-                                                    style={{ fontSize: '14px' }}
+                                                    className="fw-light"
+                                                    style={{
+                                                        fontSize: '14px',
+                                                    }}
                                                 >
                                                     +{product.totalColor} Màu
                                                     sắc
                                                 </span>
                                                 <span
-                                                    class="fw-light"
-                                                    style={{ fontSize: '14px' }}
+                                                    className="fw-light"
+                                                    style={{
+                                                        fontSize: '14px',
+                                                    }}
                                                 >
                                                     +{product.totalSize} Kích
                                                     thước
                                                 </span>
                                             </div>
-                                            <h6 class=" mt-2">
+                                            <h6 className=" mt-2">
                                                 {product.productName}
                                             </h6>
                                             {product.discountPrice !== null ? (
@@ -186,17 +314,30 @@ export default function Category() {
                                                             fontWeight: 'bold',
                                                         }}
                                                     >
-                                                        {product.price}
+                                                        {product.price.toLocaleString(
+                                                            'vi-VN',
+                                                            {
+                                                                style: 'currency',
+                                                                currency: 'VND',
+                                                            }
+                                                        )}
                                                     </span>
                                                 </div>
                                             )}
                                         </div>
                                     </div>
-                                </>
-                            ))}
+                                ))}
+                            </div>
+                            <CustomPagination
+                                totalPages={totalPages}
+                                currentPage={parseInt(currentPage)}
+                                totalItems={totalProducts}
+                            />
                         </>
                     ) : (
-                        <div>Chưa có sản phẩm trong danh mục này</div>
+                        <div className="d-flex flex-wrap justify-content-around">
+                            Chưa có sản phẩm trong danh mục này
+                        </div>
                     )}
                 </div>
             </div>

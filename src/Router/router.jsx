@@ -1,7 +1,7 @@
 import { ProtectedRoute } from './ProtectedRoute.jsx';
 import { Outlet, createBrowserRouter } from 'react-router-dom';
 import App from '../App.jsx';
-import Product from '../Components/Admin/Products/Product';
+import Product from '../Components/Customer/Product.jsx';
 import CategoryAdmin from '../Components/Admin/Categories/CategoryAdmin.jsx';
 import Category from '../Components/Customer/Category.jsx';
 import Login from '../Components/Auth/Login.jsx';
@@ -21,6 +21,7 @@ import Invoice from '../Components/Admin/Invoices/Invoice.jsx';
 import EditInvoiceDetail from '../Components/Admin/Invoices/EditInvoiceDetail.jsx';
 import Home from '../Components/Customer/Home.jsx';
 import PublicLayout from '../Components/Layout/PublicLayout.jsx';
+import ProductAdmin from '../Components/Admin/Products/ProductAdmin.jsx';
 
 export const router = createBrowserRouter([
     {
@@ -46,7 +47,19 @@ export const router = createBrowserRouter([
                     },
                     {
                         path: 'category/:catId',
-                        element: <Category />,
+                        element: (
+                            <PaginationProvider>
+                                <Category />
+                            </PaginationProvider>
+                        ),
+                    },
+                    {
+                        path: 'product/:id',
+                        element: (
+                            <PaginationProvider>
+                                <Product />
+                            </PaginationProvider>
+                        ),
                     },
                 ],
             },
@@ -72,7 +85,7 @@ export const router = createBrowserRouter([
                                 index: true,
                                 element: (
                                     <PaginationProvider>
-                                        <Product />
+                                        <ProductAdmin />
                                     </PaginationProvider>
                                 ),
                             },

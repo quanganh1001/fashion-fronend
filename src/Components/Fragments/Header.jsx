@@ -4,12 +4,12 @@ import { getAllCategories } from '../../Services/CategoryService';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import useAuth from '../../CustomHooks/useAuth';
 import { toast } from 'react-toastify';
+import { useNavigate } from 'react-router-dom';
 
 export default function Header() {
     const [listCategoriesF1, setListCategoriesF1] = useState([]);
     const [listCategoriesF2, setListCategoriesF2] = useState([]);
     const [listCategoriesF3, setListCategoriesF3] = useState([]);
-;
     const [searchValue, setSearchValue] = useState('');
     const [searchValid, setSearchValid] = useState(false);
     const { auth, handleLogout, handleLogin } = useAuth();
@@ -21,7 +21,7 @@ export default function Header() {
     const [isShowFormLogin, setIsShowFormLogin] = useState(false);
         const [hoveredF1, setHoveredF1] = useState(null);
     const [activeClass, setActiveClass] = useState('');
-
+    const navigate = useNavigate();
     
     useEffect(() => {
         if (hoveredF1 !== null) {
@@ -80,6 +80,8 @@ export default function Header() {
         } else setSearchValid(false);
 
         if (isValid) {
+            
+            navigate('/category/search?key=' + searchValue);
         }
     };
 
@@ -136,7 +138,7 @@ export default function Header() {
                         opacity: 0;
                         margin-top: 20px;
                         transition: margin-top 0.3s,opacity 0.3s;
-                        z-index:1;
+                        z-index:5;
                     }
                     .dropdown-content.show {
                         margin-top: 0px;
@@ -148,7 +150,7 @@ export default function Header() {
 
             <nav
                 style={{ zIndex: '15' }}
-                className=" bg-body-tertiary position-relative shadow-sm d-flex"
+                className=" bg-body-tertiary position-relative shadow-lg d-flex"
             >
                 <div className="container-xl  d-flex justify-content-between">
                     <Link
@@ -189,7 +191,8 @@ export default function Header() {
                                 </Link>
                                 {hoveredF1 === f1.id && (
                                     <div
-                                        className={`dropdown-content z-3 d-flex flex-wrap pt-3 pb-3 border bg-white position-absolute start-50 top-100 translate-middle-x col-10 rounded-bottom shadow justify-content-around ${activeClass}`}
+                                        className={`dropdown-content d-flex flex-wrap pt-3 pb-3 border bg-white position-absolute start-50 top-100 translate-middle-x col-10 rounded-bottom shadow justify-content-around ${activeClass}`}
+                                        style={{ zIndex: '51' }}
                                     >
                                         {listCategoriesF2
                                             .filter(
@@ -379,7 +382,7 @@ export default function Header() {
                                             </div>
                                             <button
                                                 type="submit"
-                                                className="btn btn-primary mt-3"
+                                                className="button mt-3"
                                             >
                                                 Đăng nhập
                                             </button>
