@@ -147,7 +147,7 @@ export default function Header() {
             </style>
 
             <nav
-                style={{ zIndex: '1' }}
+                style={{ zIndex: '15' }}
                 className=" bg-body-tertiary position-relative shadow-sm d-flex"
             >
                 <div className="container-xl  d-flex justify-content-between">
