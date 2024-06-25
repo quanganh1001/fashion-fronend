@@ -1,7 +1,7 @@
 export default function ReturnPolicy() {
     return (
         <>
-            <div class="content-pageDetail typeList-style mt-5">
+            <div className="content-pageDetail typeList-style mt-5">
                 <p>
                     <strong>1. CHÍNH SÁCH ÁP DỤNG</strong>
                 </p>

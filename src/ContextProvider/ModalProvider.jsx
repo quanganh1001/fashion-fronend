@@ -7,14 +7,16 @@ export default function ModalProvider({ children }) {
         isOpen: false,
         title: '',
         content: '',
+        isNoti: false,
         onAccept: () => {},
     });
 
-    const openModal = (title, content, onAccept) => {
+    const openModal = (title, content, onAccept, isNoti) => {
         setModal({
             isOpen: true,
             title,
             content,
+            isNoti,
             onAccept,
         });
     };
@@ -24,9 +26,11 @@ export default function ModalProvider({ children }) {
             isOpen: false,
             title: '',
             content: '',
+            isNoti: false,
             onAccept: () => {},
         });
     };
+
 
     return (
         <ModalContext.Provider value={{ modal, openModal, closeModal }}>

@@ -13,9 +13,13 @@ export default function CustomModal() {
                 <Button variant="secondary" onClick={closeModal}>
                     Hủy
                 </Button>
-                <Button variant="dark bg-gradient" onClick={modal.onAccept}>
-                    Xác nhận
-                </Button>
+                {!modal.isNoti === true ? (
+                    <Button variant="dark bg-gradient" onClick={modal.onAccept}>
+                        Xác nhận
+                    </Button>
+                ) : (
+                    <></>
+                )}
             </Modal.Footer>
         </Modal>
     );

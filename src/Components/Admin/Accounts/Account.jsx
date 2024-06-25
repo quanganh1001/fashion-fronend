@@ -3,11 +3,10 @@ import Tittle from '../../Fragments/Tittle';
 import {
     activation,
     deleteAccount,
-    getAccount,
     getAllAccount,
     updateRole,
 } from '../../../Services/AccountService';
-import { Button, Dropdown, Modal } from 'react-bootstrap';
+import {  Dropdown  } from 'react-bootstrap';
 import { toast } from 'react-toastify';
 import useModal from '../../../CustomHooks/useModal';
 import useAuth from '../../../CustomHooks/useAuth';
@@ -19,15 +18,9 @@ import usePagination from '../../../CustomHooks/usePagination';
 
 export default function Account() {
     const [listAccount, setListAccount] = useState([]);
-    const [account, setAccount] = useState({
-        phone: '',
-        email: '',
-        address: '',
-        name: '',
-    });
+
     const { openModal, closeModal } = useModal();
     const { auth } = useAuth();
-    const [show, setShow] = useState(false);
     const [listRoles, setListRoles] = useState([]);
     const [newIdRole, setNewIdRole] = useState({
         id: '',
@@ -37,20 +30,6 @@ export default function Account() {
     const [totalPages, setTotalPages] = useState(1);
     const [totalProducts, setTotalProducts] = useState();
     const [currentPage, setCurrentPage] = useState();
-
-    const handleClose = () => setShow(false);
-
-    const handleShow = async (id) => {
-        await getAccount(id).then((res) => {
-            setAccount({
-                name: res.data.name,
-                phone: res.data.phone,
-                email: res.data.email,
-                address: res.data.address,
-            });
-        });
-        setShow(true);
-    };
 
     useEffect(() => {
         fetchGetAllRoles();
@@ -90,7 +69,7 @@ export default function Account() {
                             toast.error('Có lỗi xảy ra!');
                         });
                     closeModal();
-                }
+                },
             );
         }
     }, [newIdRole]);
@@ -153,6 +132,30 @@ export default function Account() {
     const handleShowModalRole = async (id, role) => {
         setNewIdRole({ id, role });
     };
+
+    const handleShowAccountDetail = (account) => {
+        openModal(
+            'Thông tin tài khoản',
+            <>
+                <div className="m-5">
+                    Tên: <span className="fw-bolder">{account.name}</span>
+                </div>
+                <div className="m-5">
+                    Số điện thoại:{' '}
+                    <span className="fw-bolder">{account.phone}</span>
+                </div>
+                <div className="m-5">
+                    Email: <span className="fw-bolder">{account.email}</span>
+                </div>
+                <div className="m-5">
+                    Địa chỉ:{' '}
+                    <span className="fw-bolder">{account.address}</span>
+                </div>
+            </>,
+            () => { }
+            ,true
+        );
+    };
     return (
         <>
             <Tittle tittle="Quản lý tài khoản" />
@@ -212,7 +215,7 @@ export default function Account() {
                                                 <Dropdown.Menu>
                                                     <Dropdown.Item
                                                         onClick={() =>
-                                                            handleShow(acc.id)
+                                                            handleShowAccountDetail(acc)
                                                         }
                                                     >
                                                         Xem thông tin
@@ -260,33 +263,7 @@ export default function Account() {
                 />
             </div>
 
-            <Modal size="lg" show={show}>
-                <Modal.Header closeButton onClick={() => handleClose()}>
-                    <Modal.Title>Thông tin tài khoản</Modal.Title>
-                </Modal.Header>
-                <Modal.Body>
-                    <div className="m-5">
-                        Tên: <span className="fw-bolder">{account.name}</span>
-                    </div>
-                    <div className="m-5">
-                        Số điện thoại:{' '}
-                        <span className="fw-bolder">{account.phone}</span>
-                    </div>
-                    <div className="m-5">
-                        Email:{' '}
-                        <span className="fw-bolder">{account.email}</span>
-                    </div>
-                    <div className="m-5">
-                        Địa chỉ:{' '}
-                        <span className="fw-bolder">{account.address}</span>
-                    </div>
-                </Modal.Body>
-                <Modal.Footer>
-                    <Button variant="secondary" onClick={() => handleClose()}>
-                        Close
-                    </Button>
-                </Modal.Footer>
-            </Modal>
+            
         </>
     );
 }

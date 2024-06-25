@@ -4,6 +4,7 @@ import { getAllImageProducts, getProduct } from '../../Services/ProductService';
 import { Tab, Tabs, Nav } from 'react-bootstrap';
 import ReturnPolicy from '../Fragments/ReturnPolicy';
 import PrivatePolicy from './PrivatePolicy';
+import useModal from '../../CustomHooks/useModal';
 
 export default function Product() {
     const [listImage, setListImage] = useState([]);
@@ -15,6 +16,7 @@ export default function Product() {
     const [listColor, setListColor] = useState([]);
     const [selectProductDetail, setSelectProductDetail] = useState('');
     const [listProductsDetail, setListProductsDetail] = useState([]);
+    const { openModal, closeModal, isNoti } = useModal();
 
     useEffect(() => {
         fetchListImage();
@@ -88,6 +90,15 @@ export default function Product() {
         return productDetail ? productDetail.quantity > 0 : false;
     };
 
+    const handleShowImageChooseSize = (imgUrl) => {
+        openModal(
+            'Hướng dẫn chọn size',
+            <img src={imgUrl} alt="Chọn size" width="100%" />,
+            true,
+            () => {
+            }
+        );
+    };
     return (
         <>
             <div className="container-xl my-5">
@@ -105,10 +116,22 @@ export default function Product() {
 
                         <div className="d-flex justify-content-between mb-3">
                             {selectProductDetail ? (
-                                selectProductDetail.code
+                                <div>{selectProductDetail.code}</div>
                             ) : (
                                 <div>Hãy chọn màu và size</div>
                             )}
+
+                            <div
+                                style={{ cursor: 'pointer' }}
+                                className="link-dark fst-italic btn-link"
+                                onClick={() =>
+                                    handleShowImageChooseSize(
+                                        product.imageChooseSize
+                                    )
+                                }
+                            >
+                                Bảng hướng dẫn chọn size
+                            </div>
                         </div>
                         <div
                             style={{ backgroundColor: '#d9d7d7' }}
@@ -159,7 +182,7 @@ export default function Product() {
                                 <tbody>
                                     <tr>
                                         <td className="col-2">Màu sắc:</td>
-                                        <td className="d-flex justify-content-between">
+                                        <td className="d-flex flex-wrap justify-content-start">
                                             {listColor.map((cl) => (
                                                 <label
                                                     key={cl}
@@ -186,9 +209,9 @@ export default function Product() {
                                         </td>
                                     </tr>
 
-                                    <tr>
+                                    <tr className="border-top">
                                         <td className="col-2">Size:</td>
-                                        <td className="  d-flex justify-content-between">
+                                        <td className="  d-flex justify-content-start">
                                             {listSize.map((sz) => (
                                                 <label
                                                     key={sz}
@@ -364,7 +387,7 @@ export default function Product() {
                         <div className="tab-content mt-5">
                             {product.description ? (
                                 <pre
-                                    className='text-dark'
+                                    className="text-dark"
                                     style={{
                                         fontSize: '16px',
                                         fontFamily: 'Quicksand, sans-serif',

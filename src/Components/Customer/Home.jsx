@@ -198,17 +198,15 @@ export default function Home() {
                                     <img
                                         src={cat.catBackground}
                                         style={{
+                                            height: '350px',
                                             width: '100%',
-                                            height: '50vh',
                                         }}
                                         alt=""
                                     />
 
                                     <div className="position-absolute bg-white bg-opacity-50 p-3 d-flex justify-content-between align-items-center w-100 bottom-0">
                                         <h4>{cat.catName}</h4>
-                                        <Link
-                                            to={`/category/${cat.categoryCode}`}
-                                        >
+                                        <Link to={`/category/${cat.id}`}>
                                             <FontAwesomeIcon
                                                 icon="fa-solid fa-arrow-right-to-bracket fa-1x"
                                                 className="text-dark bg-white rounded-circle p-2 "
@@ -254,9 +252,8 @@ export default function Home() {
                                         -{product.discountPercent}%
                                     </div>
 
-                                    {product.imageBackground && product.imageBackground.endsWith(
-                                        '.mp4'
-                                    ) ? (
+                                    {product.imageBackground &&
+                                    product.imageBackground.endsWith('.mp4') ? (
                                         <video
                                             style={{
                                                 height: '350px',
@@ -279,6 +276,7 @@ export default function Home() {
                                     )}
 
                                     <Link
+                                        to={'/product/' + product.id}
                                         style={{ width: '80%' }}
                                         className="add-to-cart-btn position-absolute button border-white shadow fw-bold"
                                     >
