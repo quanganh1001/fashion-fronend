@@ -1,10 +1,13 @@
 import { Outlet } from 'react-router-dom';
 import AuthProvider from './ContextProvider/AuthProvider.jsx';
+import CartProvider from './ContextProvider/CartProvider.jsx';
 
 function App() {
     return (
         <AuthProvider>
-            <Outlet />
+            <CartProvider>
+                <Outlet />
+            </CartProvider>
         </AuthProvider>
     );
 }

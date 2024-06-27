@@ -5,6 +5,8 @@ import { Tab, Tabs, Nav } from 'react-bootstrap';
 import ReturnPolicy from '../Fragments/ReturnPolicy';
 import PrivatePolicy from './PrivatePolicy';
 import useModal from '../../CustomHooks/useModal';
+import { toast } from 'react-toastify';
+import useCart from '../../CustomHooks/useCart';
 
 export default function Product() {
     const [listImage, setListImage] = useState([]);
@@ -16,7 +18,9 @@ export default function Product() {
     const [listColor, setListColor] = useState([]);
     const [selectProductDetail, setSelectProductDetail] = useState('');
     const [listProductsDetail, setListProductsDetail] = useState([]);
-    const { openModal, closeModal, isNoti } = useModal();
+    const { openModal } = useModal();
+    const [inputQuantity, setInputQuantity] = useState(1)
+    const { handleUpdateCart } = useCart();
 
     useEffect(() => {
         fetchListImage();
@@ -99,6 +103,17 @@ export default function Product() {
             }
         );
     };
+
+    const handleAddToCart = () => {
+        try {
+            handleUpdateCart(selectProductDetail.id, inputQuantity);
+            toast.success('Thêm vào giỏ hàng thành công');
+        } catch {
+            toast.error('Có lỗi xảy ra!');
+        }
+        
+        
+    }
     return (
         <>
             <div className="container-xl my-5">
@@ -258,6 +273,9 @@ export default function Product() {
                                         defaultValue="1"
                                         min="1"
                                         max="99"
+                                        onChange={(e) =>
+                                            setInputQuantity(e.target.value)
+                                        }
                                     />
                                 </div>
                             </label>
@@ -267,6 +285,7 @@ export default function Product() {
                                     type="button"
                                     disabled={!selectProductDetail}
                                     className="button p-3"
+                                    onClick={()=>handleAddToCart()}
                                 >
                                     Thêm vào giỏ hàng
                                 </button>

@@ -5,6 +5,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import useAuth from '../../CustomHooks/useAuth';
 import { toast } from 'react-toastify';
 import { useNavigate } from 'react-router-dom';
+import useCart from '../../CustomHooks/useCart';
 
 export default function Header() {
     const [listCategoriesF1, setListCategoriesF1] = useState([]);
@@ -19,9 +20,10 @@ export default function Header() {
     const [usernameBlank, setUsernameBlank] = useState('');
     const [error, setError] = useState('');
     const [isShowFormLogin, setIsShowFormLogin] = useState(false);
-        const [hoveredF1, setHoveredF1] = useState(null);
+    const [hoveredF1, setHoveredF1] = useState(null);
     const [activeClass, setActiveClass] = useState('');
     const navigate = useNavigate();
+    const { totalCartItems } = useCart();
     
     useEffect(() => {
         if (hoveredF1 !== null) {
@@ -262,8 +264,13 @@ export default function Header() {
                     </div>
 
                     <div className="align-self-center d-flex">
-                        <Link className="position-relative btn btn-outline-dark align-self-center">
+                        <Link to={'/cart'} className="btn btn-outline-dark align-self-center position-relative">
                             <FontAwesomeIcon icon="fa-solid fa-cart-shopping" />
+                            {totalCartItems > 0 && (
+                                <span className="position-absolute top-0 start-0 translate-middle badge rounded-pill bg-danger">
+                                    {totalCartItems}
+                                </span>
+                            )}
                         </Link>
                         {auth.account ? (
                             <div className="ms-3 d-flex align-items-center">

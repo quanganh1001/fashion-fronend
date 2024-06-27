@@ -17,14 +17,14 @@ export const ProtectedRoute = ({ hasAnyRoles }) => {
             location.pathname.startsWith('/admin/categories') ||
             (location.pathname.startsWith('/admin/accounts') &&
                 (!location.pathname.endsWith('/edit') ||
-                    !location.pathname.endsWith('/add')))) &&
-        auth.account.role !== 'ROLE_MANAGER'
+                    location.pathname.endsWith('/add')))) &&
+        (auth.account.role !== 'ROLE_MANAGER')
     ) {
         console.log('Bạn không có quyền truy cập');
         return <Navigate to="/login" />;
     }
 
-    if (auth.token && hasAnyRoles?.includes(auth.account.role)) {
+    if (auth.token && hasAnyRoles?.includes(auth?.account?.role)) {
         return (
             <AdminLayout>
                 <Outlet />

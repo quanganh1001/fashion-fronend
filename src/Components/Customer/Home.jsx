@@ -343,7 +343,13 @@ export default function Home() {
                                                     fontWeight: 'bold',
                                                 }}
                                             >
-                                                {product.price}
+                                                {product.price.toLocaleString(
+                                                    'vi-VN',
+                                                    {
+                                                        style: 'currency',
+                                                        currency: 'VND',
+                                                    }
+                                                )}
                                             </span>
                                         </div>
                                     )}

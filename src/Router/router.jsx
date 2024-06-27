@@ -22,6 +22,7 @@ import EditInvoiceDetail from '../Components/Admin/Invoices/EditInvoiceDetail.js
 import Home from '../Components/Customer/Home.jsx';
 import PublicLayout from '../Components/Layout/PublicLayout.jsx';
 import ProductAdmin from '../Components/Admin/Products/ProductAdmin.jsx';
+import Cart from '../Components/Customer/Cart.jsx';
 
 export const router = createBrowserRouter([
     {
@@ -59,6 +60,12 @@ export const router = createBrowserRouter([
                             <PaginationProvider>
                                 <Product />
                             </PaginationProvider>
+                        ),
+                    },
+                    {
+                        path: 'cart',
+                        element: (
+                            <Cart/>
                         ),
                     },
                 ],
