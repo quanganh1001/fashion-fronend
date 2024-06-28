@@ -2,22 +2,23 @@ import { useEffect, useState } from 'react';
 import useCart from '../../CustomHooks/useCart';
 import useAuth from '../../CustomHooks/useAuth';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { checkoutVnpay } from '../../Services/InvoiceService';
+import { toast } from 'react-toastify';
 
 export default function Cart() {
     const { cart, handleUpdateCart, handleRemove, totalPrice } = useCart();
     const { auth } = useAuth();
-    const [inputQuantity, setInputQuantity] = useState(1);
-
+    const [selectPay, setSelectPay] = useState('cash');
+    const [nameError, setNameError] = useState('');
+    const [phoneError, setPhoneError] = useState('');
+    const [addressError, setAddressError] = useState('');
     const [customerInfo, setCustomerInfo] = useState({
         name: auth?.account?.name || '',
         phone: auth?.account?.phone || '',
         address: auth?.account?.address || '',
         customerNote: auth?.account?.customerNote || '',
         shippingFee: 0,
-        listProduct: cart.map((item) => ({
-            productDetailId: item.productDetail.id,
-            quantity: item.quantity,
-        })),
+        invoicesDetails: [],
     });
 
     const [totalBill, setTotalBill] = useState(
@@ -28,6 +29,10 @@ export default function Cart() {
         setCustomerInfo((prevState) => ({
             ...prevState,
             shippingFee: totalPrice >= 500000 ? 0 : 30000,
+            invoicesDetails: cart.map((item) => ({
+                productDetailId: item.productDetail.id,
+                quantity: item.quantity,
+            })),
         }));
         setTotalBill(totalPrice + (totalPrice >= 500000 ? 0 : 30000));
     }, [totalPrice]);
@@ -38,6 +43,57 @@ export default function Cart() {
     const handleRemoveCartItem = (id) => {
         handleRemove(id);
     };
+    const handlePaymentChange = (e) => {
+        setSelectPay(e.target.value);
+    };
+    const handleChange = (e) => {
+        const { name, value } = e.target;
+        setCustomerInfo((prevState) => ({
+            ...prevState,
+            [name]: value,
+        }));
+    };
+
+    const handleSubmit = (e) => {
+        e.preventDefault();
+
+        const isValid = true;
+
+        if (customerInfo.name === '') {
+            isValid = false;
+            setNameError('Tên không được để trống');
+        } else setNameError('');
+
+        if (customerInfo.phone === '') {
+            isValid = false;
+            setPhoneError('Số điện thoại không được để trống');
+        } else if (isNaN(customerInfo.phone)) {
+            isValid = false;
+            setPhoneError('Số điện thoại không hợp lệ');
+        } else {
+            setPhoneError('');
+        }
+
+        if (customerInfo.address === '') {
+            isValid = false;
+            setAddressError('Địa chỉ không được để trống');
+        } else setAddressError('');
+
+        if (isValid) {
+            if (selectPay === 'vnpay') {
+                
+                checkoutVnpay(customerInfo)
+                    .then((res) => {
+                        window.location.href = res.data;
+                    })
+                    .catch((error) => {
+                        toast.error(error);
+                        console.error(error);
+                    });
+            }
+        }
+    };
+
     return (
         <>
             <style>{`
@@ -266,31 +322,43 @@ export default function Cart() {
                                 </p>
                             </div>
 
-                            <div class="border mt-5 p-3 bg-light">
+                            <div className="border mt-5 p-3 bg-light">
                                 <h4>Hình thức thanh toán</h4>
-                                <div class="mt-3 border p-5 bg-white">
+                                <div className="mt-3 border p-5 bg-white">
                                     <input
-                                        class="form-check-input"
+                                        className="form-check-input"
                                         type="radio"
                                         name="paymentMethod"
                                         value="cash"
+                                        checked={selectPay === 'cash'}
+                                        onChange={handlePaymentChange}
                                     />
                                     <img
-                                        src="/image/kisspng-dollar-sign-united-states-dollar-dollar-sign-5a737456028001.6807977015175158620103.png"
+                                        className="mx-3"
+                                        src={
+                                            process.env.PUBLIC_URL +
+                                            '/kisspng-cash-on-delivery-money-electronic-bill-payment-5c80924abdc4d0.4008274915519299307773.jpg'
+                                        }
                                         alt=""
                                         width="20px"
                                     />
                                     Thanh toán bằng tiền mặt
                                 </div>
-                                <div class="mt-3 border bg-white p-5">
+                                <div className="mt-3 border bg-white p-5">
                                     <input
-                                        class="form-check-input"
+                                        className="form-check-input"
                                         type="radio"
                                         name="paymentMethod"
                                         value="vnpay"
+                                        checked={selectPay === 'vnpay'}
+                                        onChange={handlePaymentChange}
                                     />
                                     <img
-                                        src="/image/assets_-M47Mjlovb1o8n1BkFz7_-MN7SxEcvT_Y3xuokNIN_-MN7THTOhIcyZG_wpSYr_Logo-VNPAYQR-update.png"
+                                        className="ms-1"
+                                        src={
+                                            process.env.PUBLIC_URL +
+                                            '/vnpay-logo_64dc3da9d7a11.jpg'
+                                        }
                                         alt=""
                                         width="50px"
                                     />
@@ -300,128 +368,87 @@ export default function Cart() {
                         </div>
                     )}
                 </div>
-            </div>
+                {cart?.length > 0 && (
+                    <div class="d-flex flex-column align-items-center col-12 mt-5">
+                        <h1 class="border-bottom p-2">Thông tin người nhận</h1>
+                        <form onSubmit={handleSubmit}>
+                            <div class="row">
+                                <div class="mb-3">
+                                    <label class="form-label">
+                                        Họ Tên
+                                        <span style={{ color: 'red' }}>*</span>
+                                    </label>
+                                    <input
+                                        type="text"
+                                        className={
+                                            nameError !== ''
+                                                ? 'border-danger form-control'
+                                                : 'form-control'
+                                        }
+                                        value={customerInfo.name}
+                                        onChange={handleChange}
+                                        name="name"
+                                    />
+                                    <span class="text-danger">{nameError}</span>
+                                </div>
 
-            {/* <div class="col-12 d-flex flex-wrap justify-content-between container-xl mb-5" style="min-height: 30vh">
-  
+                                <div class="mb-3">
+                                    <label class="form-label">
+                                        Số điện thoại
+                                        <span style={{ color: 'red' }}>*</span>
+                                    </label>
+                                    <input
+                                        value={customerInfo.phone}
+                                        onChange={handleChange}
+                                        type="text"
+                                        className={
+                                            phoneError !== ''
+                                                ? 'border-danger form-control'
+                                                : 'form-control'
+                                        }
+                                        name="phone"
+                                    />
+                                    <span class="text-danger">{phoneError}</span>
+                                </div>
 
-    <div th:if="${#lists.size(CARTS) > 0}" class="col-12 d-flex justify-content-between">
-        <div class="col-8 me-3">
-            <h2 class="fw-bold">Giỏ hàng của bạn</h2>
-            <div id="list-cart" >
-                <div th:each="cart : ${CARTS}" class=" d-flex align-items-center">
-                    <div class="me-3">
-                        <a th:href="@{/carts/delete?prDetailCode=__${cart.code}__}">
-                            <i class="fa-solid fa-x" style="color: red;"></i>
-                        </a>
+                                <div class="mb-3">
+                                    <label class="form-label">
+                                        Địa chỉ
+                                        <span style={{ color: 'red' }}>*</span>
+                                    </label>
+                                    <input
+                                        value={customerInfo.address}
+                                        onChange={handleChange}
+                                        type="text"
+                                        className={
+                                            addressError !== ''
+                                                ? 'border-danger form-control'
+                                                : 'form-control'
+                                        }
+                                        name="address"
+                                    />
+                                    <span class="text-danger">{addressError}</span>
+                                </div>
+
+                                <div class="mb-3">
+                                    <label class="form-label">
+                                        Lời nhắn của bạn
+                                    </label>
+                                    <textarea
+                                        value={customerInfo.customerNote}
+                                        onChange={handleChange}
+                                        class="form-control"
+                                        name="customerNote"
+                                    ></textarea>
+                                </div>
+                                <button class="mt-3 col-4 button" type="submit">
+                                    Đặt hàng
+                                </button>
+                            </div>
+                        </form>
                     </div>
-                    <div class="border border-collapse border-light-subtle p-2 d-flex align-items-center col-11">
-                        <img th:unless="${cart.imgBackground.endsWith('.mp4')}"
-                             th:src="${cart.imgBackground }" alt="..." style="max-height: 150px"
-                             class="img-thumbnail col-2">
-
-                        <video th:if="${cart.imgBackground.endsWith('.mp4')}"
-                               controls autoplay muted
-                               th:src="${cart.imgBackground}"
-                               style="max-height: 150px"
-                               class="img-thumbnail col-2"></video>
-
-
-                        <div class="ps-3 col-10 ">
-                            <div class="d-flex justify-content-between col-12 ">
-                                <div>
-                                    <span>Tên sản phẩm: </span>
-                                    <span class="fw-bold" th:text="${cart.productName}"></span>
-                                </div>
-                                <div>
-                                    <span class="fw-light" th:text="${cart.color} + ' - ' "></span>
-                                    <span class="fw-light" th:text="${cart.size}"></span>
-                                </div>
-                            </div>
-                            <div class="mt-3 d-flex">
-                                <div>Giá tiền:</div>
-                                <div th:if="${cart.discountPrice == null}">
-                            <span th:text="${#numbers.formatDecimal(cart.price, 0, 'POINT', 0, 'POINT')} +' đ'"
-                                  th:id="${cart.code} + '-price'"
-                                  th:data-price="${cart.price}"
-                                  class="fw-bold">
-                            </span>
-                                </div>
-
-                                <div th:unless="${cart.discountPrice == null}">
-                            <span th:text="${#numbers.formatDecimal(cart.price, 0, 'POINT', 0, 'POINT')} +' đ'"
-                                  style="text-decoration: line-through;"></span>
-                                    <span th:id="${cart.code} + '-price'"
-                                          th:text="${#numbers.formatDecimal(cart.discountPrice, 0, 'POINT', 0, 'POINT')} +' đ'"
-                                          th:data-price="${cart.discountPrice}"></span>
-
-                                </div>
-                            </div>
-                            <div class="mt-3">Số lượng:
-                                <input class="quantity col-1"
-                                       type="number"
-                                       th:data-prDetail="${cart.code}"
-                                       th:value="${cart.quantity}"
-                                       min="1" max="99">
-                            </div>
-                            <div class="mt-3">Tổng:
-                                <span th:if="${cart.discountPrice == null}" th:id="${cart.code} + 'P'"
-                                      th:text="${#numbers.formatDecimal(cart.quantity * cart.price, 0, 'POINT', 0, 'POINT')} +' đ'"
-                                      class="text-danger fw-bold"></span>
-                                <span th:unless="${cart.discountPrice == null}" th:id="${cart.code} + 'P'"
-                                      th:text="${#numbers.formatDecimal(cart.quantity * cart.discountPrice, 0, 'POINT', 0, 'POINT')} +' đ'"
-                                      class="text-danger fw-bold">
-                        </span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+                )}
             </div>
-        </div>
-
-        <div th:if="${#lists.size(CARTS) > 0}" th:include="~{web/component/InfoCart::InfoCart}"
-             class="align-self-top col-4 p-2"
-             id="InfoCart"></div>
-
-    </div>
-
-    <div class="d-flex flex-column align-items-center col-12 mt-5">
-        <h1 class="border-bottom p-2">Thông tin người nhận</h1>
-        <form id="form" th:action="@{/checkout}" method="post">
-            <div class="row">
-                <div class="mb-3">
-                    <label for="name" class="form-label">Họ Tên<span style="color:red">*</span></label>
-                    <input type="text" class="form-control" id="name" name="name">
-                    <span id="nameError" class="text-danger"></span>
-                </div>
-
-                <div class="mb-3">
-                    <label th:for="phone" class="form-label">Số điện thoại<span style="color:red">*</span></label>
-                    <input type="text" class="form-control" id="phone" name="phone">
-                    <span id="phoneError" class="text-danger"></span>
-                </div>
-
-                <div class="mb-3">
-                    <label th:for="address" class="form-label">Địa chỉ<span style="color:red">*</span></label>
-                    <input type="text" class="form-control" id="address" name="address">
-                    <span id="addressError" class="text-danger"></span>
-                </div>
-
-                <div class="mb-3">
-                    <label th:for="customerNote" class="form-label">Lời nhắn của bạn</label>
-                    <textarea class="form-control" id="customerNote" name="customerNote"></textarea>
-                </div>
-
-                <button th:if="${number == 0}" style="text-align: center;font-size: 2rem"
-                        class="col-6 btn btn-dark disabled">Đặt hàng
-                </button>
-                <button th:unless="${number == 0}" style="text-align: center;font-size: 1rem" type="submit"
-                        id="btn-submit"
-                        class="col-4 btn btn-dark">Đặt hàng
-                </button>
-            </div>
-        </form>
-    </div> */}
         </>
     );
 }

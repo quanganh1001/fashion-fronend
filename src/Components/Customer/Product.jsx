@@ -7,6 +7,7 @@ import PrivatePolicy from './PrivatePolicy';
 import useModal from '../../CustomHooks/useModal';
 import { toast } from 'react-toastify';
 import useCart from '../../CustomHooks/useCart';
+import useAuth from '../../CustomHooks/useAuth';
 
 export default function Product() {
     const [listImage, setListImage] = useState([]);
@@ -20,8 +21,8 @@ export default function Product() {
     const [listProductsDetail, setListProductsDetail] = useState([]);
     const { openModal } = useModal();
     const [inputQuantity, setInputQuantity] = useState(1)
-    const { handleUpdateCart } = useCart();
-
+    const { handleUpdateCart, handleUpdateCartWithAuth } = useCart();
+    const { auth } = useAuth();
     useEffect(() => {
         fetchListImage();
         fetchProduct();
@@ -106,7 +107,12 @@ export default function Product() {
 
     const handleAddToCart = () => {
         try {
-            handleUpdateCart(selectProductDetail.id, inputQuantity);
+            if (auth.token) {
+                handleUpdateCartWithAuth(selectProductDetail.id, inputQuantity);
+            } else {
+                handleUpdateCart(selectProductDetail, inputQuantity);
+            }
+            
             toast.success('Thêm vào giỏ hàng thành công');
         } catch {
             toast.error('Có lỗi xảy ra!');

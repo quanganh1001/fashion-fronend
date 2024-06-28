@@ -8,6 +8,7 @@ export const ProtectedRoute = ({ hasAnyRoles }) => {
     const { auth } = useAuth();
 
     if (!auth.token) {
+        console.log(auth);
         console.log('Bạn không có quyền truy cập');
         return <Navigate to="/login" />;
     }

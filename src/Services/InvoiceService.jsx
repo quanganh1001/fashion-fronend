@@ -1,4 +1,4 @@
-import { apiPrivate } from '../Ultils/AxiosCustomize';
+import { apiPrivate, apiPublic } from '../Ultils/AxiosCustomize';
 
 export const getAllInvoice = async (searchParams, accountId, invoiceStatus) => {
     return await apiPrivate.get('invoices', {
@@ -48,4 +48,8 @@ export const editShippingFee = async (invoiceId, shippingFee) => {
             params: { shippingFee: shippingFee },
         }
     );
+};
+
+export const checkoutVnpay = async (checkoutDto) => {
+    return await apiPublic.post('/invoices/checkout', checkoutDto);
 };

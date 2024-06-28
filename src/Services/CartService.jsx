@@ -27,6 +27,10 @@ export const removeCart = (productDetailId) => {
     });
 };
 
+export const clearCart = () => {
+    return apiPrivate.delete('/carts/clear');
+};
+
 export const getTotalItems = () => {
     return apiPrivate.get('/carts/getTotal');
 };

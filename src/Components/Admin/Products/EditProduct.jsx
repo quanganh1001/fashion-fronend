@@ -13,7 +13,6 @@ import Tittle from '../../Fragments/Tittle';
 
 export default function EditProduct() {
     const { id } = useParams();
-
     const [product, setProduct] = useState({
         productCode: '',
         productName: '',

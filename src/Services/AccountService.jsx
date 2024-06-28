@@ -23,7 +23,6 @@ export const updateAccount = async (accountUpdateDto) => {
 };
 
 export const updateRole = async (id, role) => {
-    console.log(role);
     return await apiPrivate.put('accounts/' + id + '/updateRole', role);
 };
 

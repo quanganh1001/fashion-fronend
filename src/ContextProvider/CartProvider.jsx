@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import {
+    clearCart,
     getCart,
     getTotalItems,
     removeCart,
@@ -16,60 +17,138 @@ export default function CartProvider({ children }) {
     const { auth } = useAuth();
 
     useEffect(() => {
-        if (auth?.refreshToken) {
+        if (auth.token) {
             getCart()
                 .then((res) => {
+                    console.log("Auth",res.data);
                     setCart(res.data);
                 })
                 .catch((error) => {
                     console.error(error);
                 });
+        } else {
+            const cartItems = JSON.parse(localStorage.getItem('cart')) || {};
+            const cartArray = Object.values(cartItems).map((item) => ({
+                productDetail: item.productDetail,
+                quantity: item.quantity,
+                totalPriceItem: item.totalPriceItem,
+            }));
+
+            setCart(cartArray);
         }
     }, [auth]);
 
     useEffect(() => {
+        
         fetchTotalItems();
         fetchTotalPrice();
     }, [cart]);
 
     const fetchTotalPrice = () => {
         let total = 0;
-        cart.forEach((item) => {
-            total += item.totalPriceItem;
-        });
-        console.log(total);
+
+        if (auth.token) {
+            cart.forEach((item) => {
+                total += item.totalPriceItem;
+            });
+        } else {
+            const cartItems = JSON.parse(localStorage.getItem('cart')) || {};
+
+            Object.values(cartItems).forEach((item) => {
+                total += item.totalPriceItem;
+            });
+        }
+
         setTotalPrice(total);
-    }
+    };
 
     const fetchTotalItems = () => {
-        getTotalItems()
-            .then((res) => {
-                setTotalItems(res.data);
-            })
-            .catch((error) => {
-                console.error(error);
+        if (auth.token) {
+            console.log("Auth quantity");
+            getTotalItems()
+                .then((res) => {
+                    setTotalItems(res.data);
+                })
+                .catch((error) => {
+                    console.error(error);
+                });
+        } else {
+            let totalQuantity = 0;
+            let cartItems = JSON.parse(localStorage.getItem('cart')) || {};
+
+            Object.values(cartItems).forEach((item) => {
+                totalQuantity += item.quantity;
             });
+            setTotalItems(totalQuantity);
+        }
     };
 
     const handleRemove = (productDetailId) => {
-        removeCart(productDetailId)
-            .then((res) => {
-                setCart(res.data);
-            })
-            .catch((error) => {
-                console.error(error);
-            });
+        if (auth && auth.token) {
+            removeCart(productDetailId)
+                .then((res) => {
+                    setCart(res.data);
+                })
+                .catch((error) => {
+                    console.error(error);
+                });
+        } else {
+            let cartItems = JSON.parse(localStorage.getItem('cart')) || {};
+            delete cartItems[productDetailId];
+            localStorage.setItem('cart', JSON.stringify(cartItems));
+        }
     };
 
-    const handleUpdateCart = (productDetailId, quantity) => {
-        updateCart(productDetailId, quantity)
-            .then((res) => {
-                setCart(res.data);
-            })
-            .catch((error) => {
-                console.error(error);
-                toast.error(error);
-            });
+    const handleUpdateCartWithAuth = (productDetailId, quantity) => {
+        if (auth.token) {
+            updateCart(productDetailId, quantity)
+                .then((res) => {
+                    setCart(res.data);
+                })
+                .catch((error) => {
+                    console.error(error);
+                    toast.error(error);
+                });
+        }
+    };
+
+    const handleUpdateCart = (productDetail, quantity) => {
+        const cartItems = JSON.parse(localStorage.getItem('cart')) || {};
+        const price =
+            productDetail.discountPrice !== null
+                ? productDetail.discountPrice
+                : productDetail.price;
+        const totalPriceItem = price * quantity;
+
+        cartItems[productDetail.id] = {
+            productDetail,
+            quantity,
+            totalPriceItem,
+        };
+
+        const cartArray = Object.values(cartItems).map((item) => ({
+            productDetail: item.productDetail,
+            quantity: item.quantity,
+            totalPriceItem: item.totalPriceItem,
+        }));
+
+        setCart(cartArray);
+    };
+
+    const handleClearCart = (auth) => {
+        if (auth && auth.token) {
+            clearCart()
+                .then((res) => {
+                    setCart(res.data);
+                })
+                .catch((error) => {
+                    console.error(error);
+                    toast.error(error);
+                });
+        } else {
+            localStorage.removeItem('cart');
+            setCart({});
+        }
     };
 
     return (
@@ -81,6 +160,8 @@ export default function CartProvider({ children }) {
                 setCart,
                 handleRemove,
                 handleUpdateCart,
+                handleClearCart,
+                handleUpdateCartWithAuth,
             }}
         >
             {children}

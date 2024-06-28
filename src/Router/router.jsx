@@ -23,6 +23,7 @@ import Home from '../Components/Customer/Home.jsx';
 import PublicLayout from '../Components/Layout/PublicLayout.jsx';
 import ProductAdmin from '../Components/Admin/Products/ProductAdmin.jsx';
 import Cart from '../Components/Customer/Cart.jsx';
+import PaymentResponse from '../Components/Customer/PaymentResponse.jsx';
 
 export const router = createBrowserRouter([
     {
@@ -64,9 +65,11 @@ export const router = createBrowserRouter([
                     },
                     {
                         path: 'cart',
-                        element: (
-                            <Cart/>
-                        ),
+                        element: <Cart />,
+                    },
+                    {
+                        path: 'response',
+                        element: <PaymentResponse />,
                     },
                 ],
             },
