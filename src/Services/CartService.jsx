@@ -4,10 +4,11 @@ export const getCart = ()=> {
     return apiPrivate.get('/carts/get')
 }
 
-export const addCart = (productDetailId) => {
-    return apiPrivate.get('/carts/add', {
+export const addCart = (productDetailId,quantity) => {
+    return apiPrivate.get('/carts/add', null, {
         params: {
             productDetailId: productDetailId,
+            quantity: quantity,
         },
     });
 };

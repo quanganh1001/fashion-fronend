@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import {
+    addCart,
     clearCart,
     getCart,
     getTotalItems,
@@ -20,7 +21,7 @@ export default function CartProvider({ children }) {
         if (auth.token) {
             getCart()
                 .then((res) => {
-                    console.log("Auth",res.data);
+                    console.log('Auth', res.data);
                     setCart(res.data);
                 })
                 .catch((error) => {
@@ -28,6 +29,7 @@ export default function CartProvider({ children }) {
                 });
         } else {
             const cartItems = JSON.parse(localStorage.getItem('cart')) || {};
+            console.log(cartItems);
             const cartArray = Object.values(cartItems).map((item) => ({
                 productDetail: item.productDetail,
                 quantity: item.quantity,
@@ -39,7 +41,6 @@ export default function CartProvider({ children }) {
     }, [auth]);
 
     useEffect(() => {
-        
         fetchTotalItems();
         fetchTotalPrice();
     }, [cart]);
@@ -64,7 +65,7 @@ export default function CartProvider({ children }) {
 
     const fetchTotalItems = () => {
         if (auth.token) {
-            console.log("Auth quantity");
+            console.log('Auth quantity');
             getTotalItems()
                 .then((res) => {
                     setTotalItems(res.data);
@@ -77,8 +78,9 @@ export default function CartProvider({ children }) {
             let cartItems = JSON.parse(localStorage.getItem('cart')) || {};
 
             Object.values(cartItems).forEach((item) => {
-                totalQuantity += item.quantity;
+                totalQuantity += Number(item.quantity);
             });
+
             setTotalItems(totalQuantity);
         }
     };
@@ -133,6 +135,50 @@ export default function CartProvider({ children }) {
         }));
 
         setCart(cartArray);
+
+        localStorage.setItem('cart', JSON.stringify(cartItems));
+    };
+
+    const handleAddCart = (productDetail, quantity) => {
+        const cartItems = JSON.parse(localStorage.getItem('cart')) || {};
+        const price =
+            productDetail.discountPrice !== null
+                ? productDetail.discountPrice
+                : productDetail.price;
+        if (cartItems[productDetail.id]) {
+            cartItems[productDetail.id].quantity = Number(cartItems[productDetail.id].quantity) + quantity;
+            cartItems[productDetail.id].totalPriceItem =
+                price * cartItems[productDetail.id].quantity;
+        } else {
+            const totalPriceItem = price * quantity;
+            cartItems[productDetail.id] = {
+                productDetail,
+                quantity,
+                totalPriceItem,
+            };
+        }
+
+        const cartArray = Object.values(cartItems).map((item) => ({
+            productDetail: item.productDetail,
+            quantity: item.quantity,
+            totalPriceItem: item.totalPriceItem,
+        }));
+
+        setCart(cartArray);
+        localStorage.setItem('cart', JSON.stringify(cartItems));
+    };
+
+    const handleAddCartWithAuth = (id, quantity) => {
+        addCart(id, quantity)
+            .then((res) => {
+                    setCart(res.data);
+                })
+                .catch((error) => {
+                    console.error(error);
+                    toast.error(error);
+                });
+            
+    
     };
 
     const handleClearCart = (auth) => {
@@ -162,6 +208,8 @@ export default function CartProvider({ children }) {
                 handleUpdateCart,
                 handleClearCart,
                 handleUpdateCartWithAuth,
+                handleAddCart,
+                handleAddCartWithAuth,
             }}
         >
             {children}

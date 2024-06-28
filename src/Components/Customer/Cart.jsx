@@ -6,7 +6,13 @@ import { checkoutVnpay } from '../../Services/InvoiceService';
 import { toast } from 'react-toastify';
 
 export default function Cart() {
-    const { cart, handleUpdateCart, handleRemove, totalPrice } = useCart();
+    const {
+        cart,
+        handleUpdateCart,
+        handleRemove,
+        totalPrice,
+        handleUpdateCartWithAuth,
+    } = useCart();
     const { auth } = useAuth();
     const [selectPay, setSelectPay] = useState('cash');
     const [nameError, setNameError] = useState('');
@@ -26,6 +32,7 @@ export default function Cart() {
     );
 
     useEffect(() => {
+        
         setCustomerInfo((prevState) => ({
             ...prevState,
             shippingFee: totalPrice >= 500000 ? 0 : 30000,
@@ -37,8 +44,13 @@ export default function Cart() {
         setTotalBill(totalPrice + (totalPrice >= 500000 ? 0 : 30000));
     }, [totalPrice]);
 
-    const handleChangeQuantity = (id, newQuantity) => {
-        handleUpdateCart(id, newQuantity);
+    const handleChangeQuantity = (productDetail, newQuantity) => {
+        if (auth.token) {
+            handleUpdateCartWithAuth(productDetail.id, newQuantity);
+        } else {
+            handleUpdateCart(productDetail, newQuantity);
+        }
+        
     };
     const handleRemoveCartItem = (id) => {
         handleRemove(id);
@@ -112,7 +124,11 @@ export default function Cart() {
                         {cart?.length > 0 ? (
                             <div id="cart" class="  d-flex flex-column">
                                 {cart.map((c) => (
-                                    <div class=" d-flex mt-3 align-items-center">
+                                    <div
+                                        key={c.productDetail.id}
+                                        class=" d-flex mt-3 align-items-center"
+                                    >
+                                        
                                         <FontAwesomeIcon
                                             onClick={() => {
                                                 handleRemoveCartItem(
@@ -239,8 +255,7 @@ export default function Cart() {
                                                                 ) => {
                                                                     handleChangeQuantity(
                                                                         c
-                                                                            .productDetail
-                                                                            .id,
+                                                                            .productDetail,
                                                                         e.target
                                                                             .value
                                                                     );
@@ -408,7 +423,9 @@ export default function Cart() {
                                         }
                                         name="phone"
                                     />
-                                    <span class="text-danger">{phoneError}</span>
+                                    <span class="text-danger">
+                                        {phoneError}
+                                    </span>
                                 </div>
 
                                 <div class="mb-3">
@@ -427,7 +444,9 @@ export default function Cart() {
                                         }
                                         name="address"
                                     />
-                                    <span class="text-danger">{addressError}</span>
+                                    <span class="text-danger">
+                                        {addressError}
+                                    </span>
                                 </div>
 
                                 <div class="mb-3">
