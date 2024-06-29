@@ -126,29 +126,66 @@ export default function Product() {
         }
     };
 
-
     return (
         <>
+            {' '}
+            <style>{`.image-gallery .image-gallery-icon {
+                    color: white;
+                    opacity: 0.3; 
+                    padding: 5px 10px;
+                    border-radius: 100%; 
+                    cursor: pointer;
+                    transition: opacity 0.3s;
+                    }
+
+                     .image-gallery .image-gallery-icon:hover {
+                    opacity: 1; 
+                    
+                    }
+
+                    .image-gallery .image-gallery-left-nav,
+                    .image-gallery .image-gallery-right-nav {
+                    top: 50%; 
+                    transform: translateY(-50%);
+                    z-index: 1; 
+                    }
+            `}</style>
             <div className="container-xl my-5 ">
                 <div className="d-flex flex-wrap mb-5">
                     <div className="col-4 ">
                         <ImageGallery
                             items={images}
                             showThumbnails={true}
-                            showFullscreenButton={true}
+                            showFullscreenButton={false}
                             showPlayButton={false}
                             slideInterval={2000}
                             showNav={true}
+                            lazyLoad={true}
                             renderItem={({ original, description }) => (
                                 <div>
-                                    <img
-                                        src={original}
-                                        alt={description}
-                                        style={{
-                                            height: '500px',
-                                            width: '100%',
-                                        }}
-                                    />
+                                    {original.endsWith('.mp4') ? (
+                                        <video
+                                            style={{
+                                                height: '500px',
+                                                width: '100%',
+                                            }}
+                                            controls
+                                        >
+                                            <source
+                                                src={original}
+                                                type="video/mp4"
+                                            />
+                                        </video>
+                                    ) : (
+                                        <img
+                                            src={original}
+                                            alt={description}
+                                            style={{
+                                                height: '500px',
+                                                width: '100%',
+                                            }}
+                                        />
+                                    )}
                                 </div>
                             )}
                             renderThumbInner={(item, idx) => (
@@ -157,16 +194,32 @@ export default function Product() {
                                         index === idx ? 'selected' : ''
                                     }`}
                                 >
-                                    <img
-                                        thumbnail
-                                        src={item.thumbnail}
-                                        alt={item.description}
-                                        style={{
-                                            height: '80px',
-                                            cursor: 'pointer',
-                                        }}
-                                        onClick={() => setIndex(idx)}
-                                    />
+                                    {item.thumbnail.endsWith('.mp4') ? (
+                                        <video
+                                            style={{
+                                                height: '80px',
+                                                width: '100%',
+                                                cursor: 'pointer',
+                                            }}
+                                            controls
+                                        >
+                                            <source
+                                                src={item.thumbnail}
+                                                type="video/mp4"
+                                            />
+                                        </video>
+                                    ) : (
+                                        <img
+                                            thumbnail
+                                            src={item.thumbnail}
+                                            alt={item.description}
+                                            style={{
+                                                height: '80px',
+                                                cursor: 'pointer',
+                                            }}
+                                            onClick={() => setIndex(idx)}
+                                        />
+                                    )}
                                 </div>
                             )}
                         />
@@ -441,7 +494,6 @@ export default function Product() {
                     </div>
                 </div>
             </div>
-
             <div className="m-5">
                 <Tabs defaultActiveKey="description" id="myTab">
                     <Tab

@@ -1,6 +1,5 @@
 import axios from 'axios';
 import { getAuth, isTokenExpired } from '../Services/Auth';
-import useAuth from '../CustomHooks/useAuth';
 
 const apiPrivate = axios.create({
   baseURL: "http://localhost:8080/",

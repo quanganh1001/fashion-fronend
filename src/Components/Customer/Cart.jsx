@@ -156,14 +156,18 @@ export default function Cart() {
                                                 '.mp4'
                                             ) ? (
                                                 <video
+                                                    width="250px"
+                                                    maxHeight="150px"
                                                     controls
-                                                    autoplay
-                                                    muted
-                                                    style={{
-                                                        maxHeight: '150px',
-                                                    }}
-                                                    class="img-thumbnail col-2"
-                                                ></video>
+                                                >
+                                                    <source
+                                                        src={
+                                                            c.productDetail
+                                                                .imageBackground
+                                                        }
+                                                        type="video/mp4"
+                                                    />
+                                                </video>
                                             ) : (
                                                 <img
                                                     src={

@@ -33,6 +33,15 @@ export const refreshToken = (refreshToken) => {
         .then((res) => res.data);
 };
 
+export const resetPass = (email) => {
+    return apiPublic.put('/auth/resetPass',email, {
+        headers: {
+            'Content-Type': 'text/plain',
+        },
+    });
+
+};
+
 export const isTokenExpired = (token) => {
     const userPayload = jwtDecode(token);
     const { exp } = userPayload;

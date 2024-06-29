@@ -133,7 +133,6 @@ export default function Invoice() {
         <>
             <Tittle tittle="Danh sách đơn hàng" />
             <div className="mt-5 bg-white p-5 shadow border">
-
                 <div className="mt-5 d-flex flex-wrap justify-content-start">
                     <div
                         onClick={() => handleSelectInvoiceStatus(null)}
@@ -209,10 +208,27 @@ export default function Invoice() {
                                             'HH:mm:ss - d/M/yyyy'
                                         )}
                                     </td>
-                                    <td>
-                                        <Dropdown data-bs-theme="dark">
+                                    <td className=" ">
+                                        <Dropdown
+                                            data-bs-theme="dark"
+                                            className=" position-relative"
+                                        >
                                             <Dropdown.Toggle variant="dark bg-gradient btn-sm">
                                                 Hành động
+                                                {invoice.isPaid && (
+                                                    <img
+                                                        className=" position-absolute translate-middle-y start-100 top-50"
+                                                        src={
+                                                            process.env
+                                                                .PUBLIC_URL +
+                                                            '/vn-11134201-23030-b580c684i4nv82.png.png'
+                                                        }
+                                                        style={{
+                                                            width: '100px',
+                                                        }}
+                                                        alt=""
+                                                    />
+                                                )}
                                             </Dropdown.Toggle>
                                             <Dropdown.Menu>
                                                 <Dropdown.Item

@@ -15,6 +15,7 @@ import { getAllRoles } from '../../../Services/EnumService';
 import SearchForm from '../../Fragments/SearchForm';
 import CustomPagination from '../../Fragments/CustomPagination';
 import usePagination from '../../../CustomHooks/usePagination';
+import { resetPass } from '../../../Services/Auth';
 
 export default function Account() {
     const [listAccount, setListAccount] = useState([]);
@@ -26,6 +27,7 @@ export default function Account() {
         id: '',
         role: '',
     });
+    const [newResetByEmail,setNewResetByEmail] = useState('')
     const { searchParams } = usePagination();
     const [totalPages, setTotalPages] = useState(1);
     const [totalProducts, setTotalProducts] = useState();
@@ -73,6 +75,30 @@ export default function Account() {
             );
         }
     }, [newIdRole]);
+
+    useEffect(() => {
+        if (newResetByEmail !== '') {
+            openModal(
+                'Cấp lại mật khẩu',
+                `Bạn có chắc muốn cấp lại mật khẩu cho tải khoản này qua email ?`,
+                () => {
+                    console.log(newResetByEmail);
+                    resetPass(newResetByEmail)
+                        .then((res) => {
+                            console.log(res);
+                            toast.success(
+                                'Mật khẩu mới được gửi về email đăng ký!'
+                            );
+                        })
+                        .catch((error) => {
+                            
+                            toast.error('Có lỗi xảy ra!');
+                        });
+                    closeModal();
+                }
+            );
+        }
+    },[newResetByEmail])
 
     const fetchGetAllAccount = async () => {
         await getAllAccount(searchParams).then((res) => {
@@ -133,6 +159,10 @@ export default function Account() {
         setNewIdRole({ id, role });
     };
 
+    const handleResetPass = async (email) => {
+        setNewResetByEmail(email);
+    };
+
     const handleShowAccountDetail = (account) => {
         openModal(
             'Thông tin tài khoản',
@@ -164,7 +194,7 @@ export default function Account() {
                 <Link to="/admin/accounts/add">
                     <button className="button">Tạo tài khoản mới</button>
                 </Link>
-                <div className='col-4'>
+                <div className="col-4">
                     <SearchForm placeholder={'Nhập tên hoặc số điện thoại'} />
                 </div>
             </div>
@@ -215,7 +245,9 @@ export default function Account() {
                                                 <Dropdown.Menu>
                                                     <Dropdown.Item
                                                         onClick={() =>
-                                                            handleShowAccountDetail(acc)
+                                                            handleShowAccountDetail(
+                                                                acc
+                                                            )
                                                         }
                                                     >
                                                         Xem thông tin
@@ -242,6 +274,15 @@ export default function Account() {
                                                     </Dropdown.Item>
                                                     <Dropdown.Item
                                                         onClick={() =>
+                                                            handleResetPass(
+                                                                acc.email,
+                                                            )
+                                                        }
+                                                    >
+                                                        Cấp lại mật khẩu
+                                                    </Dropdown.Item>
+                                                    <Dropdown.Item
+                                                        onClick={() =>
                                                             handleDelete(acc.id)
                                                         }
                                                     >
@@ -262,8 +303,6 @@ export default function Account() {
                     totalProducts={totalProducts}
                 />
             </div>
-
-            
         </>
     );
 }
