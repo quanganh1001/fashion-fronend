@@ -2,8 +2,9 @@ import { useEffect, useState } from 'react';
 import useCart from '../../CustomHooks/useCart';
 import useAuth from '../../CustomHooks/useAuth';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { checkoutVnpay } from '../../Services/InvoiceService';
+import { checkoutCash, checkoutVnpay } from '../../Services/InvoiceService';
 import { toast } from 'react-toastify';
+import useModal from '../../CustomHooks/useModal';
 
 export default function Cart() {
     const {
@@ -14,6 +15,8 @@ export default function Cart() {
         handleUpdateCartWithAuth,
     } = useCart();
     const { auth } = useAuth();
+    const { openModal, closeModal } = useModal();
+
     const [selectPay, setSelectPay] = useState('cash');
     const [nameError, setNameError] = useState('');
     const [phoneError, setPhoneError] = useState('');
@@ -32,7 +35,6 @@ export default function Cart() {
     );
 
     useEffect(() => {
-        
         setCustomerInfo((prevState) => ({
             ...prevState,
             shippingFee: totalPrice >= 500000 ? 0 : 30000,
@@ -50,7 +52,6 @@ export default function Cart() {
         } else {
             handleUpdateCart(productDetail, newQuantity);
         }
-        
     };
     const handleRemoveCartItem = (id) => {
         handleRemove(id);
@@ -68,8 +69,8 @@ export default function Cart() {
 
     const handleSubmit = (e) => {
         e.preventDefault();
-
-        const isValid = true;
+        console.log(customerInfo);
+        let isValid = true;
 
         if (customerInfo.name === '') {
             isValid = false;
@@ -92,17 +93,28 @@ export default function Cart() {
         } else setAddressError('');
 
         if (isValid) {
-            if (selectPay === 'vnpay') {
-                
-                checkoutVnpay(customerInfo)
-                    .then((res) => {
-                        window.location.href = res.data;
-                    })
-                    .catch((error) => {
-                        toast.error(error);
-                        console.error(error);
-                    });
-            }
+            openModal(
+                'Xác nhận',
+                <>Bạn có chắc chắn muốn đặt hàng?</>,
+                async () => {
+                    if (selectPay === 'vnpay') {
+                        checkoutVnpay(customerInfo)
+                            .then((res) => {
+                                window.location.href = res.data;
+                            })
+                            .catch((error) => {
+                                toast.error(error);
+                                console.error(error);
+                            });
+                    } else {
+                        checkoutCash(customerInfo)
+                            .then((res) => {
+                                window.location.href = res.data;
+                            });
+                    }
+                    closeModal();
+                }
+            );
         }
     };
 
@@ -128,7 +140,6 @@ export default function Cart() {
                                         key={c.productDetail.id}
                                         class=" d-flex mt-3 align-items-center"
                                     >
-                                        
                                         <FontAwesomeIcon
                                             onClick={() => {
                                                 handleRemoveCartItem(
@@ -254,8 +265,7 @@ export default function Cart() {
                                                                     e
                                                                 ) => {
                                                                     handleChangeQuantity(
-                                                                        c
-                                                                            .productDetail,
+                                                                        c.productDetail,
                                                                         e.target
                                                                             .value
                                                                     );

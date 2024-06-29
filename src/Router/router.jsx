@@ -82,7 +82,7 @@ export const router = createBrowserRouter([
                     />
                 ),
                 children: [
-                    {
+                    {   
                         path: 'home' || '',
                         element: <HomeAdmin />,
                     },

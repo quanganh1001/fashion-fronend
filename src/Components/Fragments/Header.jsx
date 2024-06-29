@@ -82,7 +82,6 @@ export default function Header() {
         } else setSearchValid(false);
 
         if (isValid) {
-            
             navigate('/category/search?key=' + searchValue);
         }
     };
@@ -254,6 +253,7 @@ export default function Header() {
                                             ? 'border-danger form-control'
                                             : ' form-control'
                                     }
+                                    value={searchValue}
                                     placeholder="Tìm kiếm"
                                 />
                                 <button className="btn border" type="submit">
@@ -264,7 +264,10 @@ export default function Header() {
                     </div>
 
                     <div className="align-self-center d-flex">
-                        <Link to={'/cart'} className="btn btn-outline-dark align-self-center position-relative">
+                        <Link
+                            to={'/cart'}
+                            className="btn btn-outline-dark align-self-center position-relative"
+                        >
                             <FontAwesomeIcon icon="fa-solid fa-cart-shopping" />
                             {totalCartItems > 0 && (
                                 <span className="position-absolute top-0 start-0 translate-middle badge rounded-pill bg-danger">

@@ -18,6 +18,15 @@ export default function CartProvider({ children }) {
     const { auth } = useAuth();
 
     useEffect(() => {
+        fetchGetCart();
+    }, [auth]);
+
+    useEffect(() => {
+        fetchTotalItems();
+        fetchTotalPrice();
+    }, [cart]);
+
+    const fetchGetCart = () => {
         if (auth.token) {
             getCart()
                 .then((res) => {
@@ -29,7 +38,6 @@ export default function CartProvider({ children }) {
                 });
         } else {
             const cartItems = JSON.parse(localStorage.getItem('cart')) || {};
-            console.log(cartItems);
             const cartArray = Object.values(cartItems).map((item) => ({
                 productDetail: item.productDetail,
                 quantity: item.quantity,
@@ -38,12 +46,7 @@ export default function CartProvider({ children }) {
 
             setCart(cartArray);
         }
-    }, [auth]);
-
-    useEffect(() => {
-        fetchTotalItems();
-        fetchTotalPrice();
-    }, [cart]);
+    };
 
     const fetchTotalPrice = () => {
         let total = 0;
@@ -98,6 +101,7 @@ export default function CartProvider({ children }) {
             let cartItems = JSON.parse(localStorage.getItem('cart')) || {};
             delete cartItems[productDetailId];
             localStorage.setItem('cart', JSON.stringify(cartItems));
+            fetchGetCart();
         }
     };
 
@@ -146,7 +150,8 @@ export default function CartProvider({ children }) {
                 ? productDetail.discountPrice
                 : productDetail.price;
         if (cartItems[productDetail.id]) {
-            cartItems[productDetail.id].quantity = Number(cartItems[productDetail.id].quantity) + quantity;
+            cartItems[productDetail.id].quantity =
+                Number(cartItems[productDetail.id].quantity) + quantity;
             cartItems[productDetail.id].totalPriceItem =
                 price * cartItems[productDetail.id].quantity;
         } else {
@@ -171,17 +176,16 @@ export default function CartProvider({ children }) {
     const handleAddCartWithAuth = (id, quantity) => {
         addCart(id, quantity)
             .then((res) => {
-                    setCart(res.data);
-                })
-                .catch((error) => {
-                    console.error(error);
-                    toast.error(error);
-                });
-            
-    
+                console.log(res.data);
+                setCart(res.data);
+            })
+            .catch((error) => {
+                console.error(error);
+                toast.error(error);
+            });
     };
 
-    const handleClearCart = (auth) => {
+    const handleClearCart = () => {
         if (auth && auth.token) {
             clearCart()
                 .then((res) => {

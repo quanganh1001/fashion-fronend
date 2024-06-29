@@ -26,7 +26,7 @@ export default function Category() {
 
     useEffect(() => {
         fetchGetProductByCategory();
-    }, [catId]);
+    }, [catId, key]);
 
 
     useEffect(() => {

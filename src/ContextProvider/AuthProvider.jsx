@@ -54,7 +54,15 @@ export default function AuthProvider({ children }) {
                     role: res.data.account.role,
                 },
             });
-            navigate(redirectTo, { replace: true });
+            if (
+                res.data.account.role === 'ROLE_MANAGER' ||
+                res.data.account.role === 'ROLE_EMPLOYEE'
+            ) {
+                navigate(location.state?.redirectTo?.pathname || '/admin/home', { replace: true });
+            } else {
+                navigate('/')
+            }
+                
         });
     };
 

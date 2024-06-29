@@ -1,17 +1,22 @@
 import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { getAllImageProducts, getProduct } from '../../Services/ProductService';
-import { Tab, Tabs, Nav } from 'react-bootstrap';
+import { Tab, Tabs } from 'react-bootstrap';
 import ReturnPolicy from '../Fragments/ReturnPolicy';
 import PrivatePolicy from './PrivatePolicy';
 import useModal from '../../CustomHooks/useModal';
 import { toast } from 'react-toastify';
 import useCart from '../../CustomHooks/useCart';
 import useAuth from '../../CustomHooks/useAuth';
-import { addCart } from '../../Services/CartService';
+import ImageGallery from 'react-image-gallery';
+import 'react-image-gallery/styles/css/image-gallery.css';
 
 export default function Product() {
     const [listImage, setListImage] = useState([]);
+    const images = listImage.map((image) => ({
+        original: image.fileImg,
+        thumbnail: image.fileImg,
+    }));
     const { id } = useParams();
     const [product, setProduct] = useState('');
     const [color, setColor] = useState('');
@@ -21,9 +26,11 @@ export default function Product() {
     const [selectProductDetail, setSelectProductDetail] = useState('');
     const [listProductsDetail, setListProductsDetail] = useState([]);
     const { openModal } = useModal();
-    const [inputQuantity, setInputQuantity] = useState(1)
+    const [inputQuantity, setInputQuantity] = useState(1);
     const { handleAddCartWithAuth, handleAddCart } = useCart();
     const { auth } = useAuth();
+    const [index, setIndex] = useState(0);
+
     useEffect(() => {
         fetchListImage();
         fetchProduct();
@@ -101,8 +108,7 @@ export default function Product() {
             'Hướng dẫn chọn size',
             <img src={imgUrl} alt="Chọn size" width="100%" />,
             true,
-            () => {
-            }
+            () => {}
         );
     };
 
@@ -113,23 +119,56 @@ export default function Product() {
             } else {
                 handleAddCart(selectProductDetail, inputQuantity);
             }
-            
+
             toast.success('Thêm vào giỏ hàng thành công');
         } catch {
             toast.error('Có lỗi xảy ra!');
         }
-        
-        
-    }
+    };
+
+
     return (
         <>
-            <div className="container-xl my-5">
+            <div className="container-xl my-5 ">
                 <div className="d-flex flex-wrap mb-5">
-                    <div className="col-4 position-relative  ">
-                        <img
-                            src={product.imageBackground}
-                            width={'100%'}
-                            alt=""
+                    <div className="col-4 ">
+                        <ImageGallery
+                            items={images}
+                            showThumbnails={true}
+                            showFullscreenButton={true}
+                            showPlayButton={false}
+                            slideInterval={2000}
+                            showNav={true}
+                            renderItem={({ original, description }) => (
+                                <div>
+                                    <img
+                                        src={original}
+                                        alt={description}
+                                        style={{
+                                            height: '500px',
+                                            width: '100%',
+                                        }}
+                                    />
+                                </div>
+                            )}
+                            renderThumbInner={(item, idx) => (
+                                <div
+                                    className={`image-gallery-thumbnail-inner ${
+                                        index === idx ? 'selected' : ''
+                                    }`}
+                                >
+                                    <img
+                                        thumbnail
+                                        src={item.thumbnail}
+                                        alt={item.description}
+                                        style={{
+                                            height: '80px',
+                                            cursor: 'pointer',
+                                        }}
+                                        onClick={() => setIndex(idx)}
+                                    />
+                                </div>
+                            )}
                         />
                     </div>
 
@@ -292,7 +331,7 @@ export default function Product() {
                                     type="button"
                                     disabled={!selectProductDetail}
                                     className="button p-3"
-                                    onClick={()=>handleAddToCart()}
+                                    onClick={() => handleAddToCart()}
                                 >
                                     Thêm vào giỏ hàng
                                 </button>

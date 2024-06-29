@@ -53,3 +53,7 @@ export const editShippingFee = async (invoiceId, shippingFee) => {
 export const checkoutVnpay = async (checkoutDto) => {
     return await apiPublic.post('/invoices/checkout', checkoutDto);
 };
+
+export const checkoutCash = async (checkoutDto) => {
+    return await apiPublic.post('/invoices/checkoutByCash', checkoutDto);
+};

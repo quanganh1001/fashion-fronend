@@ -5,7 +5,7 @@ export const getCart = ()=> {
 }
 
 export const addCart = (productDetailId,quantity) => {
-    return apiPrivate.get('/carts/add', null, {
+    return apiPrivate.post('/carts/add', null, {
         params: {
             productDetailId: productDetailId,
             quantity: quantity,
