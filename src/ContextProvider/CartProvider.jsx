@@ -30,7 +30,6 @@ export default function CartProvider({ children }) {
         if (auth.token) {
             getCart()
                 .then((res) => {
-                    console.log('Auth', res.data);
                     setCart(res.data);
                 })
                 .catch((error) => {
@@ -68,7 +67,6 @@ export default function CartProvider({ children }) {
 
     const fetchTotalItems = () => {
         if (auth.token) {
-            console.log('Auth quantity');
             getTotalItems()
                 .then((res) => {
                     setTotalItems(res.data);

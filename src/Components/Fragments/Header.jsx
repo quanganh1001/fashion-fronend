@@ -6,6 +6,8 @@ import useAuth from '../../CustomHooks/useAuth';
 import { toast } from 'react-toastify';
 import { useNavigate } from 'react-router-dom';
 import useCart from '../../CustomHooks/useCart';
+import useModal from '../../CustomHooks/useModal';
+import { resetPass } from '../../Services/Auth';
 
 export default function Header() {
     const [listCategoriesF1, setListCategoriesF1] = useState([]);
@@ -24,7 +26,9 @@ export default function Header() {
     const [activeClass, setActiveClass] = useState('');
     const navigate = useNavigate();
     const { totalCartItems } = useCart();
-    
+    const { openModal, closeModal } = useModal();
+    const [email, setEmail] = useState('');
+
     useEffect(() => {
         if (hoveredF1 !== null) {
             setTimeout(() => {
@@ -131,6 +135,52 @@ export default function Header() {
     const handleToggleFormLogin = () => {
         setIsShowFormLogin(!isShowFormLogin);
     };
+
+       const handleSetEmail = (e) => {
+           setEmail(e.target.value);
+    };
+    
+    const handleResetPass = () => {
+        openModal(
+            'Cấp lại mật khẩu',
+            <div>
+                <div>Nhập email đăng ký</div>
+                <input
+                    className="form-control mt-3"
+                    type="email"
+                    onChange={handleSetEmail}
+                />
+            </div>,
+            () => {
+                let isValid = true;
+
+                if (email === '') {
+                    isValid = false;
+                    toast.error('Email không được để trống');
+                } else if (
+                    !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(
+                        String(email).toLowerCase()
+                    )
+                ) {
+                    isValid = false;
+                    toast.error('Email không hợp lệ');
+                }
+
+                if (isValid) {
+                    resetPass(email)
+                        .then((res) => {
+                            toast.success(
+                                'Mật khẩu mới được gửi về email đăng ký!'
+                            );
+                        })
+                        .catch((error) => {
+                            toast.error('Có lỗi xảy ra!');
+                        });
+                    closeModal();
+                }
+            }
+        );
+    };
     return (
         <>
             <style>
@@ -234,7 +284,7 @@ export default function Header() {
                         ))}
 
                         <div className="d-flex align-items-center">
-                            <Link className=" text-decoration-none text-dark  fw-bold">
+                            <Link to={'/stores'} className=" text-decoration-none text-dark  fw-bold">
                                 Hệ thống cửa hàng
                             </Link>
                         </div>
@@ -287,7 +337,7 @@ export default function Header() {
                                 <FontAwesomeIcon
                                     className="btn-link text-dark"
                                     onClick={logoutForm}
-                                    style={{ padding: '5px' }}
+                                    style={{ padding: '5px',cursor:'pointer' }}
                                     icon="fa-solid fa-right-from-bracket"
                                 />
                             </div>
@@ -372,7 +422,7 @@ export default function Header() {
                                             </span>
                                             <div className="d-flex justify-content-between col-12 mt-3">
                                                 <Link
-                                                    to="/forgot-password"
+                                                    onClick={handleResetPass}
                                                     className="fst-italic text-decoration-underline btn-link text-dark"
                                                     style={{
                                                         fontSize: '0.9rem',

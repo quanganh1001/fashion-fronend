@@ -68,7 +68,6 @@ export default function AuthProvider({ children }) {
 
     const handleLogout = async () => {
         await logout().then((res) => {
-            console.log("oke");
             setAuth({});
             localStorage.removeItem("auth")
                 navigate('/');

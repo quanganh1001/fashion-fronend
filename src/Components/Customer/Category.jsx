@@ -11,7 +11,7 @@ export default function Category() {
     let { catId } = useParams();
     const [listProducts, setListProducts] = useState([]);
     const [totalPages, setTotalPages] = useState(1);
-    const [totalProducts, setTotalProducts] = useState();
+    const [totalItems, setTotalItems] = useState();
     const [currentPage, setCurrentPage] = useState();
     const {searchParams } = usePagination();
     const location = useLocation();
@@ -94,7 +94,7 @@ export default function Category() {
 
         setTotalPages(newTotalPages);
 
-        setTotalProducts(filtered.length);
+        setTotalItems(filtered.length);
 
         setCurrentPage(page);
     };
@@ -213,7 +213,8 @@ export default function Category() {
                                                     -{product.discountPercent}%
                                                 </div>
                                             )}
-                                            {product.imageBackground && product.imageBackground.endsWith(
+                                            {product.imageBackground &&
+                                            product.imageBackground.endsWith(
                                                 '.mp4'
                                             ) ? (
                                                 <video
@@ -242,7 +243,7 @@ export default function Category() {
                                             )}
 
                                             <Link
-                                                to={"/product/" + product.id}
+                                                to={'/product/' + product.id}
                                                 style={{ width: '80%' }}
                                                 className="button border-white shadow fw-bold  add-to-cart-btn"
                                             >
@@ -331,7 +332,7 @@ export default function Category() {
                             <CustomPagination
                                 totalPages={totalPages}
                                 currentPage={parseInt(currentPage)}
-                                totalItems={totalProducts}
+                                totalItems={totalItems}
                             />
                         </>
                     ) : (

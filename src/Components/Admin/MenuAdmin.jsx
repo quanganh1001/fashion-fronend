@@ -38,7 +38,16 @@ const Menu = (props) => {
             path: '/admin/invoices',
             label: 'QUẢN LÝ HÓA ĐƠN',
         },
-        
+        {
+            path: '/admin/customerEmails',
+            label: 'GỬI THÔNG TIN KHUYẾN MÃI',
+            requiredRoles: ['ROLE_MANAGER'],
+        },
+        {
+            path: '/admin/feedbackCustomers',
+            label: 'PHẢN HỒI KHÁCH HÀNG',
+            requiredRoles: ['ROLE_MANAGER'],
+        },
     ];
 
     const location = useLocation();

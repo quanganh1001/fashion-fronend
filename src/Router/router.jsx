@@ -24,6 +24,14 @@ import PublicLayout from '../Components/Layout/PublicLayout.jsx';
 import ProductAdmin from '../Components/Admin/Products/ProductAdmin.jsx';
 import Cart from '../Components/Customer/Cart.jsx';
 import PaymentResponse from '../Components/Customer/PaymentResponse.jsx';
+import Register from '../Components/Auth/Register.jsx';
+import Store from '../Components/Customer/Store.jsx';
+import CustomerEmail from '../Components/Admin/CustomerEmails/CustomerEmail.jsx';
+import Introduce from '../Components/Customer/Introduce.jsx';
+import ReturnPolicy from '../Components/Customer/ReturnPolicy.jsx';
+import PrivatePolicy from '../Components/Customer/PrivatePolicy.jsx';
+import ContactUs from '../Components/Customer/ContactUs.jsx';
+import FeedbackCustomer from '../Components/Admin/FeedbackCustomers/FeedbackCustomer.jsx';
 
 export const router = createBrowserRouter([
     {
@@ -48,6 +56,30 @@ export const router = createBrowserRouter([
                         element: <Home />,
                     },
                     {
+                        path: 'register',
+                        element: <Register />,
+                    },
+                    {
+                        path: 'stores',
+                        element: <Store />,
+                    },
+                    {
+                        path: 'introduce',
+                        element: <Introduce />,
+                    },
+                    {
+                        path: 'returnPolicy',
+                        element: <ReturnPolicy />,
+                    },
+                    {
+                        path: 'privatePolicy',
+                        element: <PrivatePolicy />,
+                    },
+                    {
+                        path: 'contactUs',
+                        element: <ContactUs />,
+                    },
+                    {
                         path: 'category/:catId',
                         element: (
                             <PaginationProvider>
@@ -58,9 +90,7 @@ export const router = createBrowserRouter([
                     {
                         path: 'product/:id',
                         element: (
-                            <PaginationProvider>
                                 <Product />
-                            </PaginationProvider>
                         ),
                     },
                     {
@@ -82,7 +112,7 @@ export const router = createBrowserRouter([
                     />
                 ),
                 children: [
-                    {   
+                    {
                         path: 'home' || '',
                         element: <HomeAdmin />,
                     },
@@ -181,6 +211,20 @@ export const router = createBrowserRouter([
                                 element: <EditInvoiceDetail />,
                             },
                         ],
+                    },
+
+                    {
+                        path: 'customerEmails',
+                        element: <CustomerEmail />,
+                    },
+
+                    {
+                        path: 'feedbackCustomers',
+                        element: (
+                            <PaginationProvider>
+                                <FeedbackCustomer />
+                            </PaginationProvider>
+                        ),
                     },
                 ],
             },

@@ -6,7 +6,7 @@ import {
     getAllAccount,
     updateRole,
 } from '../../../Services/AccountService';
-import {  Dropdown  } from 'react-bootstrap';
+import { Dropdown } from 'react-bootstrap';
 import { toast } from 'react-toastify';
 import useModal from '../../../CustomHooks/useModal';
 import useAuth from '../../../CustomHooks/useAuth';
@@ -27,19 +27,19 @@ export default function Account() {
         id: '',
         role: '',
     });
-    const [newResetByEmail,setNewResetByEmail] = useState('')
+    const [newResetByEmail, setNewResetByEmail] = useState('');
     const { searchParams } = usePagination();
     const [totalPages, setTotalPages] = useState(1);
-    const [totalProducts, setTotalProducts] = useState();
+    const [totalItems, setTotalItems] = useState();
     const [currentPage, setCurrentPage] = useState();
 
     useEffect(() => {
         fetchGetAllRoles();
     }, []);
 
-     useEffect(() => {
-         fetchGetAllAccount();
-     }, [searchParams]);
+    useEffect(() => {
+        fetchGetAllAccount();
+    }, [searchParams]);
 
     useEffect(() => {
         if (newIdRole.role !== '') {
@@ -71,7 +71,7 @@ export default function Account() {
                             toast.error('Có lỗi xảy ra!');
                         });
                     closeModal();
-                },
+                }
             );
         }
     }, [newIdRole]);
@@ -82,7 +82,6 @@ export default function Account() {
                 'Cấp lại mật khẩu',
                 `Bạn có chắc muốn cấp lại mật khẩu cho tải khoản này qua email ?`,
                 () => {
-                    console.log(newResetByEmail);
                     resetPass(newResetByEmail)
                         .then((res) => {
                             console.log(res);
@@ -91,21 +90,20 @@ export default function Account() {
                             );
                         })
                         .catch((error) => {
-                            
                             toast.error('Có lỗi xảy ra!');
                         });
                     closeModal();
                 }
             );
         }
-    },[newResetByEmail])
+    }, [newResetByEmail]);
 
     const fetchGetAllAccount = async () => {
         await getAllAccount(searchParams).then((res) => {
             setListAccount(res.data.accountsRes);
             setTotalPages(res.data.totalPages);
             setCurrentPage(res.data.currentPage);
-            setTotalProducts(res.data.totalProduct);
+            setTotalItems(res.data.totalItems);
         });
     };
 
@@ -182,8 +180,8 @@ export default function Account() {
                     <span className="fw-bolder">{account.address}</span>
                 </div>
             </>,
-            () => { }
-            ,true
+            () => {},
+            true
         );
     };
     return (
@@ -275,7 +273,7 @@ export default function Account() {
                                                     <Dropdown.Item
                                                         onClick={() =>
                                                             handleResetPass(
-                                                                acc.email,
+                                                                acc.email
                                                             )
                                                         }
                                                     >
@@ -300,7 +298,7 @@ export default function Account() {
                 <CustomPagination
                     totalPages={totalPages}
                     currentPage={currentPage}
-                    totalProducts={totalProducts}
+                    totalItems={totalItems}
                 />
             </div>
         </>

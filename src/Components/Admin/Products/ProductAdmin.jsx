@@ -15,7 +15,7 @@ import Tittle from '../../Fragments/Tittle';
 export default function ProductAdmin() {
     const [products, setProducts] = useState([]);
     const [totalPages, setTotalPages] = useState(1);
-    const [totalProducts, setTotalProducts] = useState();
+    const [totalItems, setTotalItems] = useState();
     const [currentPage, setCurrentPage] = useState();
     const { searchParams } = usePagination();
     const { openModal, closeModal } = useModal();
@@ -30,7 +30,7 @@ export default function ProductAdmin() {
             setProducts(response.data.productsRes);
             setTotalPages(response.data.totalPages);
             setCurrentPage(response.data.currentPage);
-            setTotalProducts(response.data.totalProducts);
+            setTotalItems(response.data.totalItems);
         } catch (error) {
             console.error('Error fetching products:', error);
         }
@@ -112,7 +112,7 @@ export default function ProductAdmin() {
             <CustomPagination
                 totalPages={totalPages}
                 currentPage={currentPage}
-                totalItems={totalProducts}
+                totalItems={totalItems}
             />
         </>
     );

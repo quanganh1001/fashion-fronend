@@ -1,7 +1,47 @@
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Link } from "react-router-dom";
+import { registerEmail } from "../../Services/CustomerEmailService";
+import { useState } from "react";
+import { toast } from "react-toastify";
 
-export default function Footer(){
+export default function Footer() {
+    const [email, setEmail] = useState('');
+    const [emailError, setEmailError] = useState('');
+    
+    const handleChangeEmailInput = (e) => {
+        setEmail(e.target.value)
+    }
+
+    const handleRegisterEmail = (e) => {
+
+        e.preventDefault();
+        let isValid = true;
+        if (email === '') {
+            isValid = false;
+            setEmailError('Email không được để trống');
+        } else if (
+            !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(
+                String(email).toLowerCase()
+            )
+        ) {
+            isValid = false;
+            setEmailError('Email không hợp lệ');
+        } else {
+            setEmailError('');
+        }
+
+        if (isValid) {
+            registerEmail(email)
+                .then(() => {
+                    toast.success("Đăng ký nhận tin tức thành công")
+                }).catch((err) => {
+                    console.log(err);
+                    if (err.response.status === 409) {
+                        toast.error("Email đã đăng ký nhận tin tức rồi!")
+                    }
+                });
+        } 
+    }
     return (
         <>
             <div className="bg-secondary-subtle shadow-lg border footer">
@@ -53,10 +93,11 @@ export default function Footer(){
                                 </Link>
                             </li>
                             <li>
-                                <Link
-                                    className="border border-dark-subtle pt-1 pb-1 pe-2 ps-2 me-2 rounded"
-                                >
-                                    <FontAwesomeIcon className="text-dark" icon="fa-brands fa-tiktok" />
+                                <Link className="border border-dark-subtle pt-1 pb-1 pe-2 ps-2 me-2 rounded">
+                                    <FontAwesomeIcon
+                                        className="text-dark"
+                                        icon="fa-brands fa-tiktok"
+                                    />
                                 </Link>
                             </li>
                         </div>
@@ -147,7 +188,7 @@ export default function Footer(){
                                 className="mt-3 fw-lighter fs-6"
                                 style={{ listStyleType: 'disc' }}
                             >
-                                <Link className="text-dark text-decoration-none">
+                                <Link to={'/introduce'} className="text-dark text-decoration-none">
                                     Giới thiệu
                                 </Link>
                             </li>
@@ -155,7 +196,7 @@ export default function Footer(){
                                 className="mt-3 fw-lighter fs-6"
                                 style={{ listStyleType: 'disc' }}
                             >
-                                <Link className="text-dark text-decoration-none">
+                                <Link to='returnPolicy' className="text-dark text-decoration-none">
                                     Chính sách đổi trả
                                 </Link>
                             </li>
@@ -163,7 +204,7 @@ export default function Footer(){
                                 className="mt-3 fw-lighter fs-6 "
                                 style={{ listStyleType: 'disc' }}
                             >
-                                <Link className="text-dark text-decoration-none">
+                                <Link to="/privatePolicy" className="text-dark text-decoration-none">
                                     Chính sách bảo mật
                                 </Link>
                             </li>
@@ -192,19 +233,21 @@ export default function Footer(){
                             </span>
                             <div className="form-floating">
                                 <input
-                                    id="email-input"
+                                    onChange={handleChangeEmailInput}
                                     type="email"
-                                    className="form-control"
+                                    className={`form-control ${
+                                        emailError !== '' ? 'border-danger' : ''
+                                    }`}
                                     placeholder="Nhập email"
                                     style={{ fontSize: '0.8rem' }}
                                 />
-                                <label>
-                                    Nhập email của bạn
-                                </label>
+                                <label>Nhập email của bạn</label>
+                               
                             </div>
+
                             <button
-                                type="submit"
-                                className="btn btn-dark"
+                                onClick={handleRegisterEmail}
+                                className="button"
                                 id="btn-send-mail"
                             >
                                 Đăng ký

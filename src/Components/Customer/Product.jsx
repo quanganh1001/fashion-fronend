@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { getAllImageProducts, getProduct } from '../../Services/ProductService';
 import { Tab, Tabs } from 'react-bootstrap';
-import ReturnPolicy from '../Fragments/ReturnPolicy';
+import ReturnPolicy from './ReturnPolicy';
 import PrivatePolicy from './PrivatePolicy';
 import useModal from '../../CustomHooks/useModal';
 import { toast } from 'react-toastify';

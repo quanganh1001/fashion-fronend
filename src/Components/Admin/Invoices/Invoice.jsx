@@ -22,7 +22,7 @@ export default function Invoice() {
     const [listInvoiceStatus, setListInvoiceStatus] = useState([]);
     const [listEmployees, setListEmployees] = useState([]);
     const [totalPages, setTotalPages] = useState(1);
-    const [totalInvoices, setTotalInvoices] = useState();
+    const [totalItems, setTotalItems] = useState();
     const [currentPage, setCurrentPage] = useState();
     const { searchParams, setPage } = usePagination();
     const [accountId, setAccountId] = useState(0);
@@ -98,7 +98,7 @@ export default function Invoice() {
             setListInvoice(res.data.invoices);
             setTotalPages(res.data.totalPages);
             setCurrentPage(res.data.currentPage);
-            setTotalInvoices(res.data.totalInvoices);
+            setTotalItems(res.data.totalItems);
         } catch (err) {
             console.error(err);
         }
@@ -258,7 +258,7 @@ export default function Invoice() {
                     <CustomPagination
                         totalPages={totalPages}
                         currentPage={currentPage}
-                        totalItems={totalInvoices}
+                        totalItems={totalItems}
                     />
                 </div>
             </div>

@@ -1,6 +1,7 @@
 export default function PrivatePolicy() {
     return (
-        <>
+        <div className="m-5">
+            
             <p>
                 <b>1. Thu thập và sử dụng thông tin của TORANO</b>
             </p>
@@ -110,6 +111,6 @@ export default function PrivatePolicy() {
                 giải. Nếu hòa giải không thành sẽ được giải quyết tại Tòa án có
                 thẩm quyền và tuân theo pháp luật Việt Nam.
             </p>
-        </>
+        </div>
     );
 }

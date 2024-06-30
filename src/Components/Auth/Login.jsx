@@ -1,8 +1,11 @@
 /* eslint-disable no-restricted-globals */
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import useAuth from '../../CustomHooks/useAuth';
 import { toast } from 'react-toastify';
 import LoadingSprinner from '../Fragments/LoadingSpinner';
+import { resetPass } from '../../Services/Auth';
+import useModal from '../../CustomHooks/useModal';
+import { Link } from 'react-router-dom';
 
 export default function Login() {
     const [username, setUsername] = useState('');
@@ -11,9 +14,11 @@ export default function Login() {
     const [usernameBlank, setUsernameBlank] = useState('');
     const [error, setError] = useState('');
     const [isLoading, setIsLoading] = useState(false);
-
+    const [email, setEmail] = useState('');
     const { handleLogin } = useAuth();
+    const { openModal, closeModal } = useModal();
 
+    
     const submitForm = async (event) => {
         event.preventDefault();
 
@@ -52,7 +57,52 @@ export default function Login() {
             }
         }
     };
+    const handleSetEmail = (e) => {
+        setEmail(e.target.value);
+    }
 
+    const handleResetPass = () => {
+        openModal(
+            'Cấp lại mật khẩu',
+            <div>
+                <div>Nhập email đăng ký</div>
+                <input
+                    className="form-control mt-3"
+                    type="email"
+                    onChange={handleSetEmail}
+                />
+            </div>,
+            () => {
+                let isValid = true;
+
+                if (email === '') {
+                    isValid = false;
+                    toast.error('Email không được để trống');
+                } else if (
+                    !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(
+                        String(email).toLowerCase()
+                    )
+                ) {
+                    isValid = false;
+                    toast.error('Email không hợp lệ');
+                }
+
+                if (isValid) {
+                    resetPass(email)
+                        .then((res) => {
+                            toast.success(
+                                'Mật khẩu mới được gửi về email đăng ký!'
+                            );
+                        })
+                        .catch((error) => {
+                            toast.error('Có lỗi xảy ra!');
+                        });
+                    closeModal();
+                }
+            }
+        );
+    }
+    
     return (
         <div className="p-5 d-flex flex-column align-items-center">
             <h2>ĐĂNG NHẬP</h2>
@@ -93,7 +143,23 @@ export default function Login() {
                             <span className="text-danger">{passBlank}</span>
                             <span className="text-danger">{error}</span>
                         </div>
-                        <div className="row">
+                        <div class="d-flex justify-content-between">
+                            <div
+                                onClick={handleResetPass}
+                                class=" fst-italic text-decoration-underline text-dark"
+                                style={{ cursor: 'pointer' }}
+                            >
+                                Quên mật khẩu?
+                            </div>
+                            <Link
+                                to={'/register'}
+                                style={{ cursor: 'pointer' }}
+                                class=" text-dark"
+                            >
+                                Đăng ký tài khoản
+                            </Link>
+                        </div>
+                        <div className="row mt-3">
                             <div className="col-4 d-flex align-items-center">
                                 <button
                                     type="submit"

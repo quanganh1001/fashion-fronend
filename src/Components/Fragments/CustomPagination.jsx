@@ -32,7 +32,7 @@ export default function CustomPagination({
 
                 <div>
                     Tổng: <span className="text-danger"> {totalItems} </span>
-                    sản phẩm
+                    mục
                 </div>
 
                 <div className="mt-2">

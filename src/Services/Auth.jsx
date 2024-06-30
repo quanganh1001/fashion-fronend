@@ -14,6 +14,11 @@ export const logout = async () => {
     return response;
 };
 
+export const register = async (accountRegisterDto) => {
+    console.log(accountRegisterDto);
+    return await apiPublic.post('/auth/register', accountRegisterDto);
+};
+
 export const getAuth = () => {
     const auth = localStorage.getItem('auth');
     return auth ? JSON.parse(auth) : {};

@@ -12,10 +12,10 @@ import ModalProvider from './ContextProvider/ModalProvider.jsx';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
-        <ModalProvider>
-            <RouterProvider router={router} />
-            <ToastContainer autoClose={2000} />
-        </ModalProvider>
+    <ModalProvider>
+        <RouterProvider router={router} />
+        <ToastContainer autoClose={2000} />
+    </ModalProvider>
 );
 
 reportWebVitals();
