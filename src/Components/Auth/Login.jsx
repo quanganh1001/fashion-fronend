@@ -143,10 +143,10 @@ export default function Login() {
                             <span className="text-danger">{passBlank}</span>
                             <span className="text-danger">{error}</span>
                         </div>
-                        <div class="d-flex justify-content-between">
+                        <div className="d-flex justify-content-between">
                             <div
                                 onClick={handleResetPass}
-                                class=" fst-italic text-decoration-underline text-dark"
+                                className=" fst-italic text-decoration-underline text-dark"
                                 style={{ cursor: 'pointer' }}
                             >
                                 Quên mật khẩu?
@@ -154,7 +154,7 @@ export default function Login() {
                             <Link
                                 to={'/register'}
                                 style={{ cursor: 'pointer' }}
-                                class=" text-dark"
+                                className=" text-dark"
                             >
                                 Đăng ký tài khoản
                             </Link>

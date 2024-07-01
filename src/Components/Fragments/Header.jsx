@@ -329,7 +329,7 @@ export default function Header() {
                             <div className="ms-3 d-flex align-items-center">
                                 <div className="d-flex flex-column ">
                                     <span>Xin chào, </span>
-                                    <Link className=" fst-italic text-decoration-underline btn-link text-dark">
+                                    <Link to='/infoAccount' className=" fst-italic text-decoration-underline btn-link text-dark">
                                         {auth.account.name}
                                     </Link>
                                 </div>

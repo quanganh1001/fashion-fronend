@@ -127,18 +127,18 @@ export default function Cart() {
                 }
             `}</style>
             <div
-                class="col-12 d-flex flex-wrap justify-content-between container-xl mb-5"
+                className="col-12 d-flex flex-wrap justify-content-between container-xl mb-5"
                 style={{ minHeight: '30vh' }}
             >
-                <h3 class="text-danger my-5">Giỏ hàng của bạn</h3>
-                <div class="  col-12 d-flex justify-content-between">
-                    <div class="col-8">
+                <h3 className="text-danger my-5">Giỏ hàng của bạn</h3>
+                <div className="  col-12 d-flex justify-content-between">
+                    <div className="col-8">
                         {cart?.length > 0 ? (
-                            <div id="cart" class="  d-flex flex-column">
+                            <div id="cart" className="  d-flex flex-column">
                                 {cart.map((c) => (
                                     <div
                                         key={c.productDetail.id}
-                                        class=" d-flex mt-3 align-items-center"
+                                        className=" d-flex mt-3 align-items-center"
                                     >
                                         <FontAwesomeIcon
                                             onClick={() => {
@@ -151,7 +151,7 @@ export default function Cart() {
                                             size="2xl"
                                             style={{ color: '#750000' }}
                                         />
-                                        <div class="border border-light-subtle p-2 d-flex align-items-center col-11">
+                                        <div className="border border-light-subtle p-2 d-flex align-items-center col-11">
                                             {c.productDetail.imageBackground.endsWith(
                                                 '.mp4'
                                             ) ? (
@@ -178,14 +178,14 @@ export default function Cart() {
                                                     style={{
                                                         maxHeight: '150px',
                                                     }}
-                                                    class="img-thumbnail col-2"
+                                                    className="img-thumbnail col-2"
                                                 />
                                             )}
 
-                                            <div class=" p-3 col-10 ">
-                                                <div class="d-flex justify-content-between col-12 ">
+                                            <div className=" p-3 col-10 ">
+                                                <div className="d-flex justify-content-between col-12 ">
                                                     <div>
-                                                        <span class="overflow-wrap fw-bold">
+                                                        <span className="overflow-wrap fw-bold">
                                                             {
                                                                 c.productDetail
                                                                     .productName
@@ -207,7 +207,7 @@ export default function Cart() {
                                                     </div>
                                                 </div>
 
-                                                <div class="mt-3 d-flex">
+                                                <div className="mt-3 d-flex">
                                                     <div>
                                                         Giá tiền:{' '}
                                                         {c.productDetail
@@ -255,12 +255,12 @@ export default function Cart() {
                                                     </div>
                                                 </div>
 
-                                                <div class="mt-3">
+                                                <div className="mt-3">
                                                     <div className="d-flex align-items-center">
                                                         <div>Số lượng:</div>
                                                         <div>
                                                             <input
-                                                                class="form-control ms-2"
+                                                                className="form-control ms-2"
                                                                 type="number"
                                                                 defaultValue={
                                                                     c.quantity
@@ -280,7 +280,7 @@ export default function Cart() {
                                                         </div>
                                                     </div>
                                                 </div>
-                                                <div class="mt-3">
+                                                <div className="mt-3">
                                                     Tổng:{' '}
                                                     <span
                                                         style={{
@@ -308,20 +308,20 @@ export default function Cart() {
                     </div>
 
                     {cart?.length > 0 && (
-                        <div class="align-self-top col-4 p-2">
-                            <div class="border p-2 bg-light">
-                                <div class="d-flex justify-content-between p-2">
+                        <div className="align-self-top col-4 p-2">
+                            <div className="border p-2 bg-light">
+                                <div className="d-flex justify-content-between p-2">
                                     <span>Tổng tiền:</span>
-                                    <span class="fw-bold">
+                                    <span className="fw-bold">
                                         {totalPrice.toLocaleString('vi-VN', {
                                             style: 'currency',
                                             currency: 'VND',
                                         })}
                                     </span>
                                 </div>
-                                <div class="d-flex justify-content-between p-2">
+                                <div className="d-flex justify-content-between p-2">
                                     <span>Phí ship:</span>
-                                    <span class="fw-bold">
+                                    <span className="fw-bold">
                                         {totalPrice >= 500000
                                             ? (0).toLocaleString('vi-VN', {
                                                   style: 'currency',
@@ -333,11 +333,11 @@ export default function Cart() {
                                               })}
                                     </span>
                                 </div>
-                                <div class="d-flex justify-content-between p-2">
+                                <div className="d-flex justify-content-between p-2">
                                     <span>Tổng đơn:</span>
                                     <h4
                                         style={{ color: 'red' }}
-                                        class="fw-bold"
+                                        className="fw-bold"
                                     >
                                         {totalBill.toLocaleString('vi-VN', {
                                             style: 'currency',
@@ -345,7 +345,7 @@ export default function Cart() {
                                         })}
                                     </h4>
                                 </div>
-                                <p class="p-2 fw-light">
+                                <p className="p-2 fw-light">
                                     *Miễn phí vận chuyển với đơn hàng từ
                                     500.000đ{' '}
                                 </p>
@@ -398,12 +398,12 @@ export default function Cart() {
                     )}
                 </div>
                 {cart?.length > 0 && (
-                    <div class="d-flex flex-column align-items-center col-12 mt-5">
-                        <h1 class="border-bottom p-2">Thông tin người nhận</h1>
+                    <div className="d-flex flex-column align-items-center col-12 mt-5">
+                        <h1 className="border-bottom p-2">Thông tin người nhận</h1>
                         <form onSubmit={handleSubmit}>
-                            <div class="row">
-                                <div class="mb-3">
-                                    <label class="form-label">
+                            <div className="row">
+                                <div className="mb-3">
+                                    <label className="form-label">
                                         Họ Tên
                                         <span style={{ color: 'red' }}>*</span>
                                     </label>
@@ -418,11 +418,11 @@ export default function Cart() {
                                         onChange={handleChange}
                                         name="name"
                                     />
-                                    <span class="text-danger">{nameError}</span>
+                                    <span className="text-danger">{nameError}</span>
                                 </div>
 
-                                <div class="mb-3">
-                                    <label class="form-label">
+                                <div className="mb-3">
+                                    <label className="form-label">
                                         Số điện thoại
                                         <span style={{ color: 'red' }}>*</span>
                                     </label>
@@ -437,13 +437,13 @@ export default function Cart() {
                                         }
                                         name="phone"
                                     />
-                                    <span class="text-danger">
+                                    <span className="text-danger">
                                         {phoneError}
                                     </span>
                                 </div>
 
-                                <div class="mb-3">
-                                    <label class="form-label">
+                                <div className="mb-3">
+                                    <label className="form-label">
                                         Địa chỉ
                                         <span style={{ color: 'red' }}>*</span>
                                     </label>
@@ -458,23 +458,23 @@ export default function Cart() {
                                         }
                                         name="address"
                                     />
-                                    <span class="text-danger">
+                                    <span className="text-danger">
                                         {addressError}
                                     </span>
                                 </div>
 
-                                <div class="mb-3">
-                                    <label class="form-label">
+                                <div className="mb-3">
+                                    <label className="form-label">
                                         Lời nhắn của bạn
                                     </label>
                                     <textarea
                                         value={customerInfo.customerNote}
                                         onChange={handleChange}
-                                        class="form-control"
+                                        className="form-control"
                                         name="customerNote"
                                     ></textarea>
                                 </div>
-                                <button class="mt-3 col-4 button" type="submit">
+                                <button className="mt-3 col-4 button" type="submit">
                                     Đặt hàng
                                 </button>
                             </div>

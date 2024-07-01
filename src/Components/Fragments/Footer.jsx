@@ -212,7 +212,7 @@ export default function Footer() {
                                 className="mt-3 fw-lighter fs-6"
                                 style={{ listStyleType: 'disc' }}
                             >
-                                <Link className="text-dark text-decoration-none">
+                                <Link to="/contactUs" className="text-dark text-decoration-none">
                                     Liên hệ
                                 </Link>
                             </li>

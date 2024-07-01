@@ -69,9 +69,9 @@ export default function ContactUs() {
                 width="100%"
                 height="500"
                 style={{ border: '0' }}
-                allowfullscreen=""
+                allowFullScreen=""
                 loading="lazy"
-                referrerpolicy="no-referrer-when-downgrade"
+                referrerPolicy="no-referrer-when-downgrade"
                 title="a"
             ></iframe>
             <div className="container-xxl  mt-5">
@@ -91,7 +91,7 @@ export default function ContactUs() {
                                     <input
                                         type="text"
                                         placeholder="Tên của bạn"
-                                        maxlength="50"
+                                        maxLength="50"
                                         name="name"
                                         onChange={handleInputChange}
                                         className={`form-control p-3 ${
@@ -109,7 +109,7 @@ export default function ContactUs() {
                                     <input
                                         type="text"
                                         placeholder="Email của bạn"
-                                        maxlength="55"
+                                        maxLength="55"
                                         name="email"
                                         onChange={handleInputChange}
                                         className={`form-control p-3 ${
@@ -122,7 +122,7 @@ export default function ContactUs() {
                                         {emailError}
                                     </span>
                                 </div>
-                                
+
                                 <div className=" col-12 mt-3">
                                     <textarea
                                         placeholder="Nội dung"
@@ -131,11 +131,13 @@ export default function ContactUs() {
                                                 ? 'border-danger'
                                                 : ''
                                         }`}
-                                        maxlength="255"
+                                        maxLength="255"
                                         name="feedback"
                                         onChange={handleInputChange}
                                     ></textarea>
-                                    <span className="text-danger">{feedbackError}</span>
+                                    <span className="text-danger">
+                                        {feedbackError}
+                                    </span>
                                 </div>
                                 <div className="sitebox-recaptcha ">
                                     <span className="fw-light">

@@ -210,7 +210,6 @@ export default function Product() {
                                         </video>
                                     ) : (
                                         <img
-                                            thumbnail
                                             src={item.thumbnail}
                                             alt={item.description}
                                             style={{

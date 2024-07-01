@@ -7,10 +7,9 @@ export const ProtectedRoute = ({ hasAnyRoles }) => {
 
     const { auth } = useAuth();
 
-    if (!auth.token) {
-        console.log(auth);
+    if (!auth || !auth.account) {
         console.log('Bạn không có quyền truy cập');
-        return <Navigate to="/login" />;
+        return <Navigate to="/error/403" />;
     }
 
     if (
@@ -19,10 +18,10 @@ export const ProtectedRoute = ({ hasAnyRoles }) => {
             (location.pathname.startsWith('/admin/accounts') &&
                 (!location.pathname.endsWith('/edit') ||
                     location.pathname.endsWith('/add')))) &&
-        (auth.account.role !== 'ROLE_MANAGER')
+        (auth?.account?.role !== 'ROLE_MANAGER')
     ) {
         console.log('Bạn không có quyền truy cập');
-        return <Navigate to="/login" />;
+        return <Navigate to="/error/403" />;
     }
 
     if (auth.token && hasAnyRoles?.includes(auth?.account?.role)) {
@@ -34,5 +33,5 @@ export const ProtectedRoute = ({ hasAnyRoles }) => {
     }
 
     console.log('Bạn không có quyền truy cập');
-    return <Navigate to="/login" />;
+    return <Navigate to="/error/403" />;
 };

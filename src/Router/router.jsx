@@ -32,12 +32,41 @@ import ReturnPolicy from '../Components/Customer/ReturnPolicy.jsx';
 import PrivatePolicy from '../Components/Customer/PrivatePolicy.jsx';
 import ContactUs from '../Components/Customer/ContactUs.jsx';
 import FeedbackCustomer from '../Components/Admin/FeedbackCustomers/FeedbackCustomer.jsx';
+import NotFoundPage from '../Components/ErrorPage/NotFoundPage.jsx';
+import AccessDenied from '../Components/ErrorPage/AccessDenied.jsx';
+import ErrorPage from '../Components/ErrorPage/ErrorPage.jsx';
+import InternalServerError from '../Components/ErrorPage/InternalServerError.jsx';
+import InfoAccount from '../Components/Customer/InfoAccount.jsx';
 
 export const router = createBrowserRouter([
     {
         path: '',
         element: <App />,
+        errorElement: <ErrorPage />,
         children: [
+            {
+                path: 'error',
+                element: (
+                    <PublicLayout>
+                        <Outlet />
+                    </PublicLayout>
+                ),
+                children: [
+                    {
+                        path: '403',
+                        element: <AccessDenied />,
+                    },
+                    {
+                        path: '404',
+                        element: <NotFoundPage />,
+                    },
+                    {
+                        path: '500',
+                        element: <InternalServerError />,
+                    },
+                ],
+            },
+
             {
                 path: 'login',
                 element: <Login />,
@@ -89,13 +118,15 @@ export const router = createBrowserRouter([
                     },
                     {
                         path: 'product/:id',
-                        element: (
-                                <Product />
-                        ),
+                        element: <Product />,
                     },
                     {
                         path: 'cart',
                         element: <Cart />,
+                    },
+                    {
+                        path: 'infoAccount',
+                        element: <InfoAccount />,
                     },
                     {
                         path: 'response',
