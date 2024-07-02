@@ -1,6 +1,7 @@
 import { Navigate, Outlet, useLocation, useParams } from 'react-router-dom';
 import useAuth from '../CustomHooks/useAuth';
 import AdminLayout from '../Components/Layout/AdminLayout';
+import FeedbackProvider from '../ContextProvider/FeedbackProvider';
 
 export const ProtectedRoute = ({ hasAnyRoles }) => {
     const location = useLocation();
@@ -26,9 +27,11 @@ export const ProtectedRoute = ({ hasAnyRoles }) => {
 
     if (auth.token && hasAnyRoles?.includes(auth?.account?.role)) {
         return (
-            <AdminLayout>
-                <Outlet />
-            </AdminLayout>
+            <FeedbackProvider>
+                <AdminLayout>
+                    <Outlet />
+                </AdminLayout>
+            </FeedbackProvider>
         );
     }
 

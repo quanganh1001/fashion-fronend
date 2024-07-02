@@ -28,7 +28,7 @@ export default function Header() {
     const { totalCartItems } = useCart();
     const { openModal, closeModal } = useModal();
     const [email, setEmail] = useState('');
-
+    
     useEffect(() => {
         if (hoveredF1 !== null) {
             setTimeout(() => {

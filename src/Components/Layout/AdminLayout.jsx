@@ -1,4 +1,4 @@
-import Menu from '../Admin/MenuAdmin';
+import Menu from '../Fragments/MenuAdmin';
 
 export default function AdminLayout({ children }) {
     return (

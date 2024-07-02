@@ -9,8 +9,6 @@ export default function AuthProvider({ children }) {
 
     const navigate = useNavigate();
 
-    const redirectTo = location.state?.redirectTo?.pathname || '/';
-
     const [auth, setAuth] = useState(getAuth());
 
     useEffect(() => {

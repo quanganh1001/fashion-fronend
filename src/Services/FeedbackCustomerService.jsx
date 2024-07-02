@@ -5,6 +5,7 @@ export const sendFeedback = (feedbackCustomer) => {
 };
 
 export const getAllFeedback = (searchParams) => {
+    
     return apiPrivate.get('feedback', {
         params: {
             page: searchParams.get('page'),
@@ -20,3 +21,7 @@ export const readFeedback = (id) => {
 export const unread = (id) => {
     return apiPrivate.put('feedback/unread', id);
 };
+
+export const getTotalUnread = () => {
+    return apiPrivate.get('feedback/count');
+}
