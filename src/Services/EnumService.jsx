@@ -10,13 +10,13 @@ export const getImagesSize = async () => {
   return await apiPrivate.get('enums/sizeImages');
 };
 
-export const getAllRoles = async () => {
-    return await apiPrivate.get('enums/roles');
+export const getAllRoles =  () => {
+    return  apiPrivate.get('enums/roles');
 
 }
 
-export const getAllInvoiceStatus = async () => {
-    return await apiPrivate.get('enums/invoiceStatus');
+export const getAllInvoiceStatus =  () => {
+    return  apiPrivate.get('enums/invoiceStatus');
 };
 
 export const getUrlImgEnum = async (ImgEnum) => {

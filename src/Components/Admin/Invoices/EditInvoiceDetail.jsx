@@ -7,6 +7,7 @@ import { getAllInvoiceStatus } from '../../../Services/EnumService';
 import { getAllEmployees } from '../../../Services/AccountService';
 import { toast } from 'react-toastify';
 import InvoicesDetails from './InvoiceDetail';
+import LoadingSpinner from '../../Fragments/LoadingSpinner';
 
 export default function EditInvoiceDetail() {
     const { id } = useParams();
@@ -18,7 +19,7 @@ export default function EditInvoiceDetail() {
         note: '',
         accountId: '',
         invoiceStatus: '',
-        isPaid: ''
+        isPaid: '',
     });
 
     const [listInvoicesDetail, setListInvoicesDetail] = useState([]);
@@ -28,8 +29,11 @@ export default function EditInvoiceDetail() {
     const [nameError, setNameError] = useState('');
     const [phoneError, setPhoneError] = useState('');
     const [addressError, setAddressError] = useState('');
+    const [accountError, setAccountError] = useState('');
     const [accountId, setAccountId] = useState();
-
+    const [isLoadingInvoice, setIsLoadingInvoice] = useState(true);
+    const [isLoadingDetail, setIsLoadingDetail] = useState(true);
+    const [isLoadingButton, setIsLoadingButton] = useState(false);
     const [listInvoiceStatus, setListInvoiceStatus] = useState([]);
 
     const [listEmployees, setListEmployees] = useState([]);
@@ -43,26 +47,33 @@ export default function EditInvoiceDetail() {
         fetchInvoice();
     }, []);
 
-    const fetchInvoice = async () => {
-        await getInvoice(id).then((res) => {
-            setInputInvoice({
-                name: res.data.name,
-                phone: res.data.phone,
-                address: res.data.address,
-                note: res.data.note,
-                accountId: res.data.accountId,
-                invoiceStatus: res.data.invoiceStatus,
-                isPaid: res.data.isPaid,
+    const fetchInvoice = () => {
+        setIsLoadingDetail(true)
+        getInvoice(id)
+            .then((res) => {
+                setInputInvoice({
+                    name: res.data.name,
+                    phone: res.data.phone,
+                    address: res.data.address,
+                    note: res.data.note,
+                    accountId: res.data.accountId,
+                    invoiceStatus: res.data.invoiceStatus,
+                    isPaid: res.data.isPaid,
+                });
+                setInvoice(res.data);
+                setListInvoicesDetail(res.data.invoicesDetails);
+            })
+            .catch((err) => {
+                console.error(err);
+            })
+            .finally(() => {
+                setIsLoadingInvoice(false);
+                setIsLoadingDetail(false);
             });
-            setInvoice(res.data);
-            setListInvoicesDetail(res.data.invoicesDetails);
-        }).catch((err) => {
-            console.error(err)
-        });
     };
 
-    const fetchGetAllEmployee = async () => {
-        await getAllEmployees()
+    const fetchGetAllEmployee = () => {
+        getAllEmployees()
             .then((res) => {
                 setListEmployees(res.data);
             })
@@ -71,8 +82,8 @@ export default function EditInvoiceDetail() {
             });
     };
 
-    const fetchGetAllInvoicesStatus = async () => {
-        await getAllInvoiceStatus()
+    const fetchGetAllInvoicesStatus = () => {
+        getAllInvoiceStatus()
             .then((res) => {
                 setListInvoiceStatus(res.data);
             })
@@ -114,242 +125,290 @@ export default function EditInvoiceDetail() {
             setAddressError('');
         }
 
-        if (inputInvoice.accountId === 'null') {
+        if (!inputInvoice.accountId) {
             isValid = false;
-            setAccountId('Vui lòng chọn nhân viên');
+            setAccountError('Vui lòng chọn nhân viên');
         } else {
             setAccountId('');
         }
 
         if (isValid) {
-            await updateInvoice(id, inputInvoice).then(() => {
-                fetchInvoice();
-                toast.success('Cập nhập thành công');
-            }).catch((err) => {
-                toast.error(err.response.data);
-            });
+            setIsLoadingButton(true);
+            
+            await updateInvoice(id, inputInvoice)
+                .then(() => {
+                    fetchInvoice();
+                    toast.success('Cập nhập thành công');
+                })
+                .catch((err) => {
+                    toast.error(err.response.data);
+                })
+                .finally(() => {
+                    setIsLoadingButton(false);
+                    
+                });
         }
     };
 
     const checkStatusInvoice = (status) => {
-        if (status === "Đơn đã lên" || status === "Đơn đang chuyển" || status === "Đơn thành công" || status === "Đơn hoàn") {
+        if (
+            status === 'Đơn đã lên' ||
+            status === 'Đơn đang chuyển' ||
+            status === 'Đơn thành công' ||
+            status === 'Đơn hoàn'
+        ) {
             return true;
         } else return false;
-    }
+    };
 
     return (
         <>
             <Tittle tittle="Chi tiết đơn hàng" />
             <div className="mt-5 bg-white p-5 shadow border">
                 <div className="col-12 mb-3">
-                    <form
-                        onSubmit={updateForm}
-                        className="d-flex flex-wrap justify-content-between align-items-center row"
-                    >
-                        <div className="mb-5 d-flex flex-wrap justify-content-between align-items-center">
-                            {invoice ? (
-                                <div className="col-3">
-                                    Ngày tạo:{' '}
-                                    <span className="fw-bolder">
-                                        {format(
-                                            parseISO(invoice.createdAt),
-                                            'HH:mm:ss -d/M/yyyy'
-                                        )}
-                                    </span>
-                                    <div className=" d-flex mt-3">
-                                        Mã đơn hàng:{'   '}
+                    {isLoadingInvoice ? (
+                        <LoadingSpinner />
+                    ) : (
+                        <form
+                            onSubmit={updateForm}
+                            className="d-flex flex-wrap justify-content-between align-items-center row"
+                        >
+                            <div className="mb-5 d-flex flex-wrap justify-content-between align-items-center">
+                                {invoice ? (
+                                    <div className="col-3">
+                                        Ngày tạo:{' '}
                                         <span className="fw-bolder">
-                                            {invoice.invoiceCode}
+                                            {format(
+                                                parseISO(invoice.createdAt),
+                                                'HH:mm:ss -d/M/yyyy'
+                                            )}
                                         </span>
+                                        <div className=" d-flex mt-3">
+                                            Mã đơn hàng:{'   '}
+                                            <span className="fw-bolder">
+                                                {invoice.invoiceCode}
+                                            </span>
+                                        </div>
                                     </div>
-                                </div>
-                            ) : (
-                                ''
-                            )}
+                                ) : (
+                                    ''
+                                )}
 
-                            <div className="mb-3 col-3">
+                                <div className="mb-3 col-3">
+                                    <label className="form-label">
+                                        Nhân viên phụ trách:{' '}
+                                        <span style={{ color: 'red' }}>*</span>
+                                    </label>
+
+                                    <select
+                                        className={`form-control ${
+                                            accountError ? 'border-danger' : ''
+                                        } `}
+                                        onChange={handleInputChange}
+                                        name="accountId"
+                                        value={
+                                            invoice ? invoice.accountId : 'null'
+                                        }
+                                    >
+                                        <option value="null">Chưa chọn</option>
+                                        {listEmployees.map((emlp) => (
+                                            <option
+                                                key={emlp.id}
+                                                value={emlp.id}
+                                            >
+                                                {emlp.name}
+                                            </option>
+                                        ))}
+                                    </select>
+                                    <span className="text-danger">
+                                        {accountError}
+                                    </span>
+                                </div>
+                            </div>
+
+                            <div className="mb-3 col-6">
                                 <label className="form-label">
-                                    Nhân viên phụ trách:{' '}
+                                    Tên khách hàng
                                     <span style={{ color: 'red' }}>*</span>
+                                </label>
+                                {!checkStatusInvoice(invoice.invoiceStatus) ? (
+                                    <>
+                                        <input
+                                            value={inputInvoice.name}
+                                            name="name"
+                                            onChange={handleInputChange}
+                                            className={`form-control ${
+                                                nameError ? 'border-danger' : ''
+                                            } `}
+                                        />
+                                        <span className="text-danger">
+                                            {nameError}
+                                        </span>
+                                    </>
+                                ) : (
+                                    <input
+                                        type="text"
+                                        className="form-control"
+                                        disabled
+                                        value={inputInvoice.name}
+                                    />
+                                )}
+                            </div>
+
+                            <div className="mb-3 col-6">
+                                <label className="form-label">
+                                    Số điện thoại
+                                    <span style={{ color: 'red' }}>*</span>
+                                </label>
+                                {!checkStatusInvoice(invoice.invoiceStatus) ? (
+                                    <>
+                                        <input
+                                            value={inputInvoice.phone}
+                                            name="phone"
+                                            onChange={handleInputChange}
+                                            type="text"
+                                            className={`form-control ${
+                                                phoneError
+                                                    ? 'border-danger'
+                                                    : ''
+                                            } `}
+                                        />
+                                    </>
+                                ) : (
+                                    <input
+                                        type="text"
+                                        className="form-control"
+                                        disabled
+                                        value={inputInvoice.phone}
+                                    />
+                                )}
+
+                                <span className="text-danger">
+                                    {phoneError}
+                                </span>
+                            </div>
+
+                            <div className="mb-3 col-12">
+                                <label className="form-label">
+                                    Địa chỉ
+                                    <span style={{ color: 'red' }}>*</span>
+                                </label>
+                                {!checkStatusInvoice(invoice.invoiceStatus) ? (
+                                    <>
+                                        <input
+                                            value={inputInvoice.address}
+                                            name="address"
+                                            onChange={handleInputChange}
+                                            className={`form-control ${
+                                                addressError
+                                                    ? 'border-danger'
+                                                    : ''
+                                            } `}
+                                        />
+                                    </>
+                                ) : (
+                                    <input
+                                        type="text"
+                                        className="form-control"
+                                        disabled
+                                        value={inputInvoice.address}
+                                    />
+                                )}
+
+                                <span className="text-danger">
+                                    {addressError}
+                                </span>
+                            </div>
+
+                            <div className="mb-3 col-6">
+                                <label className="form-label">
+                                    Ghi chú nội bộ
+                                </label>
+                                <textarea
+                                    name="note"
+                                    value={inputInvoice.note}
+                                    onChange={handleInputChange}
+                                    className="form-control"
+                                    rows="4"
+                                    cols="50"
+                                ></textarea>
+                            </div>
+
+                            <div className="mb-3 col-6">
+                                <label className="form-label">
+                                    Ghi chú của khách hàng: {'  '}
+                                </label>
+
+                                <span className="bg-warning">
+                                    {invoice.customerNote}
+                                </span>
+                            </div>
+
+                            <div className="mb-3 col-6">
+                                <label className="form-label">
+                                    Trạng thái đơn hàng: {'  '}
                                 </label>
 
                                 <select
                                     className="form-control"
                                     onChange={handleInputChange}
-                                    name="accountId"
-                                    value={invoice ? invoice.accountId : 'null'}
+                                    name="invoiceStatus"
+                                    value={inputInvoice.invoiceStatus}
                                 >
-                                    <option value="null">Chưa chọn</option>
-                                    {listEmployees.map((emlp) => (
-                                        <option key={emlp.id} value={emlp.id}>
-                                            {emlp.name}
+                                    {listInvoiceStatus.map((status) => (
+                                        <option
+                                            key={status.key}
+                                            value={status.value}
+                                        >
+                                            {status.value}
                                         </option>
                                     ))}
                                 </select>
-                                <span className="text-danger">{accountId}</span>
                             </div>
-                        </div>
 
-                        <div className="mb-3 col-6">
-                            <label className="form-label">
-                                Tên khách hàng
-                                <span style={{ color: 'red' }}>*</span>
-                            </label>
-                            {!checkStatusInvoice(invoice.invoiceStatus) ? (
-                                <>
-                                    <input
-                                        value={inputInvoice.name}
-                                        name="name"
-                                        onChange={handleInputChange}
-                                        className=" form-control"
-                                    />
-                                    <span className="text-danger">
-                                        {nameError}
-                                    </span>
-                                </>
-                            ) : (
+                            <div className="mb-3">
                                 <input
-                                    type="text"
-                                    className="form-control"
-                                    disabled
-                                    value={inputInvoice.name}
+                                    className="form-check-input bg-dark border-dark mx-2"
+                                    type="checkbox"
+                                    name="isPaid"
+                                    checked={inputInvoice.isPaid ?? false}
+                                    onChange={(e) =>
+                                        setInputInvoice({
+                                            ...inputInvoice,
+                                            isPaid: e.target.checked,
+                                        })
+                                    }
                                 />
-                            )}
-                        </div>
+                                {inputInvoice.isPaid ? (
+                                    <span>'Đã thanh toán'</span>
+                                ) : (
+                                    <span>'Chưa thanh toán'</span>
+                                )}
+                            </div>
 
-                        <div className="mb-3 col-6">
-                            <label className="form-label">
-                                Số điện thoại
-                                <span style={{ color: 'red' }}>*</span>
-                            </label>
-                            {!checkStatusInvoice(invoice.invoiceStatus) ? (
-                                <>
-                                    <input
-                                        value={inputInvoice.phone}
-                                        name="phone"
-                                        onChange={handleInputChange}
-                                        type="text"
-                                        className=" form-control"
-                                    />
-                                </>
-                            ) : (
-                                <input
-                                    type="text"
-                                    className="form-control"
-                                    disabled
-                                    value={inputInvoice.phone}
-                                />
-                            )}
-
-                            <span className="text-danger">{phoneError}</span>
-                        </div>
-
-                        <div className="mb-3 col-12">
-                            <label className="form-label">
-                                Địa chỉ
-                                <span style={{ color: 'red' }}>*</span>
-                            </label>
-                            {!checkStatusInvoice(invoice.invoiceStatus) ? (
-                                <>
-                                    <input
-                                        value={inputInvoice.address}
-                                        name="address"
-                                        onChange={handleInputChange}
-                                        className="address form-control"
-                                    />
-                                </>
-                            ) : (
-                                <input
-                                    type="text"
-                                    className="form-control"
-                                    disabled
-                                    value={inputInvoice.address}
-                                />
-                            )}
-
-                            <span className="text-danger">{addressError}</span>
-                        </div>
-
-                        <div className="mb-3 col-6">
-                            <label className="form-label">Ghi chú nội bộ</label>
-                            <textarea
-                                name="note"
-                                value={inputInvoice.note}
-                                onChange={handleInputChange}
-                                className="form-control"
-                                rows="4"
-                                cols="50"
-                            ></textarea>
-                        </div>
-
-                        <div className="mb-3 col-6">
-                            <label className="form-label">
-                                Ghi chú của khách hàng: {'  '}
-                            </label>
-
-                            <span className="bg-warning">
-                                {invoice.customerNote}
-                            </span>
-                        </div>
-
-                        <div className="mb-3 col-6">
-                            <label className="form-label">
-                                Trạng thái đơn hàng: {'  '}
-                            </label>
-
-                            <select
-                                className="form-control"
-                                onChange={handleInputChange}
-                                name="invoiceStatus"
-                                value={inputInvoice.invoiceStatus}
+                            <button
+                                disabled={isLoadingButton}
+                                style={{ textAlign: 'center' }}
+                                type="submit"
+                                className="mt-3 button col-4"
                             >
-                                {listInvoiceStatus.map((status) => (
-                                    <option
-                                        key={status.key}
-                                        value={status.value}
-                                    >
-                                        {status.value}
-                                    </option>
-                                ))}
-                            </select>
-                        </div>
-
-                        <div className="mb-3">
-                            <input
-                                className="form-check-input bg-dark border-dark mx-2"
-                                type="checkbox"
-                                name="isPaid"
-                                checked={inputInvoice.isPaid ?? false}
-                                onChange={(e) =>
-                                    setInputInvoice({
-                                        ...inputInvoice,
-                                        isPaid: e.target.checked,
-                                    })
-                                }
-                            />
-                            {inputInvoice.isPaid ? (
-                                <span>'Đã thanh toán'</span>
-                            ) : (
-                                <span>'Chưa thanh toán'</span>
-                            )}
-                        </div>
-
-                        <button
-                            style={{ textAlign: 'center' }}
-                            type="submit"
-                            className="mt-3 button col-4"
-                        >
-                            Cập nhập đơn hàng
-                        </button>
-                    </form>
+                                Cập nhập đơn hàng
+                            </button>
+                            {isLoadingButton && <LoadingSpinner />}
+                        </form>
+                    )}
                 </div>
             </div>
             <div className="col-12">
-                <InvoicesDetails
-                    checkStatusInvoice={checkStatusInvoice}
-                    id={id}
-                    listInvoicesDetail={listInvoicesDetail}
-                />
+                {isLoadingDetail ? (
+                    <LoadingSpinner />
+                ) : (
+                    <InvoicesDetails
+                        checkStatusInvoice={checkStatusInvoice}
+                        id={id}
+                        listInvoicesDetail={listInvoicesDetail}
+                    />
+                )}
             </div>
         </>
     );

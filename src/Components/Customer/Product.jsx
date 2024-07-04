@@ -11,6 +11,7 @@ import useAuth from '../../CustomHooks/useAuth';
 import ImageGallery from 'react-image-gallery';
 import 'react-image-gallery/styles/css/image-gallery.css';
 import { getImagesSize, getUrlImgEnum } from '../../Services/EnumService';
+import LoadingSpinner from '../Fragments/LoadingSpinner';
 
 export default function Product() {
     const [listImage, setListImage] = useState([]);
@@ -31,6 +32,7 @@ export default function Product() {
     const { handleAddCartWithAuth, handleAddCart } = useCart();
     const { auth } = useAuth();
     const [index, setIndex] = useState(0);
+    const [isLoadingProduct, setIsLoadingProduct] = useState(true);
 
     useEffect(() => {
         fetchListImage();
@@ -84,6 +86,8 @@ export default function Product() {
             })
             .catch((err) => {
                 console.error(err);
+            }).finally(() => {
+                setIsLoadingProduct(false)
             });
     };
 
@@ -233,169 +237,183 @@ export default function Product() {
                     </div>
 
                     <div className=" col-8 ps-5">
-                        <h4 className="mb-4">{product.productName}</h4>
+                        {isLoadingProduct ? (
+                            <LoadingSpinner />
+                        ) : (
+                            <>
+                                <h4 className="mb-4">{product.productName}</h4>
 
-                        <div className="d-flex justify-content-between mb-3">
-                            {selectProductDetail ? (
-                                <div>{selectProductDetail.code}</div>
-                            ) : (
-                                <div>Hãy chọn màu và size</div>
-                            )}
-                            <div
-                                style={{ cursor: 'pointer' }}
-                                className="link-dark fst-italic btn-link"
-                                onClick={() =>
-                                    handleShowImageChooseSize(
-                                        product.imageChooseSize
-                                    )
-                                }
-                            >
-                                Bảng hướng dẫn chọn size
-                            </div>
-                        </div>
-                        <div
-                            style={{ backgroundColor: '#d9d7d7' }}
-                            className="p-3 "
-                        >
-                            <div className="d-flex">
-                                Giá:{' '}
-                                {product.discountPrice === null ? (
-                                    <span className="ms-3 fw-semibold text-danger">
-                                        {product &&
-                                            product.price.toLocaleString(
-                                                'vi-VN',
-                                                {
-                                                    style: 'currency',
-                                                    currency: 'VND',
-                                                }
-                                            )}
-                                    </span>
-                                ) : (
-                                    <>
-                                        <span className=" mx-3 text-decoration-line-through">
-                                            {product &&
-                                                product.price.toLocaleString(
-                                                    'vi-VN',
-                                                    {
-                                                        style: 'currency',
-                                                        currency: 'VND',
-                                                    }
-                                                )}
-                                        </span>
-                                        <span className=" fw-semibold text-danger">
-                                            {product &&
-                                                product.discountPrice.toLocaleString(
-                                                    'vi-VN',
-                                                    {
-                                                        style: 'currency',
-                                                        currency: 'VND',
-                                                    }
-                                                )}
-                                        </span>
-                                    </>
-                                )}
-                            </div>
-                        </div>
-
-                        <div className="p-3">
-                            <table>
-                                <tbody>
-                                    <tr>
-                                        <td className="col-2">Màu sắc:</td>
-                                        <td className="d-flex flex-wrap justify-content-start">
-                                            {listColor.map((cl) => (
-                                                <label
-                                                    key={cl}
-                                                    className={` m-2  border p-2 ${
-                                                        color === cl
-                                                            ? 'button'
-                                                            : 'button-non-active'
-                                                    }`}
-                                                >
-                                                    {cl}
-                                                    <input
-                                                        type="radio"
-                                                        name="color"
-                                                        value={cl}
-                                                        hidden
-                                                        onChange={() =>
-                                                            handleChangeColor(
-                                                                cl
-                                                            )
-                                                        }
-                                                    />
-                                                </label>
-                                            ))}
-                                        </td>
-                                    </tr>
-
-                                    <tr className="border-top">
-                                        <td className="col-2">Size:</td>
-                                        <td className="  d-flex justify-content-start">
-                                            {listSize.map((sz) => (
-                                                <label
-                                                    key={sz}
-                                                    className={` m-2 border p-2 ${
-                                                        !checkProductAvailability(
-                                                            sz
-                                                        )
-                                                            ? 'bg-body-secondary'
-                                                            : ''
-                                                    } ${
-                                                        size === sz
-                                                            ? 'button'
-                                                            : 'button-non-active'
-                                                    }`}
-                                                >
-                                                    {sz}
-                                                    <input
-                                                        type="radio"
-                                                        name="size"
-                                                        value={sz}
-                                                        hidden
-                                                        onChange={() =>
-                                                            handleChangeSize(sz)
-                                                        }
-                                                        disabled={
-                                                            !checkProductAvailability(
-                                                                sz
-                                                            )
-                                                        }
-                                                    />
-                                                </label>
-                                            ))}
-                                        </td>
-                                    </tr>
-                                </tbody>
-                            </table>
-
-                            <label className=" d-flex mt-5 align-items-center">
-                                <span className="col-2">Số lượng: </span>
-                                <div className="col-2">
-                                    <input
-                                        className="p-2 form-control"
-                                        type="number"
-                                        defaultValue="1"
-                                        min="1"
-                                        max="99"
-                                        onChange={(e) =>
-                                            setInputQuantity(e.target.value)
+                                <div className="d-flex justify-content-between mb-3">
+                                    {selectProductDetail ? (
+                                        <div>{selectProductDetail.code}</div>
+                                    ) : (
+                                        <div>Hãy chọn màu và size</div>
+                                    )}
+                                    <div
+                                        style={{ cursor: 'pointer' }}
+                                        className="link-dark fst-italic btn-link"
+                                        onClick={() =>
+                                            handleShowImageChooseSize(
+                                                product.imageChooseSize
+                                            )
                                         }
-                                    />
+                                    >
+                                        Bảng hướng dẫn chọn size
+                                    </div>
                                 </div>
-                            </label>
-
-                            <div className="mt-5">
-                                <button
-                                    type="button"
-                                    disabled={!selectProductDetail}
-                                    className="button p-3"
-                                    onClick={() => handleAddToCart()}
+                                <div
+                                    style={{ backgroundColor: '#d9d7d7' }}
+                                    className="p-3 "
                                 >
-                                    Thêm vào giỏ hàng
-                                </button>
-                            </div>
-                        </div>
+                                    <div className="d-flex">
+                                        Giá:{' '}
+                                        {product.discountPrice === null ? (
+                                            <span className="ms-3 fw-semibold text-danger">
+                                                {product &&
+                                                    product.price.toLocaleString(
+                                                        'vi-VN',
+                                                        {
+                                                            style: 'currency',
+                                                            currency: 'VND',
+                                                        }
+                                                    )}
+                                            </span>
+                                        ) : (
+                                            <>
+                                                <span className=" mx-3 text-decoration-line-through">
+                                                    {product &&
+                                                        product.price.toLocaleString(
+                                                            'vi-VN',
+                                                            {
+                                                                style: 'currency',
+                                                                currency: 'VND',
+                                                            }
+                                                        )}
+                                                </span>
+                                                <span className=" fw-semibold text-danger">
+                                                    {product &&
+                                                        product.discountPrice.toLocaleString(
+                                                            'vi-VN',
+                                                            {
+                                                                style: 'currency',
+                                                                currency: 'VND',
+                                                            }
+                                                        )}
+                                                </span>
+                                            </>
+                                        )}
+                                    </div>
+                                </div>
+
+                                <div className="p-3">
+                                    <table>
+                                        <tbody>
+                                            <tr>
+                                                <td className="col-2">
+                                                    Màu sắc:
+                                                </td>
+                                                <td className="d-flex flex-wrap justify-content-start">
+                                                    {listColor.map((cl) => (
+                                                        <label
+                                                            key={cl}
+                                                            className={` m-2  border p-2 ${
+                                                                color === cl
+                                                                    ? 'button'
+                                                                    : 'button-non-active'
+                                                            }`}
+                                                        >
+                                                            {cl}
+                                                            <input
+                                                                type="radio"
+                                                                name="color"
+                                                                value={cl}
+                                                                hidden
+                                                                onChange={() =>
+                                                                    handleChangeColor(
+                                                                        cl
+                                                                    )
+                                                                }
+                                                            />
+                                                        </label>
+                                                    ))}
+                                                </td>
+                                            </tr>
+
+                                            <tr className="border-top">
+                                                <td className="col-2">Size:</td>
+                                                <td className="  d-flex justify-content-start">
+                                                    {listSize.map((sz) => (
+                                                        <label
+                                                            key={sz}
+                                                            className={` m-2 border p-2 ${
+                                                                !checkProductAvailability(
+                                                                    sz
+                                                                )
+                                                                    ? 'bg-body-secondary'
+                                                                    : ''
+                                                            } ${
+                                                                size === sz
+                                                                    ? 'button'
+                                                                    : 'button-non-active'
+                                                            }`}
+                                                        >
+                                                            {sz}
+                                                            <input
+                                                                type="radio"
+                                                                name="size"
+                                                                value={sz}
+                                                                hidden
+                                                                onChange={() =>
+                                                                    handleChangeSize(
+                                                                        sz
+                                                                    )
+                                                                }
+                                                                disabled={
+                                                                    !checkProductAvailability(
+                                                                        sz
+                                                                    )
+                                                                }
+                                                            />
+                                                        </label>
+                                                    ))}
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+
+                                    <label className=" d-flex mt-5 align-items-center">
+                                        <span className="col-2">
+                                            Số lượng:{' '}
+                                        </span>
+                                        <div className="col-2">
+                                            <input
+                                                className="p-2 form-control"
+                                                type="number"
+                                                defaultValue="1"
+                                                min="1"
+                                                max="99"
+                                                onChange={(e) =>
+                                                    setInputQuantity(
+                                                        e.target.value
+                                                    )
+                                                }
+                                            />
+                                        </div>
+                                    </label>
+
+                                    <div className="mt-5">
+                                        <button
+                                            type="button"
+                                            disabled={!selectProductDetail}
+                                            className="button p-3"
+                                            onClick={() => handleAddToCart()}
+                                        >
+                                            Thêm vào giỏ hàng
+                                        </button>
+                                    </div>
+                                </div>
+                            </>
+                        )}
                     </div>
                 </div>
                 <div className="mt-5">

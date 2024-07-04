@@ -22,10 +22,11 @@ export const getProductDetail = async (id) => {
 
 
 
-export const findAllProductsDetailByKey = async (key) => {
+export const findAllProductsDetailByKey = async (key,options) => {
     return await apiPrivate.get('productsDetail', {
         params: {
             key: key,
         },
+        ...options,
     });
 }

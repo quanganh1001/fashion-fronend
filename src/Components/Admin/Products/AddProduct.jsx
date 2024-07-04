@@ -5,6 +5,7 @@ import { toast } from 'react-toastify';
 import { useNavigate } from 'react-router-dom';
 import { getImagesSize } from '../../../Services/EnumService';
 import Tittle from '../../Fragments/Tittle';
+import LoadingSpinner from '../../Fragments/LoadingSpinner';
 
 export default function AddProduct() {
     const [product, setProduct] = useState({
@@ -26,7 +27,7 @@ export default function AddProduct() {
     const [brandError, setBrandError] = useState('');
     const [imgSizeError, setImgSizeError] = useState('');
     const [listCategories, setListCategories] = useState([]);
-
+    const [isLoading, setIsLoading] = useState(false);
     const [imgSizeOptions, setImgSizeOptions] = useState([]);
 
     useEffect(() => {
@@ -118,8 +119,9 @@ export default function AddProduct() {
         }
 
         if (isValid) {
+             setIsLoading(true);
             try {
-                console.log(product);
+                
                 await createProduct(product);
                 navigator('/admin/products');
                 toast.success('Thêm mới thành công');
@@ -128,6 +130,8 @@ export default function AddProduct() {
                     setCodeError('Mã sản phẩm đã tồn tại');
                     toast.error('Mã sản phẩm đã tồn tại');
                 }
+            } finally {
+                 setIsLoading(false);
             }
         }
     };
@@ -302,12 +306,14 @@ export default function AddProduct() {
                         </div>
 
                         <button
+                            disabled={isLoading}
                             type="submit"
                             id="submit"
                             className="col-2 button text-align-center"
                         >
                             Thêm sản phẩm
                         </button>
+                        {isLoading && <LoadingSpinner />}
                     </div>
                 </form>
             </div>

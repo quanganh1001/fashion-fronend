@@ -5,10 +5,12 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { checkoutCash, checkoutVnpay } from '../../Services/InvoiceService';
 import { toast } from 'react-toastify';
 import useModal from '../../CustomHooks/useModal';
+import LoadingSpinner from '../Fragments/LoadingSpinner';
 
 export default function Cart() {
     const {
         cart,
+        isLoadingCart,
         handleUpdateCart,
         handleRemove,
         totalPrice,
@@ -16,6 +18,7 @@ export default function Cart() {
     } = useCart();
     const { auth } = useAuth();
     const { openModal, closeModal } = useModal();
+    const [isLoading, setIsLoading] = useState(false);
 
     const [selectPay, setSelectPay] = useState('cash');
     const [nameError, setNameError] = useState('');
@@ -97,6 +100,7 @@ export default function Cart() {
                 'Xác nhận',
                 <>Bạn có chắc chắn muốn đặt hàng?</>,
                 async () => {
+                    setIsLoading(true)
                     if (selectPay === 'vnpay') {
                         checkoutVnpay(customerInfo)
                             .then((res) => {
@@ -105,11 +109,20 @@ export default function Cart() {
                             .catch((error) => {
                                 toast.error(error);
                                 console.error(error);
+                            }).finally(() => {
+                                setIsLoading(false)
                             });
                     } else {
                         checkoutCash(customerInfo)
                             .then((res) => {
                                 window.location.href = res.data;
+                            })
+                            .catch((err) => {
+                                toast.error(err);
+                                console.error(err);
+                            })
+                            .finally(() => {
+                                setIsLoading(false);
                             });
                     }
                     closeModal();
@@ -133,116 +146,178 @@ export default function Cart() {
                 <h3 className="text-danger my-5">Giỏ hàng của bạn</h3>
                 <div className="  col-12 d-flex justify-content-between">
                     <div className="col-8">
-                        {cart?.length > 0 ? (
-                            <div id="cart" className="  d-flex flex-column">
-                                {cart.map((c) => (
+                        {isLoadingCart ? (
+                            <LoadingSpinner />
+                        ) : (
+                            <>
+                                {cart?.length > 0 ? (
                                     <div
-                                        key={c.productDetail.id}
-                                        className=" d-flex mt-3 align-items-center"
+                                        id="cart"
+                                        className="  d-flex flex-column"
                                     >
-                                        <FontAwesomeIcon
-                                            onClick={() => {
-                                                handleRemoveCartItem(
-                                                    c.productDetail.id
-                                                );
-                                            }}
-                                            className="mx-3"
-                                            icon="fa-solid fa-square-minus"
-                                            size="2xl"
-                                            style={{ color: '#750000' }}
-                                        />
-                                        <div className="border border-light-subtle p-2 d-flex align-items-center col-11">
-                                            {c.productDetail.imageBackground.endsWith(
-                                                '.mp4'
-                                            ) ? (
-                                                <video
-                                                    width="250px"
-                                                    maxHeight="150px"
-                                                    controls
-                                                >
-                                                    <source
-                                                        src={
-                                                            c.productDetail
-                                                                .imageBackground
-                                                        }
-                                                        type="video/mp4"
-                                                    />
-                                                </video>
-                                            ) : (
-                                                <img
-                                                    src={
-                                                        c.productDetail
-                                                            .imageBackground
-                                                    }
-                                                    alt="..."
-                                                    style={{
-                                                        maxHeight: '150px',
+                                        {cart.map((c) => (
+                                            <div
+                                                key={c.productDetail.id}
+                                                className=" d-flex mt-3 align-items-center"
+                                            >
+                                                <FontAwesomeIcon
+                                                    onClick={() => {
+                                                        handleRemoveCartItem(
+                                                            c.productDetail.id
+                                                        );
                                                     }}
-                                                    className="img-thumbnail col-2"
+                                                    className="mx-3"
+                                                    icon="fa-solid fa-square-minus"
+                                                    size="2xl"
+                                                    style={{ color: '#750000' }}
                                                 />
-                                            )}
-
-                                            <div className=" p-3 col-10 ">
-                                                <div className="d-flex justify-content-between col-12 ">
-                                                    <div>
-                                                        <span className="overflow-wrap fw-bold">
-                                                            {
+                                                <div className="border border-light-subtle p-2 d-flex align-items-center col-11">
+                                                    {c.productDetail.imageBackground.endsWith(
+                                                        '.mp4'
+                                                    ) ? (
+                                                        <video
+                                                            width="250px"
+                                                            maxHeight="150px"
+                                                            controls
+                                                        >
+                                                            <source
+                                                                src={
+                                                                    c
+                                                                        .productDetail
+                                                                        .imageBackground
+                                                                }
+                                                                type="video/mp4"
+                                                            />
+                                                        </video>
+                                                    ) : (
+                                                        <img
+                                                            src={
                                                                 c.productDetail
-                                                                    .productName
+                                                                    .imageBackground
                                                             }
-                                                        </span>
-                                                    </div>
-                                                    <div>
-                                                        <span className="fw-light">
-                                                            {
-                                                                c.productDetail
-                                                                    .color
-                                                            }{' '}
-                                                            -{' '}
-                                                            {
-                                                                c.productDetail
-                                                                    .size
-                                                            }
-                                                        </span>
-                                                    </div>
-                                                </div>
+                                                            alt="..."
+                                                            style={{
+                                                                maxHeight:
+                                                                    '150px',
+                                                            }}
+                                                            className="img-thumbnail col-2"
+                                                        />
+                                                    )}
 
-                                                <div className="mt-3 d-flex">
-                                                    <div>
-                                                        Giá tiền:{' '}
-                                                        {c.productDetail
-                                                            .discountPrice !==
-                                                        null ? (
-                                                            <span>
-                                                                <span
-                                                                    style={{
-                                                                        textDecorationLine:
-                                                                            'line-through',
-                                                                    }}
-                                                                >
-                                                                    {c.productDetail.price.toLocaleString(
-                                                                        'vi-VN',
-                                                                        {
-                                                                            style: 'currency',
-                                                                            currency:
-                                                                                'VND',
-                                                                        }
-                                                                    )}
+                                                    <div className=" p-3 col-10 ">
+                                                        <div className="d-flex justify-content-between col-12 ">
+                                                            <div>
+                                                                <span className="overflow-wrap fw-bold">
+                                                                    {
+                                                                        c
+                                                                            .productDetail
+                                                                            .productName
+                                                                    }
                                                                 </span>
-                                                                <span className="ms-2">
-                                                                    {c.productDetail.discountPrice.toLocaleString(
-                                                                        'vi-VN',
-                                                                        {
-                                                                            style: 'currency',
-                                                                            currency:
-                                                                                'VND',
-                                                                        }
-                                                                    )}
+                                                            </div>
+                                                            <div>
+                                                                <span className="fw-light">
+                                                                    {
+                                                                        c
+                                                                            .productDetail
+                                                                            .color
+                                                                    }{' '}
+                                                                    -{' '}
+                                                                    {
+                                                                        c
+                                                                            .productDetail
+                                                                            .size
+                                                                    }
                                                                 </span>
-                                                            </span>
-                                                        ) : (
-                                                            <span>
-                                                                {c.productDetail.price.toLocaleString(
+                                                            </div>
+                                                        </div>
+
+                                                        <div className="mt-3 d-flex">
+                                                            <div>
+                                                                Giá tiền:{' '}
+                                                                {c.productDetail
+                                                                    .discountPrice !==
+                                                                null ? (
+                                                                    <span>
+                                                                        <span
+                                                                            style={{
+                                                                                textDecorationLine:
+                                                                                    'line-through',
+                                                                            }}
+                                                                        >
+                                                                            {c.productDetail.price.toLocaleString(
+                                                                                'vi-VN',
+                                                                                {
+                                                                                    style: 'currency',
+                                                                                    currency:
+                                                                                        'VND',
+                                                                                }
+                                                                            )}
+                                                                        </span>
+                                                                        <span className="ms-2">
+                                                                            {c.productDetail.discountPrice.toLocaleString(
+                                                                                'vi-VN',
+                                                                                {
+                                                                                    style: 'currency',
+                                                                                    currency:
+                                                                                        'VND',
+                                                                                }
+                                                                            )}
+                                                                        </span>
+                                                                    </span>
+                                                                ) : (
+                                                                    <span>
+                                                                        {c.productDetail.price.toLocaleString(
+                                                                            'vi-VN',
+                                                                            {
+                                                                                style: 'currency',
+                                                                                currency:
+                                                                                    'VND',
+                                                                            }
+                                                                        )}
+                                                                    </span>
+                                                                )}
+                                                            </div>
+                                                        </div>
+
+                                                        <div className="mt-3">
+                                                            <div className="d-flex align-items-center">
+                                                                <div>
+                                                                    Số lượng:
+                                                                </div>
+                                                                <div>
+                                                                    <input
+                                                                        className="form-control ms-2"
+                                                                        type="number"
+                                                                        defaultValue={
+                                                                            c.quantity
+                                                                        }
+                                                                        onChange={(
+                                                                            e
+                                                                        ) => {
+                                                                            handleChangeQuantity(
+                                                                                c.productDetail,
+                                                                                e
+                                                                                    .target
+                                                                                    .value
+                                                                            );
+                                                                        }}
+                                                                        min="1"
+                                                                        max="99"
+                                                                    />
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div className="mt-3">
+                                                            Tổng:{' '}
+                                                            <span
+                                                                style={{
+                                                                    color: 'red',
+                                                                    fontWeight:
+                                                                        'bold',
+                                                                }}
+                                                            >
+                                                                {c.totalPriceItem.toLocaleString(
                                                                     'vi-VN',
                                                                     {
                                                                         style: 'currency',
@@ -251,61 +326,21 @@ export default function Cart() {
                                                                     }
                                                                 )}
                                                             </span>
-                                                        )}
-                                                    </div>
-                                                </div>
-
-                                                <div className="mt-3">
-                                                    <div className="d-flex align-items-center">
-                                                        <div>Số lượng:</div>
-                                                        <div>
-                                                            <input
-                                                                className="form-control ms-2"
-                                                                type="number"
-                                                                defaultValue={
-                                                                    c.quantity
-                                                                }
-                                                                onChange={(
-                                                                    e
-                                                                ) => {
-                                                                    handleChangeQuantity(
-                                                                        c.productDetail,
-                                                                        e.target
-                                                                            .value
-                                                                    );
-                                                                }}
-                                                                min="1"
-                                                                max="99"
-                                                            />
                                                         </div>
                                                     </div>
                                                 </div>
-                                                <div className="mt-3">
-                                                    Tổng:{' '}
-                                                    <span
-                                                        style={{
-                                                            color: 'red',
-                                                            fontWeight: 'bold',
-                                                        }}
-                                                    >
-                                                        {c.totalPriceItem.toLocaleString(
-                                                            'vi-VN',
-                                                            {
-                                                                style: 'currency',
-                                                                currency: 'VND',
-                                                            }
-                                                        )}
-                                                    </span>
-                                                </div>
                                             </div>
-                                        </div>
+                                        ))}
                                     </div>
-                                ))}
-                            </div>
-                        ) : (
-                            <p>Bạn chưa có sản phẩm nào trong giỏ hàng</p>
+                                ) : (
+                                    <p>
+                                        Bạn chưa có sản phẩm nào trong giỏ hàng
+                                    </p>
+                                )}
+                            </>
                         )}
                     </div>
+                    
 
                     {cart?.length > 0 && (
                         <div className="align-self-top col-4 p-2">
@@ -399,7 +434,9 @@ export default function Cart() {
                 </div>
                 {cart?.length > 0 && (
                     <div className="d-flex flex-column align-items-center col-12 mt-5">
-                        <h1 className="border-bottom p-2">Thông tin người nhận</h1>
+                        <h1 className="border-bottom p-2">
+                            Thông tin người nhận
+                        </h1>
                         <form onSubmit={handleSubmit}>
                             <div className="row">
                                 <div className="mb-3">
@@ -418,7 +455,9 @@ export default function Cart() {
                                         onChange={handleChange}
                                         name="name"
                                     />
-                                    <span className="text-danger">{nameError}</span>
+                                    <span className="text-danger">
+                                        {nameError}
+                                    </span>
                                 </div>
 
                                 <div className="mb-3">
@@ -474,9 +513,14 @@ export default function Cart() {
                                         name="customerNote"
                                     ></textarea>
                                 </div>
-                                <button className="mt-3 col-4 button" type="submit">
+                                <button
+                                    disabled={isLoading||isLoadingCart}
+                                    className="mt-3 col-4 button"
+                                    type="submit"
+                                >
                                     Đặt hàng
                                 </button>
+                                {isLoading && <LoadingSpinner />}
                             </div>
                         </form>
                     </div>

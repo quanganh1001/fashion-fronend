@@ -10,6 +10,7 @@ import { Link } from 'react-router-dom';
 import useModal from '../../../CustomHooks/useModal';
 import { toast } from 'react-toastify';
 import Tittle from '../../Fragments/Tittle';
+import LoadingSpinner from '../../Fragments/LoadingSpinner';
 
 export default function Category() {
     const [id, setId] = useState('');
@@ -17,7 +18,7 @@ export default function Category() {
     const [oldCatName, setOldCatName] = useState('');
 
     const [categories, setCategories] = useState([]);
-
+    const [isLoading, setIsLoading] = useState(true);
     const { openModal, closeModal } = useModal();
 
     useEffect(() => {
@@ -25,16 +26,21 @@ export default function Category() {
     }, [id]);
 
     const fetchListCategories = async () => {
+        setIsLoading(true);
         await getChildCategories(id)
             .then((res) => {
                 setCategories(res.data);
             })
             .catch((error) => {
                 console.error(error);
+            })
+            .finally(() => {
+                setIsLoading(false)
             });
     };
 
     const fetchOldCategory = async () => {
+        setIsLoading(true);
         await getCategory(id)
             .then((res) => {
                 setId(res.data.catParent);
@@ -42,11 +48,15 @@ export default function Category() {
             })
             .catch((error) => {
                 console.error(error);
+            })
+            .finally(() => {
+                setIsLoading(false);
             });
     };
 
     const handleDelete = (id) => {
         openModal('Xóa sản phẩm', `Bạn có chắc muốn xóa sản phẩm này?`, () => {
+            setIsLoading(true);
             deleteCategory(id)
                 .then(() => {
                     toast.success('Xóa thành công!');
@@ -54,6 +64,8 @@ export default function Category() {
                 })
                 .catch((error) => {
                     toast.error('Không thể xóa!');
+                }).finally(() => {
+                    setIsLoading(false);
                 });
             closeModal();
         });
@@ -81,79 +93,85 @@ export default function Category() {
                         </span>
                     </div>
                 </div>
-                {id ? (
-                    <div
-                        className=" my-3"
-                        onClick={() => {
-                            fetchOldCategory();
-                        }}
-                    >
-                        <FontAwesomeIcon icon="fa-solid fa-backward" />
-                        <AlertLink className="ms-2 link-dark">
-                            {oldCatName}
-                        </AlertLink>
-                    </div>
+                {isLoading ? (
+                    <LoadingSpinner />
                 ) : (
-                    ''
-                )}
-                <table className="table table-striped table-hover table-bordered border">
-                    <thead>
-                        <tr>
-                            <th>Mã danh mục</th>
-                            <th>Tên danh mục</th>
-                            <th>Nằm trong danh mục</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {categories.length === 0 ? (
-                            <tr className="bg-body-secondary">
-                                <td colSpan="7" className="text-center">
-                                    Không có danh mục con
-                                </td>
-                            </tr>
-                        ) : null}
+                    <>
+                        {id ? (
+                            <div
+                                className=" my-3"
+                                onClick={() => {
+                                    fetchOldCategory();
+                                }}
+                            >
+                                <FontAwesomeIcon icon="fa-solid fa-backward" />
+                                <AlertLink className="ms-2 link-dark">
+                                    {oldCatName}
+                                </AlertLink>
+                            </div>
+                        ) : (
+                            ''
+                        )}
+                        <table className="table table-striped table-hover table-bordered border">
+                            <thead>
+                                <tr>
+                                    <th>Mã danh mục</th>
+                                    <th>Tên danh mục</th>
+                                    <th>Nằm trong danh mục</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {categories.length === 0 ? (
+                                    <tr className="bg-body-secondary">
+                                        <td colSpan="7" className="text-center">
+                                            Không có danh mục con
+                                        </td>
+                                    </tr>
+                                ) : null}
 
-                        {categories.map((cat) => (
-                            <tr key={cat.id}>
-                                <td
-                                    onClick={() => {
-                                        setId(cat.id);
-                                        setOldCatName(cat.catName);
-                                    }}
-                                >
-                                    <AlertLink className="ms-2 link-dark">
-                                        {cat.categoryCode}{' '}
-                                        <FontAwesomeIcon icon="fa-solid fa-right-to-bracket" />
-                                    </AlertLink>
-                                </td>
-                                <td>{cat.catName}</td>
-                                <td>{cat.catParentName ?? 'Không'}</td>
-                                <td>
-                                    <Dropdown data-bs-theme="dark">
-                                        <Dropdown.Toggle variant="dark bg-gradient btn-sm">
-                                            Hành động
-                                        </Dropdown.Toggle>
-                                        <Dropdown.Menu>
-                                            <Dropdown.Item
-                                                as={Link}
-                                                to={`/admin/categories/${cat.id}/edit`}
-                                            >
-                                                Xem/Sửa
-                                            </Dropdown.Item>
-                                            <Dropdown.Item
-                                                onClick={() =>
-                                                    handleDelete(cat.id)
-                                                }
-                                            >
-                                                Xóa
-                                            </Dropdown.Item>
-                                        </Dropdown.Menu>
-                                    </Dropdown>
-                                </td>
-                            </tr>
-                        ))}
-                    </tbody>
-                </table>
+                                {categories.map((cat) => (
+                                    <tr key={cat.id}>
+                                        <td
+                                            onClick={() => {
+                                                setId(cat.id);
+                                                setOldCatName(cat.catName);
+                                            }}
+                                        >
+                                            <AlertLink className="ms-2 link-dark">
+                                                {cat.categoryCode}{' '}
+                                                <FontAwesomeIcon icon="fa-solid fa-right-to-bracket" />
+                                            </AlertLink>
+                                        </td>
+                                        <td>{cat.catName}</td>
+                                        <td>{cat.catParentName ?? 'Không'}</td>
+                                        <td>
+                                            <Dropdown data-bs-theme="dark">
+                                                <Dropdown.Toggle variant="dark bg-gradient btn-sm">
+                                                    Hành động
+                                                </Dropdown.Toggle>
+                                                <Dropdown.Menu>
+                                                    <Dropdown.Item
+                                                        as={Link}
+                                                        to={`/admin/categories/${cat.id}/edit`}
+                                                    >
+                                                        Xem/Sửa
+                                                    </Dropdown.Item>
+                                                    <Dropdown.Item
+                                                        onClick={() =>
+                                                            handleDelete(cat.id)
+                                                        }
+                                                    >
+                                                        Xóa
+                                                    </Dropdown.Item>
+                                                </Dropdown.Menu>
+                                            </Dropdown>
+                                        </td>
+                                    </tr>
+                                ))}
+                            </tbody>
+                        </table>
+                    </>
+                )}
             </div>
         </>
     );

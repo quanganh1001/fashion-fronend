@@ -38,6 +38,6 @@ export const deleteAccount = async (id) => {
     return await apiPrivate.delete('accounts/' + id);
 };
 
-export const getAllEmployees = async () => {
-    return await apiPrivate.get('accounts/getAllEmployees');
+export const getAllEmployees =  () => {
+    return  apiPrivate.get('accounts/getAllEmployees');
 };

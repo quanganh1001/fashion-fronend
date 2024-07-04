@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { sendMail } from '../../../Services/CustomerEmailService';
 import { toast } from 'react-toastify';
+import LoadingSpinner from '../../Fragments/LoadingSpinner';
 
 export default function CustomerEmail() {
     const [subject, setSubject] = useState('');
@@ -9,6 +10,7 @@ export default function CustomerEmail() {
     const [contentError, setContentError] = useState('');
     const [isButtonDisabled, setIsButtonDisabled] = useState(false);
     const [countdown, setCountdown] = useState(0);
+    const [isLoading, setIsLoading] = useState(false);
 
     useEffect(() => {
         let timer;
@@ -41,6 +43,7 @@ export default function CustomerEmail() {
         }
 
         if (isValid) {
+            setIsLoading(true);
             sendMail({ subject, content })
                 .then(() => {
                     toast.success('Đã gửi thành công!');
@@ -50,7 +53,7 @@ export default function CustomerEmail() {
                 .catch((error) => {
                     toast.error('Gửi thất bại');
                     console.error(error);
-                });
+                }).finally(()=>{setIsLoading(false)});
         }
     };
 
@@ -91,12 +94,14 @@ export default function CustomerEmail() {
                     </label>
 
                     <button
+                        
                         className="button"
                         onClick={handleSendEmail}
-                        disabled={isButtonDisabled}
+                        disabled={isButtonDisabled || isLoading}
                     >
                         {isButtonDisabled ? `Chờ ${countdown}s` : 'Gửi'}
                     </button>
+                    {isLoading && <LoadingSpinner />}
                 </div>
             </div>
         </>

@@ -15,6 +15,7 @@ import { Link } from 'react-router-dom';
 import { parseISO, format } from 'date-fns';
 import useModal from '../../../CustomHooks/useModal';
 import { toast } from 'react-toastify';
+import LoadingSpinner from '../../Fragments/LoadingSpinner';
 
 export default function Invoice() {
     const [listInvoice, setListInvoice] = useState([]);
@@ -30,6 +31,8 @@ export default function Invoice() {
     const { auth } = useAuth();
     const { openModal, closeModal } = useModal();
     const [newStatus, setNewStatus] = useState('');
+    const [isLoading, setIsLoading] = useState(true);
+    const [isLoadingStatus, setIsLoadingStatus] = useState(true);
 
     useEffect(() => {
         fetchGetAllInvoicesStatus();
@@ -37,10 +40,11 @@ export default function Invoice() {
         if (auth.account.role === 'ROLE_MANAGER') {
             fetchGetAllEmployee();
         }
+        setIsLoading(true);
     }, [searchParams, accountId, invoiceStatus, auth.account.role]);
 
     useEffect(() => {
-        if (newStatus !== "") {
+        if (newStatus !== '') {
             openModal(
                 'Đổi trạng thái',
                 <>
@@ -60,6 +64,7 @@ export default function Invoice() {
                     </select>
                 </>,
                 () => {
+                    setIsLoading(true)
                     updateStatusInvoice(invoiceId, newStatus)
                         .then(() => {
                             toast.success('Cập nhật trạng thái thành công!');
@@ -68,49 +73,58 @@ export default function Invoice() {
                         .catch((err) => {
                             console.error(err);
                             toast.error(err.response.data);
-                        });
+                        }).finally(() => {
+                            setIsLoading(false);
+                        })
 
                     closeModal();
-                    
                 }
             );
         }
         setNewStatus('');
-    }, [invoiceId, newStatus])
-    
-    
+    }, [invoiceId, newStatus]);
+
     const fetchGetAllInvoicesStatus = async () => {
-        try {
-            const res = await getAllInvoiceStatus();
-            setListInvoiceStatus(res.data);
-        } catch (err) {
-            console.error(err);
-        }
+        await getAllInvoiceStatus()
+            .then((res) => {
+                setListInvoiceStatus(res.data);
+            })
+
+            .catch((err) => {
+                console.error(err);
+            })
+            .finally(() => {
+                setIsLoadingStatus(false);
+            });
     };
 
-    const fetchGetAllInvoices = async () => {
-        try {
-            const res = await getAllInvoice(
-                searchParams,
-                accountId,
-                invoiceStatus
-            );
-            setListInvoice(res.data.invoices);
-            setTotalPages(res.data.totalPages);
-            setCurrentPage(res.data.currentPage);
-            setTotalItems(res.data.totalItems);
-        } catch (err) {
-            console.error(err);
-        }
+    const fetchGetAllInvoices =  () => {
+         getAllInvoice(searchParams, accountId, invoiceStatus)
+            .then((res) => {
+                setListInvoice(res.data.invoices);
+                setTotalPages(res.data.totalPages);
+                setCurrentPage(res.data.currentPage);
+                setTotalItems(res.data.totalItems);
+            })
+
+            .catch((err) => {
+                console.error(err);
+            })
+            .finally(() => {
+                setIsLoading(false);
+            });
     };
 
-    const fetchGetAllEmployee = async () => {
-        try {
-            const res = await getAllEmployees();
-            setListEmployees(res.data);
-        } catch (err) {
-            console.error(err);
-        }
+    const fetchGetAllEmployee =  () => {
+        setIsLoading(true);
+        getAllEmployees()
+            .then((res) => {
+                setListEmployees(res.data);
+            })
+
+            .catch((err) => {
+                console.error(err);
+            });
     };
 
     const handleAccountIdChange = (e) => {
@@ -127,38 +141,43 @@ export default function Invoice() {
     const handleShowModalStatus = (id, status) => {
         setInvoiceId(id);
         setNewStatus(status);
-        
     };
     return (
         <>
             <Tittle tittle="Danh sách đơn hàng" />
             <div className="mt-5 bg-white p-5 shadow border">
                 <div className="mt-5 d-flex flex-wrap justify-content-start">
-                    <div
-                        onClick={() => handleSelectInvoiceStatus(null)}
-                        className={
-                            invoiceStatus == null
-                                ? 'button m-3 col-2 d-flex align-items-center justify-content-around py-3'
-                                : 'button-non-active m-3 col-2 d-flex align-items-center justify-content-around py-3'
-                        }
-                    >
-                        Tất cả đơn hàng
-                    </div>
-                    {listInvoiceStatus.map((status) => (
-                        <div
-                            key={status.key}
-                            onClick={() =>
-                                handleSelectInvoiceStatus(status.key)
-                            }
-                            className={
-                                invoiceStatus === status.key
-                                    ? 'button m-3 col-2 d-flex align-items-center justify-content-around py-3'
-                                    : 'button-non-active m-3 col-2 d-flex align-items-center justify-content-around py-3'
-                            }
-                        >
-                            {status.value}
-                        </div>
-                    ))}
+                    {isLoadingStatus ? (
+                        <LoadingSpinner />
+                    ) : (
+                        <>
+                            <div
+                                onClick={() => handleSelectInvoiceStatus(null)}
+                                className={
+                                    invoiceStatus == null
+                                        ? 'button m-3 col-2 d-flex align-items-center justify-content-around py-3'
+                                        : 'button-non-active m-3 col-2 d-flex align-items-center justify-content-around py-3'
+                                }
+                            >
+                                Tất cả đơn hàng
+                            </div>
+                            {listInvoiceStatus.map((status) => (
+                                <div
+                                    key={status.key}
+                                    onClick={() =>
+                                        handleSelectInvoiceStatus(status.key)
+                                    }
+                                    className={
+                                        invoiceStatus === status.key
+                                            ? 'button m-3 col-2 d-flex align-items-center justify-content-around py-3'
+                                            : 'button-non-active m-3 col-2 d-flex align-items-center justify-content-around py-3'
+                                    }
+                                >
+                                    {status.value}
+                                </div>
+                            ))}
+                        </>
+                    )}
                 </div>
                 <div className=" mt-5 d-flex flex-wrap justify-content-between align-items-center">
                     {auth.account.role === 'ROLE_MANAGER' ? (
@@ -195,63 +214,69 @@ export default function Invoice() {
                             </tr>
                         </thead>
                         <tbody>
-                            {listInvoice.map((invoice) => (
-                                <tr key={invoice.id}>
-                                    <td>{invoice.invoiceCode}</td>
-                                    <td>{invoice.name}</td>
-                                    <td>{invoice.phone}</td>
-                                    <td>{invoice.invoiceStatus}</td>
-                                    <td>{invoice.accountName}</td>
-                                    <td>
-                                        {format(
-                                            parseISO(invoice.createdAt),
-                                            'HH:mm:ss - d/M/yyyy'
-                                        )}
-                                    </td>
-                                    <td className=" ">
-                                        <Dropdown
-                                            data-bs-theme="dark"
-                                            className=" position-relative"
-                                        >
-                                            <Dropdown.Toggle variant="dark bg-gradient btn-sm">
-                                                Hành động
-                                                {invoice.isPaid && (
-                                                    <img
-                                                        className=" position-absolute translate-middle-y start-100 top-50"
-                                                        src={
-                                                            process.env
-                                                                .PUBLIC_URL +
-                                                            '/vn-11134201-23030-b580c684i4nv82.png.png'
-                                                        }
-                                                        style={{
-                                                            width: '100px',
-                                                        }}
-                                                        alt=""
-                                                    />
+                            {isLoading ? (
+                                <LoadingSpinner />
+                            ) : (
+                                <>
+                                    {listInvoice.map((invoice) => (
+                                        <tr key={invoice.id}>
+                                            <td>{invoice.invoiceCode}</td>
+                                            <td>{invoice.name}</td>
+                                            <td>{invoice.phone}</td>
+                                            <td>{invoice.invoiceStatus}</td>
+                                            <td>{invoice.accountName}</td>
+                                            <td>
+                                                {format(
+                                                    parseISO(invoice.createdAt),
+                                                    'HH:mm:ss - d/M/yyyy'
                                                 )}
-                                            </Dropdown.Toggle>
-                                            <Dropdown.Menu>
-                                                <Dropdown.Item
-                                                    as={Link}
-                                                    to={`/admin/invoices/${invoice.id}/invoicesDetail`}
+                                            </td>
+                                            <td className=" ">
+                                                <Dropdown
+                                                    data-bs-theme="dark"
+                                                    className=" position-relative"
                                                 >
-                                                    Xem/Sửa
-                                                </Dropdown.Item>
-                                                <Dropdown.Item
-                                                    onClick={() =>
-                                                        handleShowModalStatus(
-                                                            invoice.id,
-                                                            invoice.invoiceStatus
-                                                        )
-                                                    }
-                                                >
-                                                    Đổi trạng thái
-                                                </Dropdown.Item>
-                                            </Dropdown.Menu>
-                                        </Dropdown>
-                                    </td>
-                                </tr>
-                            ))}
+                                                    <Dropdown.Toggle variant="dark bg-gradient btn-sm">
+                                                        Hành động
+                                                        {invoice.isPaid && (
+                                                            <img
+                                                                className=" position-absolute translate-middle-y start-100 top-50"
+                                                                src={
+                                                                    process.env
+                                                                        .PUBLIC_URL +
+                                                                    '/vn-11134201-23030-b580c684i4nv82.png.png'
+                                                                }
+                                                                style={{
+                                                                    width: '100px',
+                                                                }}
+                                                                alt=""
+                                                            />
+                                                        )}
+                                                    </Dropdown.Toggle>
+                                                    <Dropdown.Menu>
+                                                        <Dropdown.Item
+                                                            as={Link}
+                                                            to={`/admin/invoices/${invoice.id}/invoicesDetail`}
+                                                        >
+                                                            Xem/Sửa
+                                                        </Dropdown.Item>
+                                                        <Dropdown.Item
+                                                            onClick={() =>
+                                                                handleShowModalStatus(
+                                                                    invoice.id,
+                                                                    invoice.invoiceStatus
+                                                                )
+                                                            }
+                                                        >
+                                                            Đổi trạng thái
+                                                        </Dropdown.Item>
+                                                    </Dropdown.Menu>
+                                                </Dropdown>
+                                            </td>
+                                        </tr>
+                                    ))}
+                                </>
+                            )}
                         </tbody>
                     </table>
 

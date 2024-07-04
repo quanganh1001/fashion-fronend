@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Dropdown } from 'react-bootstrap';
 import useModal from '../../../CustomHooks/useModal';
 import {
@@ -14,6 +14,7 @@ import {
 } from '../../../Services/InvoiceService';
 import { findAllProductsDetailByKey } from '../../../Services/ProductDetailService';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import LoadingSpinner from '../../Fragments/LoadingSpinner';
 
 export default function InvoicesDetails({
     checkStatusInvoice,
@@ -34,6 +35,10 @@ export default function InvoicesDetails({
     const [shippingFee, setShippingFee] = useState('');
     const [shippingFeeError, setShippingFeeError] = useState('');
     const [newShippingFee, setNewShippingFee] = useState('');
+    const [isLoading, setIsLoading] = useState(false);
+    const [isLoadingDetail, setIsLoadingDetail] = useState(true);
+    const [isLoadingPrice, setIsLoadingPrice] = useState(false);
+    const abortControllerRef = useRef(null);
 
     useEffect(() => {
         if (newIdQuantity.quantity !== '') {
@@ -54,12 +59,12 @@ export default function InvoicesDetails({
                     <span className="text-danger">{quantityError}</span>
                 </>,
                 (e) => {
+                    
                     e.preventDefault();
                     let isValid = true;
 
                     if (newIdQuantity.quantity === '') {
                         isValid = false;
-                        console.log('Số lượng không được để trống');
                         setQuantityError('Số lượng không được để trống');
                     } else if (
                         newIdQuantity.quantity !== '' &&
@@ -78,6 +83,7 @@ export default function InvoicesDetails({
                     }
 
                     if (isValid) {
+                        setIsLoadingDetail(true);
                         updateQuantity(newIdQuantity.id, newIdQuantity.quantity)
                             .then(() => {
                                 toast.success('Cập nhật số lượng thành công!');
@@ -86,7 +92,7 @@ export default function InvoicesDetails({
                             .catch((err) => {
                                 console.error(err);
                                 toast.error('Cập nhật số lượng thất bại.');
-                            });
+                            })
 
                         closeModal();
                     }
@@ -125,15 +131,16 @@ export default function InvoicesDetails({
                     }
 
                     if (isValid) {
+                        setIsLoadingPrice(true);
                         editShippingFee(id, newShippingFee)
                             .then(() => {
                                 toast.success('Cập nhật số lượng thành công!');
-                                fetchDetail();
+                                fetchInvoice();
                             })
                             .catch((err) => {
                                 console.error(err);
                                 toast.error('Cập nhật số lượng thất bại.');
-                            });
+                            })
 
                         closeModal();
                     }
@@ -148,14 +155,27 @@ export default function InvoicesDetails({
     }, [listInvoicesDetail]);
 
     useEffect(() => {
-        setKey('');
         setIsShowAddDetail(false);
         fetchInvoice();
     }, [details]);
 
     useEffect(() => {
         if (key !== '') {
-            fetchProductsDetail();
+            if (abortControllerRef.current) {
+                abortControllerRef.current.abort();
+            }
+
+            // Tạo AbortController mới cho yêu cầu mới
+            abortControllerRef.current = new AbortController();
+
+            fetchProductsDetail(key, abortControllerRef.current);
+
+            // Cleanup function to abort the fetch on unmount or key change
+            return () => {
+                if (abortControllerRef.current) {
+                    abortControllerRef.current.abort();
+                }
+            };
         }
     }, [key]);
 
@@ -163,24 +183,43 @@ export default function InvoicesDetails({
         setNewIdQuantity({ id, quantity });
     };
 
-    const fetchInvoice = async () => {
-        await getInvoice(id).then((res) => {
+    const fetchInvoice = () => {
+        setIsLoadingPrice(true);
+         getInvoice(id).then((res) => {
             setInvoice(res.data);
             setShippingFee(res.data.shippingFee);
+         }).catch((error) => {
+            console.error(error);
+         }).finally(() => {
+             setIsLoadingPrice(false)
+             setIsLoadingDetail(false)
         });
     };
 
-    const fetchProductsDetail = async () => {
+    const fetchProductsDetail = async (key, abortController) => {
+        setIsLoading(true);
         if (key !== '') {
-            await findAllProductsDetailByKey(key).then((res) => {
-                setListProductsDetail(res.data);
-            });
+            await findAllProductsDetailByKey(key, {
+                signal: abortController.signal,
+            })
+                .then((res) => {
+                    setListProductsDetail(res.data);
+                    setIsLoading(false);
+                })
+                .catch((err) => {
+                    if (err.name === 'AbortError') {
+                        console.log('Fetch aborted');
+                    } else {
+                        console.error(err);
+                    }
+                })
         } else {
             setListProductsDetail([]);
         }
     };
 
     const fetchDetail = async () => {
+        setIsLoadingPrice(true)
         await getAllInvoicesDetail(id)
             .then((res) => {
                 setDetails(res.data);
@@ -188,6 +227,8 @@ export default function InvoicesDetails({
             .catch((err) => {
                 console.error(err);
                 toast.error(err);
+            }).finally(() => {
+                setIsLoadingPrice(false)
             });
     };
 
@@ -205,10 +246,12 @@ export default function InvoicesDetails({
 
     const handleInputChange = (e) => {
         setKey(e.target.value);
+        
     };
 
     const handleAdd = async (productDetailId, quantity) => {
         if (quantity > 0) {
+            setIsLoadingDetail(true)
             await addInvoiceDetail(id, productDetailId)
                 .then(() => {
                     toast.success('Thêm thành công!');
@@ -217,7 +260,7 @@ export default function InvoicesDetails({
                 .catch((err) => {
                     toast.error(err);
                     console.log(err);
-                });
+                }).finally(()=>{setIsLoadingDetail(false)});
         } else {
             toast.error('Sản phẩm đã hết hàng');
         }
@@ -261,79 +304,95 @@ export default function InvoicesDetails({
                                     {isShowAddDetail && key !== '' ? (
                                         <>
                                             <ul
-                                                className="col-12 border list-group position-absolute overflow-auto"
+                                                className="  col-12 border list-group position-absolute overflow-auto"
                                                 style={{
                                                     bottom: '60px',
                                                     maxHeight: '70vh',
                                                 }}
                                             >
-                                                {listProductsDetail.map(
-                                                    (pd) => (
-                                                        <li
-                                                            onClick={() =>
-                                                                handleAdd(
-                                                                    pd.id,
-                                                                    pd.quantity
-                                                                )
-                                                            }
-                                                            className={
-                                                                pd.quantity > 0
-                                                                    ? 'd-flex align-items-center list-group-item'
-                                                                    : 'text-decoration-line-through d-flex align-items-center list-group-item'
-                                                            }
-                                                            key={pd.id}
-                                                        >
-                                                            {pd.imageBackground.endsWith(
-                                                                '.mp4'
-                                                            ) ? (
-                                                                <video
-                                                                    width="150px"
-                                                                    controls
-                                                                >
-                                                                    <source
-                                                                        src={
-                                                                            pd.imageBackground
-                                                                        }
-                                                                        type="video/mp4"
-                                                                    />
-                                                                </video>
-                                                            ) : (
-                                                                <img
-                                                                    src={
-                                                                        pd.imageBackground
-                                                                    }
-                                                                    width="50px"
-                                                                    alt=""
-                                                                />
-                                                            )}
-                                                            <div>
-                                                                <span>
-                                                                    {
-                                                                        pd.productName
-                                                                    }{' '}
-                                                                    | {pd.size}{' '}
-                                                                    | {pd.color}
-                                                                </span>
-
-                                                                <div className="d-flex justify-content-between">
-                                                                    <span>
-                                                                        {pd.discountPrice !=
-                                                                        null
-                                                                            ? pd.discountPrice
-                                                                            : pd.price}
-                                                                    </span>
-
-                                                                    <span className="fw-lighter">
-                                                                        Số
-                                                                        lượng:{' '}
-                                                                        {
+                                                {isLoading ? (
+                                                    <LoadingSpinner />
+                                                ) : (
+                                                    <>
+                                                        {listProductsDetail.map(
+                                                            (pd) => (
+                                                                <li
+                                                                    onClick={() =>
+                                                                        handleAdd(
+                                                                            pd.id,
                                                                             pd.quantity
-                                                                        }
-                                                                    </span>
-                                                                </div>
-                                                            </div>
-                                                        </li>
-                                                    )
+                                                                        )
+                                                                    }
+                                                                    style={{
+                                                                        cursor: 'pointer',
+                                                                    }}
+                                                                    className={
+                                                                        pd.quantity >
+                                                                        0
+                                                                            ? ' d-flex align-items-center list-group-item'
+                                                                            : ' text-decoration-line-through d-flex align-items-center list-group-item'
+                                                                    }
+                                                                    key={pd.id}
+                                                                >
+                                                                    {pd.imageBackground.endsWith(
+                                                                        '.mp4'
+                                                                    ) ? (
+                                                                        <video
+                                                                            width="150px"
+                                                                            controls
+                                                                        >
+                                                                            <source
+                                                                                src={
+                                                                                    pd.imageBackground
+                                                                                }
+                                                                                type="video/mp4"
+                                                                            />
+                                                                        </video>
+                                                                    ) : (
+                                                                        <img
+                                                                            src={
+                                                                                pd.imageBackground
+                                                                            }
+                                                                            width="50px"
+                                                                            alt=""
+                                                                        />
+                                                                    )}
+                                                                    <div>
+                                                                        <span>
+                                                                            {
+                                                                                pd.productName
+                                                                            }{' '}
+                                                                            |{' '}
+                                                                            {
+                                                                                pd.size
+                                                                            }{' '}
+                                                                            |{' '}
+                                                                            {
+                                                                                pd.color
+                                                                            }
+                                                                        </span>
+
+                                                                        <div className="d-flex justify-content-between">
+                                                                            <span>
+                                                                                {pd.discountPrice !=
+                                                                                null
+                                                                                    ? pd.discountPrice
+                                                                                    : pd.price}
+                                                                            </span>
+
+                                                                            <span className="fw-lighter">
+                                                                                Số
+                                                                                lượng:{' '}
+                                                                                {
+                                                                                    pd.quantity
+                                                                                }
+                                                                            </span>
+                                                                        </div>
+                                                                    </div>
+                                                                </li>
+                                                            )
+                                                        )}
+                                                    </>
                                                 )}
                                             </ul>
                                         </>
@@ -360,152 +419,184 @@ export default function InvoicesDetails({
                     </tr>
                 </thead>
                 <tbody>
-                    {details.length > 0 ? (
-                        details.map((detail) => (
-                            <tr key={detail.id}>
-                                <td>
-                                    {detail.imgUrl.endsWith('.mp4') ? (
-                                        <video width="250px" controls>
-                                            <source
-                                                src={detail.imgUrl}
-                                                type="video/mp4"
-                                            />
-                                        </video>
-                                    ) : (
-                                        <img
-                                            src={detail.imgUrl}
-                                            width="100px"
-                                            alt=""
-                                        />
-                                    )}
-                                </td>
-                                <td>{detail.code}</td>
-                                <td>{detail.productName}</td>
-                                <td>{detail.color}</td>
-                                <td>{detail.size}</td>
-                                <td>
-                                    {detail.price.toLocaleString('vi-VN', {
-                                        style: 'currency',
-                                        currency: 'VND',
-                                    })}
-                                </td>
-                                <td>{detail.quantity}</td>
-                                <td>
-                                    {detail.totalPrice.toLocaleString('vi-VN', {
-                                        style: 'currency',
-                                        currency: 'VND',
-                                    })}
-                                </td>
-                                {!invoice.isPaid &&
-                                !checkStatusInvoice(invoice.invoiceStatus) ? (
-                                    <td>
-                                        <Dropdown
-                                            data-bs-theme="dark"
-                                            className="me-3"
-                                        >
-                                            <Dropdown.Toggle variant="dark bg-gradient btn-sm">
-                                                Hành động
-                                            </Dropdown.Toggle>
-                                            <Dropdown.Menu>
-                                                <Dropdown.Item
-                                                    onClick={() =>
-                                                        handleShowModalQuantity(
-                                                            detail.id,
-                                                            detail.quantity
-                                                        )
-                                                    }
-                                                >
-                                                    Sửa số lượng
-                                                </Dropdown.Item>
-                                                <Dropdown.Item
-                                                    onClick={() => {
-                                                        handleDelete(detail.id);
-                                                    }}
-                                                >
-                                                    Xóa
-                                                </Dropdown.Item>
-                                            </Dropdown.Menu>
-                                        </Dropdown>
-                                    </td>
-                                ) : null}
-                            </tr>
-                        ))
+                    {isLoadingDetail ? (
+                        <LoadingSpinner />
                     ) : (
-                        <tr>
-                            <td colSpan={9}>Chưa có sản phẩm</td>
-                        </tr>
-                    )}
-                    {details.length > 0 ? (
                         <>
-                            <tr>
-                                <td colSpan={7} className="fw-bolder">
-                                    Tổng
-                                </td>
-                                <td colSpan={7}>
-                                    {invoice ? (
-                                        invoice.totalPrice.toLocaleString(
-                                            'vi-VN',
-                                            {
-                                                style: 'currency',
-                                                currency: 'VND',
-                                            }
-                                        )
-                                    ) : (
-                                        <></>
-                                    )}
-                                </td>
-                            </tr>
-                            <tr>
-                                <td colSpan={7} className="fw-bolder">
-                                    Phí ship
-                                </td>
-                                <td colSpan={7}>
-                                    {invoice
-                                        ? invoice.shippingFee.toLocaleString(
-                                              'vi-VN',
-                                              {
-                                                  style: 'currency',
-                                                  currency: 'VND',
-                                              }
-                                          )
-                                        : null}
-                                    {!invoice.isPaid &&
-                                    !checkStatusInvoice(
-                                        invoice.invoiceStatus
-                                    ) ? (
-                                        <FontAwesomeIcon
-                                            icon="fa-regular fa-pen-to-square"
-                                            className="ms-3"
-                                            onClick={handleEditShippingFee}
-                                        />
-                                    ) : null}
-                                </td>
-                            </tr>
-                            <tr>
-                                <td colSpan={7} className="fw-bolder">
-                                    Thành tiền
-                                </td>
-                                <td colSpan={7} className="">
-                                    {invoice ? (
-                                        <div className="d-flex flex-wrap text-danger fw-semibold fs-3">
-                                            {invoice.totalBill.toLocaleString(
+                            {details.length > 0 ? (
+                                details.map((detail) => (
+                                    <tr key={detail.id}>
+                                        <td>
+                                            {detail.imgUrl.endsWith('.mp4') ? (
+                                                <video width="250px" controls>
+                                                    <source
+                                                        src={detail.imgUrl}
+                                                        type="video/mp4"
+                                                    />
+                                                </video>
+                                            ) : (
+                                                <img
+                                                    src={detail.imgUrl}
+                                                    width="100px"
+                                                    alt=""
+                                                />
+                                            )}
+                                        </td>
+                                        <td>{detail.code}</td>
+                                        <td>{detail.productName}</td>
+                                        <td>{detail.color}</td>
+                                        <td>{detail.size}</td>
+                                        <td>
+                                            {detail.price.toLocaleString(
                                                 'vi-VN',
                                                 {
                                                     style: 'currency',
                                                     currency: 'VND',
                                                 }
-                                            )}{' '}
-                                            <span className="text-danger">
-                                                {invoice.isPaid === true
-                                                    ? 'Đã thanh toán'
-                                                    : ''}
-                                            </span>
-                                        </div>
-                                    ) : null}
-                                </td>
-                            </tr>
+                                            )}
+                                        </td>
+                                        <td>{detail.quantity}</td>
+                                        <td>
+                                            {detail.totalPrice.toLocaleString(
+                                                'vi-VN',
+                                                {
+                                                    style: 'currency',
+                                                    currency: 'VND',
+                                                }
+                                            )}
+                                        </td>
+                                        {!invoice.isPaid &&
+                                        !checkStatusInvoice(
+                                            invoice.invoiceStatus
+                                        ) ? (
+                                            <td>
+                                                <Dropdown
+                                                    data-bs-theme="dark"
+                                                    className="me-3"
+                                                >
+                                                    <Dropdown.Toggle variant="dark bg-gradient btn-sm">
+                                                        Hành động
+                                                    </Dropdown.Toggle>
+                                                    <Dropdown.Menu>
+                                                        <Dropdown.Item
+                                                            onClick={() =>
+                                                                handleShowModalQuantity(
+                                                                    detail.id,
+                                                                    detail.quantity
+                                                                )
+                                                            }
+                                                        >
+                                                            Sửa số lượng
+                                                        </Dropdown.Item>
+                                                        <Dropdown.Item
+                                                            onClick={() => {
+                                                                handleDelete(
+                                                                    detail.id
+                                                                );
+                                                            }}
+                                                        >
+                                                            Xóa
+                                                        </Dropdown.Item>
+                                                    </Dropdown.Menu>
+                                                </Dropdown>
+                                            </td>
+                                        ) : null}
+                                    </tr>
+                                ))
+                            ) : (
+                                <tr>
+                                    <td colSpan={9}>Chưa có sản phẩm</td>
+                                </tr>
+                            )}
+                            {details.length > 0 ? (
+                                <>
+                                    <tr>
+                                        <td colSpan={7} className="fw-bolder">
+                                            Tổng
+                                        </td>
+                                        <td colSpan={7}>
+                                            {invoice ? (
+                                                invoice.totalPrice.toLocaleString(
+                                                    'vi-VN',
+                                                    {
+                                                        style: 'currency',
+                                                        currency: 'VND',
+                                                    }
+                                                )
+                                            ) : (
+                                                <></>
+                                            )}
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td colSpan={7} className="fw-bolder">
+                                            Phí ship
+                                        </td>
+                                        <td colSpan={7}>
+                                            {isLoadingPrice ? (
+                                                <LoadingSpinner />
+                                            ) : (
+                                                <>
+                                                    {invoice
+                                                        ? invoice.shippingFee.toLocaleString(
+                                                              'vi-VN',
+                                                              {
+                                                                  style: 'currency',
+                                                                  currency:
+                                                                      'VND',
+                                                              }
+                                                          )
+                                                        : null}
+                                                    {!invoice.isPaid &&
+                                                    !checkStatusInvoice(
+                                                        invoice.invoiceStatus
+                                                    ) ? (
+                                                        <FontAwesomeIcon
+                                                            icon="fa-regular fa-pen-to-square"
+                                                            className="ms-3"
+                                                            onClick={
+                                                                handleEditShippingFee
+                                                            }
+                                                        />
+                                                    ) : null}
+                                                </>
+                                            )}
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td colSpan={7} className="fw-bolder">
+                                            Thành tiền
+                                        </td>
+                                        <td colSpan={7} className="">
+                                            {invoice ? (
+                                                <div className="d-flex flex-wrap text-danger fw-semibold fs-3">
+                                                    {isLoadingPrice ? (
+                                                        <LoadingSpinner />
+                                                    ) : (
+                                                        <>
+                                                            {invoice.totalBill.toLocaleString(
+                                                                'vi-VN',
+                                                                {
+                                                                    style: 'currency',
+                                                                    currency:
+                                                                        'VND',
+                                                                }
+                                                            )}{' '}
+                                                        </>
+                                                    )}
+                                                    <span className="text-danger">
+                                                        {invoice.isPaid === true
+                                                            ? 'Đã thanh toán'
+                                                            : ''}
+                                                    </span>
+                                                </div>
+                                            ) : null}
+                                        </td>
+                                    </tr>
+                                </>
+                            ) : null}
                         </>
-                    ) : null}
+                    )}
                 </tbody>
             </table>
 

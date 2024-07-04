@@ -4,24 +4,18 @@ import { getSize } from '../../../Services/EnumService';
 import { addProductDetail } from '../../../Services/ProductDetailService';
 import { toast } from 'react-toastify';
 import { getAllColors } from '../../../Services/ColorService';
+import LoadingSpinner from '../../Fragments/LoadingSpinner';
 
 export default function AddProductDetail() {
     const { id } = useParams();
-
     const navigate = useNavigate();
-
     const [listSize, setListSize] = useState([]);
-
     const [listColor, setListColor] = useState([]);
-
     const [sizeError, setSizeError] = useState('');
-
     const [codeError, setCodeError] = useState('');
-
     const [colorError, setColorError] = useState('');
-
     const [quantityError, setQuantityError] = useState('');
-
+    const [isLoading, setIsLoading] = useState(false);
     const [productDetail, setProductDetail] = useState({
         code: '',
         quantity: '',
@@ -99,7 +93,7 @@ export default function AddProductDetail() {
         }
 
         if (isValid) {
-            console.log(productDetail);
+            setIsLoading(true);
             await addProductDetail(productDetail)
                 .then((res) => {
                     toast.success('Thêm thành công');
@@ -107,6 +101,9 @@ export default function AddProductDetail() {
                 })
                 .catch((error) => {
                     toast.error('Có lỗi xảy ra, không thể thêm');
+                })
+                .finally(() => {
+                    setIsLoading(false);
                 });
         }
     };
@@ -190,7 +187,10 @@ export default function AddProductDetail() {
                             >
                                 <option value="">--Chọn size--</option>
                                 {listSize.map((option) => (
-                                    <option key={option.key} value={option.value}>
+                                    <option
+                                        key={option.key}
+                                        value={option.value}
+                                    >
                                         {option.value}
                                     </option>
                                 ))}
@@ -198,9 +198,10 @@ export default function AddProductDetail() {
                             <span className="text-danger">{sizeError}</span>
                         </div>
 
-                        <button type="submit" className="col-2 button">
+                        <button disabled={isLoading} type="submit" className="col-2 button">
                             Thêm mới
                         </button>
+                        {isLoading && <LoadingSpinner />}
                     </div>
                 </form>
             </div>

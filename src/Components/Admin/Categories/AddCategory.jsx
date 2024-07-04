@@ -6,6 +6,7 @@ import {
 import { toast } from 'react-toastify';
 import { useNavigate } from 'react-router-dom';
 import Tittle from '../../Fragments/Tittle';
+import LoadingSpinner from '../../Fragments/LoadingSpinner';
 
 export default function AddCategory() {
     const [category, setCategory] = useState({
@@ -15,6 +16,7 @@ export default function AddCategory() {
     });
 
     const [listCategories, setListCategories] = useState([]);
+    const [isLoading, setIsLoading] = useState(false);
 
     const navigator = useNavigate();
     const [categoryCodeErorr, setCategoryCodeErorr] = useState('');
@@ -25,12 +27,15 @@ export default function AddCategory() {
     }, []);
 
     const fetchListCategories = async () => {
-        try {
-            const response = await getAllCategories();
-            setListCategories(response.data);
-        } catch (error) {
-            console.error('Error fetching list categories:', error);
-        }
+        await getAllCategories()
+            .then((res) => {
+                setListCategories(res.data);
+            })
+            .catch((error) => {
+                console.error('Error fetching list categories:', error);
+            })
+
+            ;
     };
 
     const handleInputChange = (e) => {
@@ -57,6 +62,7 @@ export default function AddCategory() {
         }
 
         if (isValid) {
+            setIsLoading(true);
             await createCategory(category)
                 .then(() => {
                     navigator('/admin/categories');
@@ -67,6 +73,9 @@ export default function AddCategory() {
                         setCategoryCodeErorr('Mã danh mục đã tồn tại');
                         toast.error('Mã danh mục đã tồn tại');
                     }
+                })
+                .finally(() => {
+                    setIsLoading(false);
                 });
         }
     };
@@ -138,11 +147,14 @@ export default function AddCategory() {
 
                         <div className="col-12 mt-3">
                             <button
+                                disabled={isLoading}
                                 type="submit"
                                 className="col-2 button text-align-center"
                             >
                                 Thêm danh mục
                             </button>
+                            {isLoading &&
+                                <LoadingSpinner />}
                         </div>
                     </div>
                 </form>

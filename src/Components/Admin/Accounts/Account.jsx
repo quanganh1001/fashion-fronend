@@ -16,10 +16,11 @@ import SearchForm from '../../Fragments/SearchForm';
 import CustomPagination from '../../Fragments/CustomPagination';
 import usePagination from '../../../CustomHooks/usePagination';
 import { resetPass } from '../../../Services/Auth';
+import LoadingSpinner from '../../Fragments/LoadingSpinner';
 
 export default function Account() {
     const [listAccount, setListAccount] = useState([]);
-
+    const [isLoading, setIsLoading] = useState(true);
     const { openModal, closeModal } = useModal();
     const { auth } = useAuth();
     const [listRoles, setListRoles] = useState([]);
@@ -38,6 +39,7 @@ export default function Account() {
     }, []);
 
     useEffect(() => {
+        setIsLoading(true);
         fetchGetAllAccount();
     }, [searchParams]);
 
@@ -60,8 +62,9 @@ export default function Account() {
                         ))}
                     </select>
                 </>,
-                async () => {
-                    await updateRole(newIdRole.id, newIdRole.role)
+                () => {
+                     setIsLoading(true);
+                     updateRole(newIdRole.id, newIdRole.role)
                         .then((res) => {
                             toast.success('Cập nhật quyền thành công!');
                             fetchGetAllAccount();
@@ -69,6 +72,8 @@ export default function Account() {
                         .catch((error) => {
                             console.error(error);
                             toast.error('Có lỗi xảy ra!');
+                        }).finally(() => {
+                           setIsLoading(false) 
                         });
                     closeModal();
                 }
@@ -82,6 +87,7 @@ export default function Account() {
                 'Cấp lại mật khẩu',
                 `Bạn có chắc muốn cấp lại mật khẩu cho tải khoản này qua email ?`,
                 () => {
+                    setIsLoading(true)
                     resetPass(newResetByEmail)
                         .then((res) => {
                             console.log(res);
@@ -91,6 +97,9 @@ export default function Account() {
                         })
                         .catch((error) => {
                             toast.error('Có lỗi xảy ra!');
+                        })
+                        .finally(() => {
+                            setIsLoading(false);
                         });
                     closeModal();
                 }
@@ -104,6 +113,10 @@ export default function Account() {
             setTotalPages(res.data.totalPages);
             setCurrentPage(res.data.currentPage);
             setTotalItems(res.data.totalItems);
+        }).catch((err) => {
+            console.error(err);
+        }).finally(() => {
+            setIsLoading(false)
         });
     };
 
@@ -120,6 +133,7 @@ export default function Account() {
                 (isActivated ? ' hủy kích hoạt' : 'kích hoạt') +
                 ' tài khoản này?',
             () => {
+                setIsLoading(true)
                 activation(id)
                     .then((res) => {
                         fetchGetAllAccount();
@@ -127,7 +141,7 @@ export default function Account() {
                     .catch((error) => {
                         console.error(error);
                         toast.error('Có lỗi xảy ra!');
-                    });
+                    })
 
                 closeModal();
             }
@@ -208,91 +222,104 @@ export default function Account() {
                         </tr>
                     </thead>
                     <tbody>
-                        {listAccount.map((acc) => (
-                            <tr key={acc.id}>
-                                <td>{acc.name}</td>
-                                <td>{acc.phone}</td>
-                                <td>{acc.email}</td>
-                                <td>{acc.role}</td>
-                                <td
-                                    className={
-                                        acc.isActivated
-                                            ? 'text-bg-success'
-                                            : 'text-bg-danger'
-                                    }
-                                >
-                                    {acc.isActivated
-                                        ? 'Hoạt động'
-                                        : 'Hủy kích hoạt'}
-                                </td>
-                                <td>
-                                    {auth.account.id === acc.id ? (
-                                        <>
-                                            <Link to={'/admin/accounts/edit'}>
-                                                <button className="button">
-                                                    Xem/Sửa
-                                                </button>
-                                            </Link>
-                                        </>
-                                    ) : (
-                                        <>
-                                            <Dropdown data-bs-theme="dark">
-                                                <Dropdown.Toggle variant="dark bg-gradient btn-sm">
-                                                    Hành động
-                                                </Dropdown.Toggle>
-                                                <Dropdown.Menu>
-                                                    <Dropdown.Item
-                                                        onClick={() =>
-                                                            handleShowAccountDetail(
-                                                                acc
-                                                            )
+                        {isLoading ? (
+                            <LoadingSpinner />
+                        ) : (
+                            <>
+                                {listAccount.map((acc) => (
+                                    <tr key={acc.id}>
+                                        <td>{acc.name}</td>
+                                        <td>{acc.phone}</td>
+                                        <td>{acc.email}</td>
+                                        <td>{acc.role}</td>
+                                        <td
+                                            className={
+                                                acc.isActivated
+                                                    ? 'text-bg-success'
+                                                    : 'text-bg-danger'
+                                            }
+                                        >
+                                            {acc.isActivated
+                                                ? 'Hoạt động'
+                                                : 'Hủy kích hoạt'}
+                                        </td>
+                                        <td>
+                                            {auth.account.id === acc.id ? (
+                                                <>
+                                                    <Link
+                                                        to={
+                                                            '/admin/accounts/edit'
                                                         }
                                                     >
-                                                        Xem thông tin
-                                                    </Dropdown.Item>
-                                                    <Dropdown.Item
-                                                        onClick={() =>
-                                                            handleShowModalRole(
-                                                                acc.id,
-                                                                acc.role
-                                                            )
-                                                        }
-                                                    >
-                                                        Sửa quyền
-                                                    </Dropdown.Item>
-                                                    <Dropdown.Item
-                                                        onClick={() =>
-                                                            handleActivation(
-                                                                acc.id,
-                                                                acc.isActivated
-                                                            )
-                                                        }
-                                                    >
-                                                        Hủy kích hoạt/Kích hoạt
-                                                    </Dropdown.Item>
-                                                    <Dropdown.Item
-                                                        onClick={() =>
-                                                            handleResetPass(
-                                                                acc.email
-                                                            )
-                                                        }
-                                                    >
-                                                        Cấp lại mật khẩu
-                                                    </Dropdown.Item>
-                                                    <Dropdown.Item
-                                                        onClick={() =>
-                                                            handleDelete(acc.id)
-                                                        }
-                                                    >
-                                                        Xóa
-                                                    </Dropdown.Item>
-                                                </Dropdown.Menu>
-                                            </Dropdown>
-                                        </>
-                                    )}
-                                </td>
-                            </tr>
-                        ))}
+                                                        <button className="button">
+                                                            Xem/Sửa
+                                                        </button>
+                                                    </Link>
+                                                </>
+                                            ) : (
+                                                <>
+                                                    <Dropdown data-bs-theme="dark">
+                                                        <Dropdown.Toggle variant="dark bg-gradient btn-sm">
+                                                            Hành động
+                                                        </Dropdown.Toggle>
+                                                        <Dropdown.Menu>
+                                                            <Dropdown.Item
+                                                                onClick={() =>
+                                                                    handleShowAccountDetail(
+                                                                        acc
+                                                                    )
+                                                                }
+                                                            >
+                                                                Xem thông tin
+                                                            </Dropdown.Item>
+                                                            <Dropdown.Item
+                                                                onClick={() =>
+                                                                    handleShowModalRole(
+                                                                        acc.id,
+                                                                        acc.role
+                                                                    )
+                                                                }
+                                                            >
+                                                                Sửa quyền
+                                                            </Dropdown.Item>
+                                                            <Dropdown.Item
+                                                                onClick={() =>
+                                                                    handleActivation(
+                                                                        acc.id,
+                                                                        acc.isActivated
+                                                                    )
+                                                                }
+                                                            >
+                                                                Hủy kích
+                                                                hoạt/Kích hoạt
+                                                            </Dropdown.Item>
+                                                            <Dropdown.Item
+                                                                onClick={() =>
+                                                                    handleResetPass(
+                                                                        acc.email
+                                                                    )
+                                                                }
+                                                            >
+                                                                Cấp lại mật khẩu
+                                                            </Dropdown.Item>
+                                                            <Dropdown.Item
+                                                                onClick={() =>
+                                                                    handleDelete(
+                                                                        acc.id
+                                                                    )
+                                                                }
+                                                            >
+                                                                Xóa
+                                                            </Dropdown.Item>
+                                                        </Dropdown.Menu>
+                                                    </Dropdown>
+                                                </>
+                                            )}
+                                        </td>
+                                    </tr>
+                                ))}
+                            </>
+                        )}
                     </tbody>
                 </table>
                 <CustomPagination

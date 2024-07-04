@@ -34,14 +34,13 @@ export default function ProductAdmin() {
             setTotalPages(response.data.totalPages);
             setCurrentPage(response.data.currentPage);
             setTotalItems(response.data.totalItems);
-            setIsLoading(false)
+            setIsLoading(false);
         } catch (error) {
             console.error('Error fetching products:', error);
         }
     };
 
     const handleDelete = (productId) => {
-        
         openModal('Xóa sản phẩm', `Bạn có chắc muốn xóa sản phẩm này?`, () => {
             setIsLoading(true);
             deleteProduct(productId)
@@ -76,20 +75,21 @@ export default function ProductAdmin() {
                     />
                 </div>
             </div>
-            {isLoading ? (
-                <LoadingSpinner />
-            ) : (
-                <>
-                    <table className="table table-striped table-hover table-bordered border">
-                        <thead>
-                            <tr>
-                                <th>Mã sản phẩm</th>
-                                <th>Tên sản phâm</th>
-                                <th>Danh mục</th>
-                                <th>Trạng thái</th>
-                            </tr>
-                        </thead>
-                        <tbody>
+
+            <table className="table table-striped table-hover table-bordered border">
+                <thead>
+                    <tr>
+                        <th>Mã sản phẩm</th>
+                        <th>Tên sản phâm</th>
+                        <th>Danh mục</th>
+                        <th>Trạng thái</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {isLoading ? (
+                        <LoadingSpinner />
+                    ) : (
+                        <>
                             {products.map((p) => (
                                 <tr key={p.id} className="align-middle">
                                     <td>{p.productCode}</td>
@@ -122,16 +122,16 @@ export default function ProductAdmin() {
                                     </td>
                                 </tr>
                             ))}
-                        </tbody>
-                    </table>
+                        </>
+                    )}
+                </tbody>
+            </table>
 
-                    <CustomPagination
-                        totalPages={totalPages}
-                        currentPage={currentPage}
-                        totalItems={totalItems}
-                    />
-                </>
-            )}
+            <CustomPagination
+                totalPages={totalPages}
+                currentPage={currentPage}
+                totalItems={totalItems}
+            />
         </>
     );
 }

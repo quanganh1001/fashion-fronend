@@ -10,6 +10,7 @@ import { Dropdown } from 'react-bootstrap';
 import useModal from '../../../CustomHooks/useModal';
 import { getImagesSize } from '../../../Services/EnumService';
 import Tittle from '../../Fragments/Tittle';
+import LoadingSpinner from '../../Fragments/LoadingSpinner';
 
 export default function EditProduct() {
     const { id } = useParams();
@@ -33,6 +34,9 @@ export default function EditProduct() {
     const [brandError, setBrandError] = useState('');
     const [imgSizeError, setImgSizeError] = useState('');
     const [discountPriceError, setDiscountPriceError] = useState('');
+    const [isLoading, setIsLoading] = useState(false);
+    const [isLoadingDetail, setIsLoadingDetail] = useState(true);
+    const [isLoadingProduct, setIsLoadingProduct] = useState(true);
 
     const [imgSizeOptions, setImgSizeOptions] = useState([]);
 
@@ -69,13 +73,22 @@ export default function EditProduct() {
             })
             .catch((error) => {
                 console.error(error);
+            }).finally(() => {
+                setIsLoadingProduct(false);
             });
     };
 
     const fetchProductDetail = async () => {
-        await getAllProductsDetails(id).then((res) => {
-            setListProductsDetails(res.data);
-        });
+        setIsLoadingDetail(true)
+        await getAllProductsDetails(id)
+            .then((res) => {
+                setListProductsDetails(res.data);
+            })
+            .catch((err) => {
+                console.error(err);
+            }).finally(() => {
+                setIsLoadingDetail(false)
+            });
     };
 
     const handleInputChange = (e) => {
@@ -133,17 +146,22 @@ export default function EditProduct() {
         }
 
         if (isValid) {
-            try {
-                await updateProduct(id, product);
-                navigator('/admin/products');
-                toast.success('Lưu thành công!');
-            } catch (error) {
-                console.log(error);
-                if (error.response.status === 409) {
-                    setCodeError('Mã sản phẩm đã tồn tại');
-                    toast.error('Mã sản phẩm đã tồn tại');
-                }
-            }
+            setIsLoading(true);
+            await updateProduct(id, product)
+                .then(() => {
+                    navigator('/admin/products');
+                    toast.success('Lưu thành công!');
+                })
+                .catch((err) => {
+                    console.error(err);
+                    if (err.response.status === 409) {
+                        setCodeError('Mã sản phẩm đã tồn tại');
+                        toast.error('Mã sản phẩm đã tồn tại');
+                    }
+                })
+                .finally(() => {
+                    setIsLoading(false);
+                });
         }
     };
 
@@ -152,6 +170,7 @@ export default function EditProduct() {
             'Xóa chi tiết sản phẩm',
             `Bạn có chắc muốn xóa chi tiết sản phẩm này?`,
             () => {
+                setIsLoadingDetail(true);
                 deleteProductDetail(id)
                     .then(() => {
                         toast.success('Xóa sản phẩm thành công!');
@@ -159,6 +178,9 @@ export default function EditProduct() {
                     })
                     .catch((err) => {
                         toast.error('Xảy ra lỗi!');
+                    })
+                    .finally(() => {
+                        setIsLoadingDetail(false);
                     });
                 closeModal();
             }
@@ -176,185 +198,195 @@ export default function EditProduct() {
                     </Link>
                 </div>
                 <div className=" col-6 bg-white p-5 shadow border">
-                    <form onSubmit={updateProductForm}>
-                        <div className="row">
-                            <div className="mb-3">
-                                <label className="form-label">
-                                    Mã sản phẩm
-                                    <span style={{ color: 'red' }}>*</span>
-                                </label>
-                                <input
-                                    id="productCode"
-                                    name="productCode"
-                                    value={product.productCode ?? ''}
-                                    type="text"
-                                    className={
-                                        codeError !== ''
-                                            ? 'border-danger form-control'
-                                            : 'form-control'
-                                    }
-                                    onChange={handleInputChange}
-                                />
-                                <span className="text-danger">{codeError}</span>
-                            </div>
+                    {isLoadingProduct ? (
+                        <LoadingSpinner />
+                    ) : (
+                        <form onSubmit={updateProductForm}>
+                            <div className="row">
+                                <div className="mb-3">
+                                    <label className="form-label">
+                                        Mã sản phẩm
+                                        <span style={{ color: 'red' }}>*</span>
+                                    </label>
+                                    <input
+                                        id="productCode"
+                                        name="productCode"
+                                        value={product.productCode ?? ''}
+                                        type="text"
+                                        className={
+                                            codeError !== ''
+                                                ? 'border-danger form-control'
+                                                : 'form-control'
+                                        }
+                                        onChange={handleInputChange}
+                                    />
+                                    <span className="text-danger">
+                                        {codeError}
+                                    </span>
+                                </div>
 
-                            <div className="mb-3">
-                                <label className="form-label">
-                                    Tên sản phẩm
-                                    <span style={{ color: 'red' }}>*</span>
-                                </label>
-                                <input
-                                    id="productName"
-                                    type="text"
-                                    name="productName"
-                                    className={
-                                        nameError !== ''
-                                            ? 'border-danger form-control'
-                                            : 'form-control'
-                                    }
-                                    value={product.productName ?? ''}
-                                    onChange={handleInputChange}
-                                />
-                                <span className="text-danger">{nameError}</span>
-                            </div>
+                                <div className="mb-3">
+                                    <label className="form-label">
+                                        Tên sản phẩm
+                                        <span style={{ color: 'red' }}>*</span>
+                                    </label>
+                                    <input
+                                        id="productName"
+                                        type="text"
+                                        name="productName"
+                                        className={
+                                            nameError !== ''
+                                                ? 'border-danger form-control'
+                                                : 'form-control'
+                                        }
+                                        value={product.productName ?? ''}
+                                        onChange={handleInputChange}
+                                    />
+                                    <span className="text-danger">
+                                        {nameError}
+                                    </span>
+                                </div>
 
-                            <div className="mb-3">
-                                <label className="form-label">
-                                    Giá tiền
-                                    <span style={{ color: 'red' }}>*</span>
-                                </label>
-                                <input
-                                    id="price"
-                                    type="text"
-                                    className={
-                                        priceError !== ''
-                                            ? 'border-danger form-control'
-                                            : 'form-control'
-                                    }
-                                    name="price"
-                                    value={product.price}
-                                    onChange={handleInputChange}
-                                />
-                                <span className="text-danger">
-                                    {priceError}
-                                </span>
-                            </div>
+                                <div className="mb-3">
+                                    <label className="form-label">
+                                        Giá tiền
+                                        <span style={{ color: 'red' }}>*</span>
+                                    </label>
+                                    <input
+                                        id="price"
+                                        type="text"
+                                        className={
+                                            priceError !== ''
+                                                ? 'border-danger form-control'
+                                                : 'form-control'
+                                        }
+                                        name="price"
+                                        value={product.price}
+                                        onChange={handleInputChange}
+                                    />
+                                    <span className="text-danger">
+                                        {priceError}
+                                    </span>
+                                </div>
 
-                            <div className="mb-3">
-                                <label className="form-label">
-                                    Giá khuyến mãi
-                                </label>
-                                <input
-                                    id="discountPrice"
-                                    type="text"
-                                    className={
-                                        discountPriceError !== ''
-                                            ? 'border-danger form-control'
-                                            : 'form-control'
-                                    }
-                                    name="discountPrice"
-                                    value={product.discountPrice ?? ''}
-                                    onChange={handleInputChange}
-                                />
-                                <span className="text-danger">
-                                    {discountPriceError}
-                                </span>
-                            </div>
+                                <div className="mb-3">
+                                    <label className="form-label">
+                                        Giá khuyến mãi
+                                    </label>
+                                    <input
+                                        id="discountPrice"
+                                        type="text"
+                                        className={
+                                            discountPriceError !== ''
+                                                ? 'border-danger form-control'
+                                                : 'form-control'
+                                        }
+                                        name="discountPrice"
+                                        value={product.discountPrice ?? ''}
+                                        onChange={handleInputChange}
+                                    />
+                                    <span className="text-danger">
+                                        {discountPriceError}
+                                    </span>
+                                </div>
 
-                            <div className="mb-3">
-                                <label className="form-label">
-                                    Thương hiệu
-                                    <span style={{ color: 'red' }}>*</span>
-                                </label>
-                                <input
-                                    id="brand"
-                                    type="text"
-                                    className={
-                                        brandError !== ''
-                                            ? 'border-danger form-control'
-                                            : 'form-control'
-                                    }
-                                    value={product.brand ?? ''}
-                                    name="brand"
-                                    onChange={handleInputChange}
-                                />
-                                <span className="text-danger">
-                                    {brandError}
-                                </span>
-                            </div>
+                                <div className="mb-3">
+                                    <label className="form-label">
+                                        Thương hiệu
+                                        <span style={{ color: 'red' }}>*</span>
+                                    </label>
+                                    <input
+                                        id="brand"
+                                        type="text"
+                                        className={
+                                            brandError !== ''
+                                                ? 'border-danger form-control'
+                                                : 'form-control'
+                                        }
+                                        value={product.brand ?? ''}
+                                        name="brand"
+                                        onChange={handleInputChange}
+                                    />
+                                    <span className="text-danger">
+                                        {brandError}
+                                    </span>
+                                </div>
 
-                            <div className="mb-3">
-                                <label className="form-label">Mô tả</label>
-                                <textarea
-                                    id="description"
-                                    className="form-control"
-                                    rows="4"
-                                    cols="50"
-                                    name="description"
-                                    value={product.description ?? ''}
-                                    onChange={handleInputChange}
-                                ></textarea>
-                            </div>
+                                <div className="mb-3">
+                                    <label className="form-label">Mô tả</label>
+                                    <textarea
+                                        id="description"
+                                        className="form-control"
+                                        rows="4"
+                                        cols="50"
+                                        name="description"
+                                        value={product.description ?? ''}
+                                        onChange={handleInputChange}
+                                    ></textarea>
+                                </div>
 
-                            <div className="mb-3">
-                                <label className="form-label">
-                                    Ảnh hướng dẫn chọn size
-                                    <span style={{ color: 'red' }}>*</span>
-                                </label>
-                                <select
-                                    id="imgSize"
-                                    className={
-                                        imgSizeError !== ''
-                                            ? 'border-danger form-control'
-                                            : 'form-control'
-                                    }
-                                    value={product.imageChooseSize ?? ''}
-                                    name="imageChooseSize"
-                                    onChange={handleInputChange}
+                                <div className="mb-3">
+                                    <label className="form-label">
+                                        Ảnh hướng dẫn chọn size
+                                        <span style={{ color: 'red' }}>*</span>
+                                    </label>
+                                    <select
+                                        id="imgSize"
+                                        className={
+                                            imgSizeError !== ''
+                                                ? 'border-danger form-control'
+                                                : 'form-control'
+                                        }
+                                        value={product.imageChooseSize ?? ''}
+                                        name="imageChooseSize"
+                                        onChange={handleInputChange}
+                                    >
+                                        <option value="">--Chọn size--</option>
+                                        {imgSizeOptions.map((option) => (
+                                            <option
+                                                key={option.key}
+                                                value={option.key}
+                                            >
+                                                {option.value}
+                                            </option>
+                                        ))}
+                                    </select>
+                                    <span className="text-danger">
+                                        {imgSizeError}
+                                    </span>
+                                </div>
+
+                                <div className="mb-3">
+                                    <label className="form-label">
+                                        Trạng thái
+                                        <span style={{ color: 'red' }}>*</span>
+                                    </label>
+                                    <input
+                                        className="form-check-input bg-dark border-dark mx-2"
+                                        type="checkbox"
+                                        name="isActivated"
+                                        checked={product.isActivated ?? true}
+                                        onChange={(e) =>
+                                            setProduct({
+                                                ...product,
+                                                isActivated: e.target.checked,
+                                            })
+                                        }
+                                    />
+                                    {product.isActivated ? 'Kích hoạt' : 'Ẩn'}
+                                </div>
+                                <button
+                                    disabled={isLoading}
+                                    type="submit"
+                                    id="submit"
+                                    className="col-4 button text-align-center"
                                 >
-                                    <option value="">--Chọn size--</option>
-                                    {imgSizeOptions.map((option) => (
-                                        <option
-                                            key={option.key}
-                                            value={option.key}
-                                        >
-                                            {option.value}
-                                        </option>
-                                    ))}
-                                </select>
-                                <span className="text-danger">
-                                    {imgSizeError}
-                                </span>
+                                    Lưu lại
+                                </button>
+                                {isLoading && <LoadingSpinner />}
                             </div>
-
-                            <div className="mb-3">
-                                <label className="form-label">
-                                    Trạng thái
-                                    <span style={{ color: 'red' }}>*</span>
-                                </label>
-                                <input
-                                    className="form-check-input bg-dark border-dark mx-2"
-                                    type="checkbox"
-                                    name="isActivated"
-                                    checked={product.isActivated ?? true}
-                                    onChange={(e) =>
-                                        setProduct({
-                                            ...product,
-                                            isActivated: e.target.checked,
-                                        })
-                                    }
-                                />
-                                {product.isActivated ? 'Kích hoạt' : 'Ẩn'}
-                            </div>
-                            <button
-                                type="submit"
-                                id="submit"
-                                className="col-4 button text-align-center"
-                            >
-                                Lưu lại
-                            </button>
-                        </div>
-                    </form>
+                        </form>
+                    )}
                 </div>
 
                 <div className=" col-5 bg-white p-3 pt-5 shadow border">
@@ -364,41 +396,52 @@ export default function EditProduct() {
                             <button className="button">Thêm mã</button>
                         </Link>
                     </div>
-                    {listProductsDetails.length === 0 ? (
-                        <div>Chưa có mã phân loại sản phẩm</div>
-                    ) : null}
-                    <div
-                        className="overflow-auto border ps-3 pb-3 mt-3"
-                        style={{ maxHeight: '700px' }}
-                    >
-                        {listProductsDetails.map((pd) => (
+                    {isLoadingDetail ? (
+                        <LoadingSpinner />
+                    ) : (
+                        <>
+                            {listProductsDetails.length === 0 ? (
+                                <div>Chưa có mã phân loại sản phẩm</div>
+                            ) : null}
                             <div
-                                key={pd.id}
-                                className="d-flex align-items-center mt-3"
+                                className="overflow-auto border ps-3 pb-3 mt-3"
+                                style={{ maxHeight: '700px' }}
                             >
-                                <Dropdown data-bs-theme="dark" className="me-3">
-                                    <Dropdown.Toggle variant="dark bg-gradient btn-sm">
-                                        Hành động
-                                    </Dropdown.Toggle>
-                                    <Dropdown.Menu>
-                                        <Dropdown.Item
-                                            as={Link}
-                                            to={`/admin/products/${id}/productDetail/edit/${pd.id}`}
+                                {listProductsDetails.map((pd) => (
+                                    <div
+                                        key={pd.id}
+                                        className="d-flex align-items-center mt-3"
+                                    >
+                                        <Dropdown
+                                            data-bs-theme="dark"
+                                            className="me-3"
                                         >
-                                            Xem/Sửa
-                                        </Dropdown.Item>
-                                        <Dropdown.Item
-                                            onClick={() => handleDelete(pd.id)}
-                                        >
-                                            Xóa
-                                        </Dropdown.Item>
-                                    </Dropdown.Menu>
-                                </Dropdown>
+                                            <Dropdown.Toggle variant="dark bg-gradient btn-sm">
+                                                Hành động
+                                            </Dropdown.Toggle>
+                                            <Dropdown.Menu>
+                                                <Dropdown.Item
+                                                    as={Link}
+                                                    to={`/admin/products/${id}/productDetail/edit/${pd.id}`}
+                                                >
+                                                    Xem/Sửa
+                                                </Dropdown.Item>
+                                                <Dropdown.Item
+                                                    onClick={() =>
+                                                        handleDelete(pd.id)
+                                                    }
+                                                >
+                                                    Xóa
+                                                </Dropdown.Item>
+                                            </Dropdown.Menu>
+                                        </Dropdown>
 
-                                <div>{pd.code}</div>
+                                        <div>{pd.code}</div>
+                                    </div>
+                                ))}
                             </div>
-                        ))}
-                    </div>
+                        </>
+                    )}
                 </div>
             </div>
         </>

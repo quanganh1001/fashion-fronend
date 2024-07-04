@@ -26,7 +26,7 @@ export default function Header() {
     const [hoveredF1, setHoveredF1] = useState(null);
     const [activeClass, setActiveClass] = useState('');
     const navigate = useNavigate();
-    const { totalCartItems } = useCart();
+    const { totalCartItems,isLoadingCart } = useCart();
     const { openModal, closeModal } = useModal();
     const [email, setEmail] = useState('');
     const [isLoading, setIsLoading] = useState(true);
@@ -334,9 +334,9 @@ export default function Header() {
                             className="btn btn-outline-dark align-self-center position-relative"
                         >
                             <FontAwesomeIcon icon="fa-solid fa-cart-shopping" />
-                            {totalCartItems > 0 && (
+                            {totalCartItems && (
                                 <span className="position-absolute top-0 start-0 translate-middle badge rounded-pill bg-danger">
-                                    {totalCartItems}
+                                    {isLoadingCart ? <LoadingSpinner/> : totalCartItems}
                                 </span>
                             )}
                         </Link>

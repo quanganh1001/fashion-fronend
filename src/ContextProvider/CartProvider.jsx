@@ -16,6 +16,7 @@ export default function CartProvider({ children }) {
     const [totalCartItems, setTotalItems] = useState('');
     const [totalPrice, setTotalPrice] = useState(0);
     const { auth } = useAuth();
+    const [isLoadingCart, setIsLoadingCart] = useState(false);
 
     useEffect(() => {
         fetchGetCart();
@@ -28,13 +29,14 @@ export default function CartProvider({ children }) {
 
     const fetchGetCart = () => {
         if (auth.token) {
+            setIsLoadingCart(true);
             getCart()
                 .then((res) => {
                     setCart(res.data);
                 })
                 .catch((error) => {
                     console.error(error);
-                });
+                }).finally(()=>{setIsLoadingCart(false)});
         } else {
             const cartItems = JSON.parse(localStorage.getItem('cart')) || {};
             const cartArray = Object.values(cartItems).map((item) => ({
@@ -88,12 +90,16 @@ export default function CartProvider({ children }) {
 
     const handleRemove = (productDetailId) => {
         if (auth && auth.token) {
+            setIsLoadingCart(true);
             removeCart(productDetailId)
                 .then((res) => {
                     setCart(res.data);
                 })
                 .catch((error) => {
                     console.error(error);
+                })
+                .finally(() => {
+                    setIsLoadingCart(false);
                 });
         } else {
             let cartItems = JSON.parse(localStorage.getItem('cart')) || {};
@@ -105,6 +111,7 @@ export default function CartProvider({ children }) {
 
     const handleUpdateCartWithAuth = (productDetailId, quantity) => {
         if (auth.token) {
+            setIsLoadingCart(true);
             updateCart(productDetailId, quantity)
                 .then((res) => {
                     setCart(res.data);
@@ -112,6 +119,9 @@ export default function CartProvider({ children }) {
                 .catch((error) => {
                     console.error(error);
                     toast.error(error);
+                })
+                .finally(() => {
+                    setIsLoadingCart(false);
                 });
         }
     };
@@ -172,19 +182,23 @@ export default function CartProvider({ children }) {
     };
 
     const handleAddCartWithAuth = (id, quantity) => {
+        setIsLoadingCart(true)
         addCart(id, quantity)
             .then((res) => {
-                console.log(res.data);
                 setCart(res.data);
             })
             .catch((error) => {
                 console.error(error);
                 toast.error(error);
-            });
+            })
+            .finally(() => {
+                setIsLoadingCart(false);
+            });;
     };
 
     const handleClearCart = () => {
         if (auth && auth.token) {
+            setIsLoadingCart(true)
             clearCart()
                 .then((res) => {
                     setCart(res.data);
@@ -192,7 +206,10 @@ export default function CartProvider({ children }) {
                 .catch((error) => {
                     console.error(error);
                     toast.error(error);
-                });
+                })
+                .finally(() => {
+                    setIsLoadingCart(false);
+                });;
         } else {
             localStorage.removeItem('cart');
             setCart({});
@@ -205,6 +222,7 @@ export default function CartProvider({ children }) {
                 cart,
                 totalCartItems,
                 totalPrice,
+                isLoadingCart,
                 setCart,
                 handleRemove,
                 handleUpdateCart,
