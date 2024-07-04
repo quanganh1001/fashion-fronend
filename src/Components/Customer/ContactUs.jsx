@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { toast } from "react-toastify";
 import { sendFeedback } from "../../Services/FeedbackCustomerService";
+import LoadingSpinner from "../Fragments/LoadingSpinner";
 
 export default function ContactUs() {
     const [feedbackCustomer, setFeedbackCustomer] = useState({
@@ -12,7 +13,8 @@ export default function ContactUs() {
     const [nameError, setNameError] = useState('');
     const [feedbackError, setFeedbackError] = useState('');
     const [emailError, setEmailError] = useState('');
-    
+    const [isLoading, setIsLoading] = useState(false);
+
       const handleInputChange = (e) => {
           const { name, value } = e.target;
           setFeedbackCustomer({ ...feedbackCustomer, [name]: value });
@@ -53,12 +55,15 @@ export default function ContactUs() {
 
          
         if (isValid) {
+            setIsLoading(true);
             sendFeedback(feedbackCustomer)
                 .then(() => {
                     toast.success("Gửi feedback thành công!")
                 }).catch((error) => {
                     toast.error("Có lỗi! Hãy thử lại")
                     console.error(error);
+                }).finally(() => {
+                 setIsLoading(false);
             })
         }
     }
@@ -164,11 +169,13 @@ export default function ContactUs() {
                                     <span className="fw-light">apply.</span>
                                 </div>
                                 <button
+                                    disabled={isLoading}
                                     className="btn btn-dark col-6 mt-3"
                                     type="submit"
                                 >
                                     Gửi cho chúng tôi
                                 </button>
+                                {isLoading && <LoadingSpinner />}
                             </div>
                         </form>
                     </div>

@@ -3,8 +3,9 @@ import {
     getAllProductByCategory,
 } from '../../Services/ProductService';
 import { Link, useParams, useNavigate, useLocation } from 'react-router-dom';
-import CustomPagination from '../Fragments/CustomPagination';
 import usePagination from '../../CustomHooks/usePagination';
+import CustomPagination from '../Fragments/CustomPagination';
+import LoadingSpinner from '../Fragments/LoadingSpinner';
 
 
 export default function Category() {
@@ -22,6 +23,7 @@ export default function Category() {
     const [priceRange, setPriceRange] = useState({ min: 0, max: 10000000 });
     const [sortOption, setSortOption] = useState('');
     const navigate = useNavigate();
+    const [loading, setLoading] = useState(true);
 
 
     useEffect(() => {
@@ -103,14 +105,17 @@ export default function Category() {
         if (catId === 'sale') {
             catId = 0;
         }
+        setLoading(true);
         await getAllProductByCategory(catId, key)
             .then((res) => {
                 setListProducts(res.data);
+                setLoading(false);
             })
             .catch((error) => {
                 console.error(error);
-            });
+            })
     };
+
     return (
         <>
             <style>
@@ -191,154 +196,179 @@ export default function Category() {
                 </div>
 
                 <div className="col ">
-                    {listProducts.length > 0 ? (
-                        <>
-                            <div className="d-flex flex-wrap justify-content-around">
-                                {filteredProducts.map((product) => (
-                                    <div
-                                        key={product.id}
-                                        className="shadow card hover m-2"
-                                        style={{ width: '30%' }}
-                                    >
-                                        <div className="card  position-relative ">
-                                            {product.discountPrice && (
-                                                <div
-                                                    style={{
-                                                        zIndex: '0',
-                                                        backgroundColor: 'red',
-                                                        width: '50px',
-                                                    }}
-                                                    className="position-absolute top-0 start-0 text-white rounded-pill m-2 fw-semibold d-flex justify-content-center"
-                                                >
-                                                    -{product.discountPercent}%
-                                                </div>
-                                            )}
-                                            {product.imageBackground &&
-                                            product.imageBackground.endsWith(
-                                                '.mp4'
-                                            ) ? (
-                                                <video
-                                                    style={{
-                                                        height: '350px',
-                                                        width: '100%',
-                                                    }}
-                                                    controls
-                                                    autoplay
-                                                    muted
-                                                    src={
-                                                        product.imageBackground
-                                                    }
-                                                ></video>
-                                            ) : (
-                                                <img
-                                                    src={
-                                                        product.imageBackground
-                                                    }
-                                                    alt="..."
-                                                    style={{
-                                                        height: '350px',
-                                                        width: '100%',
-                                                    }}
-                                                />
-                                            )}
-
-                                            <Link
-                                                to={'/product/' + product.id}
-                                                style={{ width: '80%' }}
-                                                className="button border-white shadow fw-bold  add-to-cart-btn"
-                                            >
-                                                Chi tiết sản phẩm
-                                            </Link>
-                                        </div>
-
-                                        <div className="card-body">
-                                            <div className="d-flex justify-content-between">
-                                                <span
-                                                    className="fw-light"
-                                                    style={{
-                                                        fontSize: '14px',
-                                                    }}
-                                                >
-                                                    +{product.totalColor} Màu
-                                                    sắc
-                                                </span>
-                                                <span
-                                                    className="fw-light"
-                                                    style={{
-                                                        fontSize: '14px',
-                                                    }}
-                                                >
-                                                    +{product.totalSize} Kích
-                                                    thước
-                                                </span>
-                                            </div>
-                                            <h6 className=" mt-2">
-                                                {product.productName}
-                                            </h6>
-                                            {product.discountPrice !== null ? (
-                                                <div>
-                                                    <span
-                                                        style={{
-                                                            textDecorationLine:
-                                                                'line-through',
-                                                        }}
-                                                    >
-                                                        {product.price.toLocaleString(
-                                                            'vi-VN',
-                                                            {
-                                                                style: 'currency',
-                                                                currency: 'VND',
-                                                            }
-                                                        )}
-                                                    </span>
-                                                    <span
-                                                        className="ms-2"
-                                                        style={{
-                                                            color: 'red',
-                                                            fontWeight: 'bold',
-                                                        }}
-                                                    >
-                                                        {product.discountPrice.toLocaleString(
-                                                            'vi-VN',
-                                                            {
-                                                                style: 'currency',
-                                                                currency: 'VND',
-                                                            }
-                                                        )}
-                                                    </span>
-                                                </div>
-                                            ) : (
-                                                <div>
-                                                    <span
-                                                        style={{
-                                                            color: 'red',
-                                                            fontWeight: 'bold',
-                                                        }}
-                                                    >
-                                                        {product.price.toLocaleString(
-                                                            'vi-VN',
-                                                            {
-                                                                style: 'currency',
-                                                                currency: 'VND',
-                                                            }
-                                                        )}
-                                                    </span>
-                                                </div>
-                                            )}
-                                        </div>
-                                    </div>
-                                ))}
-                            </div>
-                            <CustomPagination
-                                totalPages={totalPages}
-                                currentPage={parseInt(currentPage)}
-                                totalItems={totalItems}
-                            />
-                        </>
-                    ) : (
-                        <div className="d-flex flex-wrap justify-content-around">
-                            Chưa có sản phẩm trong danh mục này
+                    {loading ? (
+                        <div className='d-flex justify-content-center align-items-center col-12'>
+                            <LoadingSpinner/>
                         </div>
+                    ) : (
+                        <>
+                            {listProducts.length > 0 ? (
+                                <>
+                                    <div className="d-flex flex-wrap justify-content-around">
+                                        {filteredProducts.map((product) => (
+                                            <div
+                                                key={product.id}
+                                                className="shadow card hover m-2"
+                                                style={{ width: '30%' }}
+                                            >
+                                                <div className="card  position-relative ">
+                                                    {product.discountPrice && (
+                                                        <div
+                                                            style={{
+                                                                zIndex: '0',
+                                                                backgroundColor:
+                                                                    'red',
+                                                                width: '50px',
+                                                            }}
+                                                            className="position-absolute top-0 start-0 text-white rounded-pill m-2 fw-semibold d-flex justify-content-center"
+                                                        >
+                                                            -
+                                                            {
+                                                                product.discountPercent
+                                                            }
+                                                            %
+                                                        </div>
+                                                    )}
+                                                    {product.imageBackground &&
+                                                    product.imageBackground.endsWith(
+                                                        '.mp4'
+                                                    ) ? (
+                                                        <video
+                                                            style={{
+                                                                height: '350px',
+                                                                width: '100%',
+                                                            }}
+                                                            controls
+                                                            autoplay
+                                                            muted
+                                                            src={
+                                                                product.imageBackground
+                                                            }
+                                                        ></video>
+                                                    ) : (
+                                                        <img
+                                                            src={
+                                                                product.imageBackground
+                                                            }
+                                                            alt="..."
+                                                            style={{
+                                                                height: '350px',
+                                                                width: '100%',
+                                                            }}
+                                                        />
+                                                    )}
+
+                                                    <Link
+                                                        to={
+                                                            '/product/' +
+                                                            product.id
+                                                        }
+                                                        style={{ width: '80%' }}
+                                                        className="button border-white shadow fw-bold  add-to-cart-btn"
+                                                    >
+                                                        Chi tiết sản phẩm
+                                                    </Link>
+                                                </div>
+
+                                                <div className="card-body">
+                                                    <div className="d-flex justify-content-between">
+                                                        <span
+                                                            className="fw-light"
+                                                            style={{
+                                                                fontSize:
+                                                                    '14px',
+                                                            }}
+                                                        >
+                                                            +
+                                                            {product.totalColor}{' '}
+                                                            Màu sắc
+                                                        </span>
+                                                        <span
+                                                            className="fw-light"
+                                                            style={{
+                                                                fontSize:
+                                                                    '14px',
+                                                            }}
+                                                        >
+                                                            +{product.totalSize}{' '}
+                                                            Kích thước
+                                                        </span>
+                                                    </div>
+                                                    <h6 className=" mt-2">
+                                                        {product.productName}
+                                                    </h6>
+                                                    {product.discountPrice !==
+                                                    null ? (
+                                                        <div>
+                                                            <span
+                                                                style={{
+                                                                    textDecorationLine:
+                                                                        'line-through',
+                                                                }}
+                                                            >
+                                                                {product.price.toLocaleString(
+                                                                    'vi-VN',
+                                                                    {
+                                                                        style: 'currency',
+                                                                        currency:
+                                                                            'VND',
+                                                                    }
+                                                                )}
+                                                            </span>
+                                                            <span
+                                                                className="ms-2"
+                                                                style={{
+                                                                    color: 'red',
+                                                                    fontWeight:
+                                                                        'bold',
+                                                                }}
+                                                            >
+                                                                {product.discountPrice.toLocaleString(
+                                                                    'vi-VN',
+                                                                    {
+                                                                        style: 'currency',
+                                                                        currency:
+                                                                            'VND',
+                                                                    }
+                                                                )}
+                                                            </span>
+                                                        </div>
+                                                    ) : (
+                                                        <div>
+                                                            <span
+                                                                style={{
+                                                                    color: 'red',
+                                                                    fontWeight:
+                                                                        'bold',
+                                                                }}
+                                                            >
+                                                                {product.price.toLocaleString(
+                                                                    'vi-VN',
+                                                                    {
+                                                                        style: 'currency',
+                                                                        currency:
+                                                                            'VND',
+                                                                    }
+                                                                )}
+                                                            </span>
+                                                        </div>
+                                                    )}
+                                                </div>
+                                            </div>
+                                        ))}
+                                    </div>
+                                    <CustomPagination
+                                        totalPages={totalPages}
+                                        currentPage={parseInt(currentPage)}
+                                        totalItems={totalItems}
+                                    />
+                                </>
+                            ) : (
+                                <div className="d-flex flex-wrap justify-content-around">
+                                    Chưa có sản phẩm trong danh mục này
+                                </div>
+                            )}
+                        </>
                     )}
                 </div>
             </div>

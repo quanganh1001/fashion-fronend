@@ -5,12 +5,13 @@ import useAuth from '../../CustomHooks/useAuth';
 import { toast } from 'react-toastify';
 import useFeedback from '../../CustomHooks/useFeedback';
 import { Badge } from 'react-bootstrap';
+import LoadingSpinner from './LoadingSpinner';
 
 const Menu = (props) => {
     const [username, setUsername] = useState('');
     const { auth, handleLogout } = useAuth();
   const { totalFeedbackUnread } = useFeedback();
-
+const [isLoading, setIsLoading] = useState(false);
     const navItems = [
         {
             path: '/admin/home',
@@ -60,11 +61,14 @@ const Menu = (props) => {
     }, [auth.account.name]); 
 
     const logout = async () => {
+        setIsLoading(true);
         try {
             await handleLogout();
             toast.success('Đã đăng xuất!');
         } catch (error) {
             toast.error('Có lỗi xảy ra!');
+        } finally {
+            setIsLoading(false)
         }
     };
 
@@ -111,9 +115,7 @@ const Menu = (props) => {
                                     {item.label}
                                 </Link>
                                 {item.badge !== undefined && (
-                                    <Badge
-                                        className="ms-2 bg-danger position-absolute translate-middle-y top-0 end-0 "
-                                    >
+                                    <Badge className="ms-2 bg-danger position-absolute translate-middle-y top-0 end-0 ">
                                         {item.badge}
                                     </Badge>
                                 )}
@@ -126,13 +128,17 @@ const Menu = (props) => {
                             Xin chào,
                             {username} !{' '}
                             <Link to={'/admin/accounts/edit'}>
-                                <FontAwesomeIcon className='text-warning' icon="fa-regular fa-eye" />
+                                <FontAwesomeIcon
+                                    className="text-warning"
+                                    icon="fa-regular fa-eye"
+                                />
                             </Link>
                         </div>
 
-                        <button className="btn btn-danger" onClick={logout}>
+                        <button disabled={isLoading} className="btn btn-danger" onClick={logout}>
                             Đăng xuất
                         </button>
+                        {isLoading && <LoadingSpinner />}
                     </div>
                 </ul>
             </div>

@@ -37,6 +37,7 @@ export default function AddProduct() {
     const fetchImgSize = async () => {
         await getImagesSize()
             .then((res) => {
+                
                 setImgSizeOptions(res.data);
             })
             .catch((error) => {
@@ -118,6 +119,7 @@ export default function AddProduct() {
 
         if (isValid) {
             try {
+                console.log(product);
                 await createProduct(product);
                 navigator('/admin/products');
                 toast.success('Thêm mới thành công');

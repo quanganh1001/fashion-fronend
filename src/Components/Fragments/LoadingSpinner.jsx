@@ -1,5 +1,4 @@
-import { useState } from 'react';
 
-export default function LoadingSprinner() {
-    return <div className="spinner-border text-dark" role="status"></div>;
+export default function LoadingSpinner() {
+    return <div with="100%" className="spinner-border text-dark" role="status"></div>;
 }

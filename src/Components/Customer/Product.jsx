@@ -10,6 +10,7 @@ import useCart from '../../CustomHooks/useCart';
 import useAuth from '../../CustomHooks/useAuth';
 import ImageGallery from 'react-image-gallery';
 import 'react-image-gallery/styles/css/image-gallery.css';
+import { getImagesSize, getUrlImgEnum } from '../../Services/EnumService';
 
 export default function Product() {
     const [listImage, setListImage] = useState([]);
@@ -104,12 +105,19 @@ export default function Product() {
     };
 
     const handleShowImageChooseSize = (imgUrl) => {
-        openModal(
-            'Hướng dẫn chọn size',
-            <img src={imgUrl} alt="Chọn size" width="100%" />,
-            true,
-            () => {}
-        );
+        
+        getUrlImgEnum(imgUrl).then((res) => {           
+             openModal(
+                 'Hướng dẫn chọn size',
+                 <img src={res.data} alt="Chọn size" width="100%" />,
+                 true,
+                 () => {}
+             );
+        }).catch((err) => {
+            console.error(err)
+        });
+
+       
     };
 
     const handleAddToCart = () => {
@@ -233,7 +241,6 @@ export default function Product() {
                             ) : (
                                 <div>Hãy chọn màu và size</div>
                             )}
-
                             <div
                                 style={{ cursor: 'pointer' }}
                                 className="link-dark fst-italic btn-link"

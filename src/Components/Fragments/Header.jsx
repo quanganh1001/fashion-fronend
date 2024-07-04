@@ -8,6 +8,7 @@ import { useNavigate } from 'react-router-dom';
 import useCart from '../../CustomHooks/useCart';
 import useModal from '../../CustomHooks/useModal';
 import { resetPass } from '../../Services/Auth';
+import LoadingSpinner from './LoadingSpinner';
 
 export default function Header() {
     const [listCategoriesF1, setListCategoriesF1] = useState([]);
@@ -28,7 +29,9 @@ export default function Header() {
     const { totalCartItems } = useCart();
     const { openModal, closeModal } = useModal();
     const [email, setEmail] = useState('');
-    
+    const [isLoading, setIsLoading] = useState(true);
+    const [isLoadingLogin, setIsLoadingLogin] = useState(false);
+
     useEffect(() => {
         if (hoveredF1 !== null) {
             setTimeout(() => {
@@ -46,6 +49,7 @@ export default function Header() {
     const fetchAllCategories = async () => {
         await getAllCategories()
             .then((res) => {
+                setIsLoading(false)
                 const categories = res.data;
 
                 const categoriesF1 = categories.filter(
@@ -114,7 +118,9 @@ export default function Header() {
         }
 
         if (valid) {
+            setIsLoadingLogin(true);
             try {
+                
                 await handleLogin({ username, password });
                 toast.success('Đăng nhập thành công!');
             } catch (error) {
@@ -127,6 +133,8 @@ export default function Header() {
                     toast.error('Tài khoản không hoạt động');
                     setError('Tài khoản không hoạt động');
                 }
+            } finally {
+                setIsLoadingLogin(false);
             }
         }
     };
@@ -167,6 +175,7 @@ export default function Header() {
                 }
 
                 if (isValid) {
+                    
                     resetPass(email)
                         .then((res) => {
                             toast.success(
@@ -175,7 +184,9 @@ export default function Header() {
                         })
                         .catch((error) => {
                             toast.error('Có lỗi xảy ra!');
-                        });
+                        }).finally(() => {
+                            
+                        })
                     closeModal();
                 }
             }
@@ -224,7 +235,7 @@ export default function Header() {
                                 Sale
                             </Link>
                         </div>
-
+                        {isLoading && <LoadingSpinner />}
                         {listCategoriesF1.map((f1) => (
                             <div
                                 onMouseLeave={() => {
@@ -240,6 +251,7 @@ export default function Header() {
                                 >
                                     {f1.catName}
                                 </Link>
+
                                 {hoveredF1 === f1.id && (
                                     <div
                                         className={`dropdown-content d-flex flex-wrap pt-3 pb-3 border bg-white position-absolute start-50 top-100 translate-middle-x col-10 rounded-bottom shadow justify-content-around ${activeClass}`}
@@ -284,7 +296,10 @@ export default function Header() {
                         ))}
 
                         <div className="d-flex align-items-center">
-                            <Link to={'/stores'} className=" text-decoration-none text-dark  fw-bold">
+                            <Link
+                                to={'/stores'}
+                                className=" text-decoration-none text-dark  fw-bold"
+                            >
                                 Hệ thống cửa hàng
                             </Link>
                         </div>
@@ -329,7 +344,10 @@ export default function Header() {
                             <div className="ms-3 d-flex align-items-center">
                                 <div className="d-flex flex-column ">
                                     <span>Xin chào, </span>
-                                    <Link to='/infoAccount' className=" fst-italic text-decoration-underline btn-link text-dark">
+                                    <Link
+                                        to="/infoAccount"
+                                        className=" fst-italic text-decoration-underline btn-link text-dark"
+                                    >
                                         {auth.account.name}
                                     </Link>
                                 </div>
@@ -337,7 +355,10 @@ export default function Header() {
                                 <FontAwesomeIcon
                                     className="btn-link text-dark"
                                     onClick={logoutForm}
-                                    style={{ padding: '5px',cursor:'pointer' }}
+                                    style={{
+                                        padding: '5px',
+                                        cursor: 'pointer',
+                                    }}
                                     icon="fa-solid fa-right-from-bracket"
                                 />
                             </div>
@@ -441,11 +462,15 @@ export default function Header() {
                                                 </Link>
                                             </div>
                                             <button
+                                                disabled={isLoadingLogin}
                                                 type="submit"
                                                 className="button mt-3"
                                             >
                                                 Đăng nhập
                                             </button>
+                                            {isLoadingLogin && (
+                                                <LoadingSpinner />
+                                            )}
                                         </form>
                                     </div>
                                 ) : (

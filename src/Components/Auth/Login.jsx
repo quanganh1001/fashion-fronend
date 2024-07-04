@@ -1,8 +1,8 @@
 /* eslint-disable no-restricted-globals */
-import { useEffect, useState } from 'react';
+import {  useState } from 'react';
 import useAuth from '../../CustomHooks/useAuth';
 import { toast } from 'react-toastify';
-import LoadingSprinner from '../Fragments/LoadingSpinner';
+import LoadingSpinner from '../Fragments/LoadingSpinner';
 import { resetPass } from '../../Services/Auth';
 import useModal from '../../CustomHooks/useModal';
 import { Link } from 'react-router-dom';
@@ -167,7 +167,7 @@ export default function Login() {
                                 >
                                     Đăng nhập
                                 </button>
-                                {isLoading && <LoadingSprinner />}
+                                {isLoading && <LoadingSpinner />}
                             </div>
                         </div>
                     </form>

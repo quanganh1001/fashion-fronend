@@ -3,11 +3,13 @@ import { Link } from "react-router-dom";
 import { registerEmail } from "../../Services/CustomerEmailService";
 import { useState } from "react";
 import { toast } from "react-toastify";
+import LoadingSpinner from "./LoadingSpinner";
 
 export default function Footer() {
     const [email, setEmail] = useState('');
     const [emailError, setEmailError] = useState('');
-    
+    const [isLoading, setIsLoading] = useState(false);
+
     const handleChangeEmailInput = (e) => {
         setEmail(e.target.value)
     }
@@ -31,14 +33,18 @@ export default function Footer() {
         }
 
         if (isValid) {
+            setIsLoading(true);
             registerEmail(email)
                 .then(() => {
+                    
                     toast.success("Đăng ký nhận tin tức thành công")
                 }).catch((err) => {
                     console.log(err);
                     if (err.response.status === 409) {
                         toast.error("Email đã đăng ký nhận tin tức rồi!")
                     }
+                }).finally(()=>{
+                    setIsLoading(false);
                 });
         } 
     }
@@ -188,7 +194,10 @@ export default function Footer() {
                                 className="mt-3 fw-lighter fs-6"
                                 style={{ listStyleType: 'disc' }}
                             >
-                                <Link to={'/introduce'} className="text-dark text-decoration-none">
+                                <Link
+                                    to={'/introduce'}
+                                    className="text-dark text-decoration-none"
+                                >
                                     Giới thiệu
                                 </Link>
                             </li>
@@ -196,7 +205,10 @@ export default function Footer() {
                                 className="mt-3 fw-lighter fs-6"
                                 style={{ listStyleType: 'disc' }}
                             >
-                                <Link to='returnPolicy' className="text-dark text-decoration-none">
+                                <Link
+                                    to="returnPolicy"
+                                    className="text-dark text-decoration-none"
+                                >
                                     Chính sách đổi trả
                                 </Link>
                             </li>
@@ -204,7 +216,10 @@ export default function Footer() {
                                 className="mt-3 fw-lighter fs-6 "
                                 style={{ listStyleType: 'disc' }}
                             >
-                                <Link to="/privatePolicy" className="text-dark text-decoration-none">
+                                <Link
+                                    to="/privatePolicy"
+                                    className="text-dark text-decoration-none"
+                                >
                                     Chính sách bảo mật
                                 </Link>
                             </li>
@@ -212,7 +227,10 @@ export default function Footer() {
                                 className="mt-3 fw-lighter fs-6"
                                 style={{ listStyleType: 'disc' }}
                             >
-                                <Link to="/contactUs" className="text-dark text-decoration-none">
+                                <Link
+                                    to="/contactUs"
+                                    className="text-dark text-decoration-none"
+                                >
                                     Liên hệ
                                 </Link>
                             </li>
@@ -242,17 +260,18 @@ export default function Footer() {
                                     style={{ fontSize: '0.8rem' }}
                                 />
                                 <label>Nhập email của bạn</label>
-                               
                             </div>
 
                             <button
                                 onClick={handleRegisterEmail}
+                                disabled={isLoading}
                                 className="button"
                                 id="btn-send-mail"
                             >
                                 Đăng ký
                             </button>
                         </div>
+                        {isLoading && <LoadingSpinner />}
                     </div>
                 </div>
                 <p className="fs-6 fw-light border-top border-dark-subtle p-2 d-flex justify-content-center">
