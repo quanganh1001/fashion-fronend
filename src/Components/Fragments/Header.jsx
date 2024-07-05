@@ -28,10 +28,59 @@ export default function Header() {
     const navigate = useNavigate();
     const { totalCartItems,isLoadingCart } = useCart();
     const { openModal, closeModal } = useModal();
-    const [email, setEmail] = useState('');
+       const [email, setEmail] = useState('');
+       const [showModal, setShowModal] = useState(false);
     const [isLoading, setIsLoading] = useState(true);
     const [isLoadingLogin, setIsLoadingLogin] = useState(false);
+    const [isLoadingLogout, setIsLoadingLogout] = useState(false);
 
+     useEffect(() => {
+         if (email !== '' || showModal) {
+             openModal(
+                 'Cấp lại mật khẩu',
+                 <div>
+                     <div>Nhập email đăng ký</div>
+                     <input
+                         value={email}
+                         className="form-control mt-3"
+                         type="email"
+                         onChange={handleSetEmail}
+                     />
+                 </div>,
+                 () => {
+                     let isValid = true;
+
+                     if (email === '') {
+                         isValid = false;
+                         toast.error('Email không được để trống');
+                     } else if (
+                         !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(
+                             String(email).toLowerCase()
+                         )
+                     ) {
+                         isValid = false;
+                         toast.error('Email không hợp lệ');
+                     }
+
+                     if (isValid) {
+                         resetPass(email)
+                             .then((res) => {
+                                 toast.success(
+                                     'Mật khẩu mới được gửi về email đăng ký!'
+                                 );
+                             })
+                             .catch((error) => {
+                                 toast.error('Có lỗi xảy ra!');
+                             });
+                         closeModal();
+                     }
+                 }
+             );
+         }
+         setShowModal(false);
+         setEmail('')
+     }, [email, showModal]);
+    
     useEffect(() => {
         if (hoveredF1 !== null) {
             setTimeout(() => {
@@ -95,7 +144,9 @@ export default function Header() {
     };
 
     const logoutForm = async () => {
-        await handleLogout();
+        setIsLoadingLogout(true);
+        await handleLogout()
+        setIsLoadingLogout(false);
         toast.success('Đã đăng xuất!');
     };
 
@@ -147,51 +198,11 @@ export default function Header() {
        const handleSetEmail = (e) => {
            setEmail(e.target.value);
     };
-    
     const handleResetPass = () => {
-        openModal(
-            'Cấp lại mật khẩu',
-            <div>
-                <div>Nhập email đăng ký</div>
-                <input
-                    className="form-control mt-3"
-                    type="email"
-                    onChange={handleSetEmail}
-                />
-            </div>,
-            () => {
-                let isValid = true;
-
-                if (email === '') {
-                    isValid = false;
-                    toast.error('Email không được để trống');
-                } else if (
-                    !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(
-                        String(email).toLowerCase()
-                    )
-                ) {
-                    isValid = false;
-                    toast.error('Email không hợp lệ');
-                }
-
-                if (isValid) {
-                    
-                    resetPass(email)
-                        .then((res) => {
-                            toast.success(
-                                'Mật khẩu mới được gửi về email đăng ký!'
-                            );
-                        })
-                        .catch((error) => {
-                            toast.error('Có lỗi xảy ra!');
-                        }).finally(() => {
-                            
-                        })
-                    closeModal();
-                }
-            }
-        );
+        setShowModal(true);
     };
+    
+    
     return (
         <>
             <style>
@@ -334,10 +345,19 @@ export default function Header() {
                             className="btn btn-outline-dark align-self-center position-relative"
                         >
                             <FontAwesomeIcon icon="fa-solid fa-cart-shopping" />
-                            {totalCartItems && (
+
+                            {isLoadingCart ? (
                                 <span className="position-absolute top-0 start-0 translate-middle badge rounded-pill bg-danger">
-                                    {isLoadingCart ? <LoadingSpinner/> : totalCartItems}
+                                    <LoadingSpinner />
                                 </span>
+                            ) : (
+                                <>
+                                    {totalCartItems !== 0 && (
+                                        <span className="position-absolute top-0 start-0 translate-middle badge rounded-pill bg-danger">
+                                            {totalCartItems}
+                                        </span>
+                                    )}
+                                </>
                             )}
                         </Link>
                         {auth.account ? (
@@ -351,16 +371,19 @@ export default function Header() {
                                         {auth.account.name}
                                     </Link>
                                 </div>
-
-                                <FontAwesomeIcon
-                                    className="btn-link text-dark"
-                                    onClick={logoutForm}
-                                    style={{
-                                        padding: '5px',
-                                        cursor: 'pointer',
-                                    }}
-                                    icon="fa-solid fa-right-from-bracket"
-                                />
+                                {isLoadingLogout ? (
+                                    <LoadingSpinner />
+                                ) : (
+                                    <FontAwesomeIcon
+                                        className="btn-link text-dark"
+                                        onClick={logoutForm}
+                                        style={{
+                                            padding: '5px',
+                                            cursor: 'pointer',
+                                        }}
+                                        icon="fa-solid fa-right-from-bracket"
+                                    />
+                                )}
                             </div>
                         ) : (
                             <div className=" ms-3 position-relative">

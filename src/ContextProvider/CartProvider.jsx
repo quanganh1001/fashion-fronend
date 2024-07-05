@@ -69,12 +69,15 @@ export default function CartProvider({ children }) {
 
     const fetchTotalItems = () => {
         if (auth.token) {
+            setIsLoadingCart(true)
             getTotalItems()
                 .then((res) => {
                     setTotalItems(res.data);
                 })
                 .catch((error) => {
                     console.error(error);
+                }).finally(() => {
+                     setIsLoadingCart(false);
                 });
         } else {
             let totalQuantity = 0;

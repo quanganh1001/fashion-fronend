@@ -41,3 +41,10 @@ export const deleteAccount = async (id) => {
 export const getAllEmployees =  () => {
     return  apiPrivate.get('accounts/getAllEmployees');
 };
+
+export const changePass = (id,currentPass,newPass) => {
+    return apiPrivate.put('accounts/' + id + '/changePass', {
+        currentPass: currentPass,
+        newPass: newPass,
+    });
+};

@@ -15,7 +15,6 @@ export const logout = async () => {
 };
 
 export const register = async (accountRegisterDto) => {
-    console.log(accountRegisterDto);
     return await apiPublic.post('/auth/register', accountRegisterDto);
 };
 

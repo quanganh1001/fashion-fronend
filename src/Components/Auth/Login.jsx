@@ -1,5 +1,5 @@
 /* eslint-disable no-restricted-globals */
-import {  useState } from 'react';
+import { useEffect, useState } from 'react';
 import useAuth from '../../CustomHooks/useAuth';
 import { toast } from 'react-toastify';
 import LoadingSpinner from '../Fragments/LoadingSpinner';
@@ -15,10 +15,65 @@ export default function Login() {
     const [error, setError] = useState('');
     const [isLoading, setIsLoading] = useState(false);
     const [email, setEmail] = useState('');
+    const [showModal, setShowModal] = useState(false);
     const { handleLogin } = useAuth();
     const { openModal, closeModal } = useModal();
 
-    
+    useEffect(() => {
+        if (email !== "" || showModal) {
+            openModal(
+                'Cấp lại mật khẩu',
+                <div>
+                    <div>Nhập email đăng ký</div>
+                    <input
+                        value={email}
+                        className="form-control mt-3"
+                        type="email"
+                        onChange={handleSetEmail}
+                    />
+                </div>,
+                () => {
+                    let isValid = true;
+
+                    if (email === '') {
+                        isValid = false;
+                        toast.error('Email không được để trống');
+                    } else if (
+                        !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(
+                            String(email).toLowerCase()
+                        )
+                    ) {
+                        isValid = false;
+                        toast.error('Email không hợp lệ');
+                    }
+
+                    if (isValid) {
+                        resetPass(email)
+                            .then((res) => {
+                                toast.success(
+                                    'Mật khẩu mới được gửi về email đăng ký!'
+                                );
+                            })
+                            .catch((error) => {
+                                toast.error('Có lỗi xảy ra!');
+                            });
+                        closeModal();
+                    }
+                }
+            );
+        }
+        setShowModal(false)
+        setEmail('');
+    }, [email,showModal]);
+
+    const handleSetEmail = (e) => {
+        setEmail(e.target.value);
+    };
+
+    const handleResetPass = () => {
+            setShowModal(true)
+    };
+
     const submitForm = async (event) => {
         event.preventDefault();
 
@@ -57,52 +112,7 @@ export default function Login() {
             }
         }
     };
-    const handleSetEmail = (e) => {
-        setEmail(e.target.value);
-    }
 
-    const handleResetPass = () => {
-        openModal(
-            'Cấp lại mật khẩu',
-            <div>
-                <div>Nhập email đăng ký</div>
-                <input
-                    className="form-control mt-3"
-                    type="email"
-                    onChange={handleSetEmail}
-                />
-            </div>,
-            () => {
-                let isValid = true;
-
-                if (email === '') {
-                    isValid = false;
-                    toast.error('Email không được để trống');
-                } else if (
-                    !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(
-                        String(email).toLowerCase()
-                    )
-                ) {
-                    isValid = false;
-                    toast.error('Email không hợp lệ');
-                }
-
-                if (isValid) {
-                    resetPass(email)
-                        .then((res) => {
-                            toast.success(
-                                'Mật khẩu mới được gửi về email đăng ký!'
-                            );
-                        })
-                        .catch((error) => {
-                            toast.error('Có lỗi xảy ra!');
-                        });
-                    closeModal();
-                }
-            }
-        );
-    }
-    
     return (
         <div className="p-5 d-flex flex-column align-items-center">
             <h2>ĐĂNG NHẬP</h2>
@@ -162,6 +172,7 @@ export default function Login() {
                         <div className="row mt-3">
                             <div className="col-4 d-flex align-items-center">
                                 <button
+                                    disabled={isLoading}
                                     type="submit"
                                     className="btn btn-dark bg-gradient"
                                 >
