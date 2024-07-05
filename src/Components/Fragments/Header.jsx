@@ -34,7 +34,8 @@ export default function Header() {
     const [isLoadingLogin, setIsLoadingLogin] = useState(false);
     const [isLoadingLogout, setIsLoadingLogout] = useState(false);
 
-     useEffect(() => {
+    useEffect(() => {
+         console.log(process.env.API_URL);
          if (email !== '' || showModal) {
              openModal(
                  'Cấp lại mật khẩu',
