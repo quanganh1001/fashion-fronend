@@ -10,8 +10,9 @@ import LoadingSpinner from './LoadingSpinner';
 const Menu = (props) => {
     const [username, setUsername] = useState('');
     const { auth, handleLogout } = useAuth();
-  const { totalFeedbackUnread } = useFeedback();
-const [isLoading, setIsLoading] = useState(false);
+    const { totalFeedbackUnread } = useFeedback();
+    const [isLoading, setIsLoading] = useState(false);
+
     const navItems = [
         {
             path: '/admin/home',
@@ -56,9 +57,9 @@ const [isLoading, setIsLoading] = useState(false);
 
     const location = useLocation();
 
-  useEffect(() => {
+    useEffect(() => {
         setUsername(auth.account.name);
-    }, [auth.account.name]); 
+    }, [auth.account.name]);
 
     const logout = async () => {
         setIsLoading(true);
@@ -68,7 +69,7 @@ const [isLoading, setIsLoading] = useState(false);
         } catch (error) {
             toast.error('Có lỗi xảy ra!');
         } finally {
-            setIsLoading(false)
+            setIsLoading(false);
         }
     };
 
@@ -135,7 +136,11 @@ const [isLoading, setIsLoading] = useState(false);
                             </Link>
                         </div>
 
-                        <button disabled={isLoading} className="btn btn-danger" onClick={logout}>
+                        <button
+                            disabled={isLoading}
+                            className="btn btn-danger"
+                            onClick={logout}
+                        >
                             Đăng xuất
                         </button>
                         {isLoading && <LoadingSpinner />}

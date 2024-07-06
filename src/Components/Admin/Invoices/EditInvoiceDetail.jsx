@@ -8,6 +8,7 @@ import { getAllEmployees } from '../../../Services/AccountService';
 import { toast } from 'react-toastify';
 import InvoicesDetails from './InvoiceDetail';
 import LoadingSpinner from '../../Fragments/LoadingSpinner';
+import useAuth from '../../../CustomHooks/useAuth';
 
 export default function EditInvoiceDetail() {
     const { id } = useParams();
@@ -36,10 +37,12 @@ export default function EditInvoiceDetail() {
     const [listInvoiceStatus, setListInvoiceStatus] = useState([]);
 
     const [listEmployees, setListEmployees] = useState([]);
-
+    const { auth } = useAuth();
     useEffect(() => {
         fetchGetAllInvoicesStatus();
-        fetchGetAllEmployee();
+        if (auth.account.role === "ROLE_MANAGER") {
+            fetchGetAllEmployee();
+        }
     }, [inputInvoice]);
 
     useEffect(() => {
@@ -193,38 +196,46 @@ export default function EditInvoiceDetail() {
                                     ''
                                 )}
 
-                                <div className="mb-3 col-3">
-                                    <label className="form-label">
-                                        Nhân viên phụ trách:{' '}
-                                        <span style={{ color: 'red' }}>*</span>
-                                    </label>
+                                {auth.account.role === 'ROLE_MANAGER' && (
+                                    <div className="mb-3 col-3">
+                                        <label className="form-label">
+                                            Nhân viên phụ trách:{' '}
+                                            <span style={{ color: 'red' }}>
+                                                *
+                                            </span>
+                                        </label>
 
-                                    <select
-                                        className={`form-control ${
-                                            accountError ? 'border-danger' : ''
-                                        } `}
-                                        onChange={handleInputChange}
-                                        name="accountId"
-                                        value={
-                                            invoice
-                                                ? inputInvoice.accountId
-                                                : 'null'
-                                        }
-                                    >
-                                        <option value="null">Chưa chọn</option>
-                                        {listEmployees.map((emlp) => (
-                                            <option
-                                                key={emlp.id}
-                                                value={emlp.id}
-                                            >
-                                                {emlp.name}
+                                        <select
+                                            className={`form-control ${
+                                                accountError
+                                                    ? 'border-danger'
+                                                    : ''
+                                            } `}
+                                            onChange={handleInputChange}
+                                            name="accountId"
+                                            value={
+                                                invoice
+                                                    ? inputInvoice.accountId
+                                                    : 'null'
+                                            }
+                                        >
+                                            <option value="null">
+                                                Chưa chọn
                                             </option>
-                                        ))}
-                                    </select>
-                                    <span className="text-danger">
-                                        {accountError}
-                                    </span>
-                                </div>
+                                            {listEmployees.map((emlp) => (
+                                                <option
+                                                    key={emlp.id}
+                                                    value={emlp.id}
+                                                >
+                                                    {emlp.name}
+                                                </option>
+                                            ))}
+                                        </select>
+                                        <span className="text-danger">
+                                            {accountError}
+                                        </span>
+                                    </div>
+                                )}
                             </div>
 
                             <div className="mb-3 col-6">
