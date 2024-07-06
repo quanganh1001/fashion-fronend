@@ -13,16 +13,18 @@ import 'slick-carousel/slick/slick.css';
 import 'slick-carousel/slick/slick-theme.css';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { getAllProductByCategory } from '../../Services/ProductService';
+import useAuth from '../../CustomHooks/useAuth';
 
 export default function Home() {
     const [activeIndex, setActiveIndex] = useState(0);
     const [animating, setAnimating] = useState(false);
     const [listCategoriesF2, setListCategoriesF2] = useState([]);
     const [listProductsSale, setListProductSale] = useState([]);
-
+    const { auth } = useAuth();
     useEffect(() => {
         fetchCategories();
         fetchProductSale();
+        console.log(auth);
     }, []);
 
     const fetchProductSale =  () => {

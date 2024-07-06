@@ -124,7 +124,7 @@ export default function EditInvoiceDetail() {
             setAddressError('');
         }
 
-        if (!inputInvoice.accountId) {
+        if (inputInvoice.accountId === 'null' || !inputInvoice.accountId) {
             isValid = false;
             setAccountError('Vui lòng chọn nhân viên');
         } else {
@@ -206,7 +206,9 @@ export default function EditInvoiceDetail() {
                                         onChange={handleInputChange}
                                         name="accountId"
                                         value={
-                                            invoice ? invoice.accountId : 'null'
+                                            invoice
+                                                ? inputInvoice.accountId
+                                                : 'null'
                                         }
                                     >
                                         <option value="null">Chưa chọn</option>

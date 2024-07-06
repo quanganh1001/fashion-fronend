@@ -31,14 +31,21 @@ export default function ImageProduct() {
     }, []);
 
     const fetchImagesProduct =  () => {
-         getAllImageProducts(id).then((res) => {
-            setListImages(res.data);
-        });
+         getAllImageProducts(id)
+             .then((res) => {
+                 setListImages(res.data);
+             })
+             .catch((err) => {
+                 console.log(err);
+             });
     };
 
     const fetchImageBackground =  () => {
-         getProduct(id).then((res) => {
+        getProduct(id).then((res) => {
+             console.log(res);
             setImageBackground(res.data.imageBackground);
+         }).catch((err) => {
+            console.log(err);
         });
     };
 
@@ -157,7 +164,8 @@ export default function ImageProduct() {
                         <h4>Ảnh nền</h4>
 
                         <div className="mt-3">
-                            {imageBackground.endsWith('.mp4') ? (
+                            {!imageBackground && <div>Chưa có ảnh nền</div> }
+                            {imageBackground?.endsWith('.mp4') ? (
                                 <video width="250px" controls>
                                     <source
                                         src={imageBackground}

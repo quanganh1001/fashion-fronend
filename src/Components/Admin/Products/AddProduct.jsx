@@ -38,7 +38,6 @@ export default function AddProduct() {
     const fetchImgSize =  () => {
          getImagesSize()
             .then((res) => {
-                
                 setImgSizeOptions(res.data);
             })
             .catch((error) => {
@@ -47,12 +46,13 @@ export default function AddProduct() {
     };
 
     const fetchListCategories =  () => {
-        try {
-            const response =  getAllCategories();
-            setListCategories(response.data);
-        } catch (error) {
-            console.error('Error fetching list categories:', error);
-        }
+         getAllCategories()
+            .then((res) => {
+                setListCategories(res.data);
+            })
+            .catch((error) => {
+                console.error('Error fetching list categories:', error);
+            });
     };
 
     const handleInputChange = (e) => {
@@ -60,7 +60,7 @@ export default function AddProduct() {
         setProduct({ ...product, [name]: value });
     };
 
-    const addProductForm =  (e) => {
+    const addProductForm = (e) => {
         e.preventDefault();
         let isValid = true;
 
@@ -119,20 +119,22 @@ export default function AddProduct() {
         }
 
         if (isValid) {
-             setIsLoading(true);
-            try {
-                
-                 createProduct(product);
-                navigator('/admin/products');
-                toast.success('Thêm mới thành công');
-            } catch (error) {
-                if (error.response.status === 409) {
-                    setCodeError('Mã sản phẩm đã tồn tại');
-                    toast.error('Mã sản phẩm đã tồn tại');
-                }
-            } finally {
-                 setIsLoading(false);
-            }
+            setIsLoading(true);
+            createProduct(product)
+                .then(() => {
+                    navigator('/admin/products');
+                    toast.success('Thêm mới thành công');
+                })
+
+                .catch((error) => {
+                    if (error.response.status === 409) {
+                        setCodeError('Mã sản phẩm đã tồn tại');
+                        toast.error('Mã sản phẩm đã tồn tại');
+                    }
+                })
+                .finally(() => {
+                    setIsLoading(false);
+                });
         }
     };
 

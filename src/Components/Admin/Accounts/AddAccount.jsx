@@ -95,12 +95,15 @@ export default function AddAccount() {
                  })
                  .catch((error) => {
                      if (error.response.status === 409) {
-                         if (error.response.message.startsWith('Phone')) {
+                         if (error.response.data.startsWith('Phone')) {
                              toast.error('Số điện thoại đã tồn tại');
                              setPhoneError('Số điện thoại đã tồn tại');
-                         } else {
+                         } else if (error.response.data.startsWith('Email')) {
                              toast.error('Email đã tồn tại');
-                             setPhoneError('Email đã tồn tại');
+                             setEmailError('Email đã tồn tại');
+                         } else {
+                             toast.error('Có lỗi xảy ra');
+                             console.error(error);
                          }
                      }
                  });

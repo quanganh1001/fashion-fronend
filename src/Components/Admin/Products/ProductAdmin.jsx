@@ -27,17 +27,22 @@ export default function ProductAdmin() {
         setIsLoading(true);
     }, [searchParams]);
 
-    const fetchProducts =  () => {
-        try {
-            const response =  getAllProducts(searchParams);
+    const fetchProducts = () => {
+        setIsLoading(true)
+        getAllProducts(searchParams)
+            .then((response) => {
             setProducts(response.data.productsRes);
             setTotalPages(response.data.totalPages);
             setCurrentPage(response.data.currentPage);
             setTotalItems(response.data.totalItems);
             setIsLoading(false);
-        } catch (error) {
-            console.error('Error fetching products:', error);
-        }
+        }).catch((err) => {
+            console.error(err);
+        }).finally(() => {
+            setIsLoading(false);
+        });
+            
+        
     };
 
     const handleDelete = (productId) => {

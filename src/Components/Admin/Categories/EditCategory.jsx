@@ -71,7 +71,6 @@ export default function EditCategory() {
             setIsLoadingButton(true);
              updateCategory(id, category)
                 .then(() => {
-                    setIsLoading(true);
                     // navigator("/admin/categories");
                     
                     toast.success('Sửa thành công thành công');
@@ -83,10 +82,12 @@ export default function EditCategory() {
                     }
                     return;
                 }).finally(() => {
+                    
                     setIsLoadingButton(false);
                 });
 
             if (catBackground != null) {
+                setIsLoading(true);
                 const formData = new FormData();
                 formData.append('file', catBackground);
                  updateBackgroundCategory(id, formData)
@@ -95,6 +96,8 @@ export default function EditCategory() {
                     })
                     .catch((err) => {
                         console.error(err);
+                    }).finally(() => {
+                        setIsLoading(false);
                     });
             } else {
                 setIsLoading(false);
