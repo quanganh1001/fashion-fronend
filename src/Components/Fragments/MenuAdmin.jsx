@@ -60,10 +60,10 @@ const [isLoading, setIsLoading] = useState(false);
         setUsername(auth.account.name);
     }, [auth.account.name]); 
 
-    const logout =  () => {
+    const logout = async () => {
         setIsLoading(true);
         try {
-             handleLogout();
+            await handleLogout();
             toast.success('Đã đăng xuất!');
         } catch (error) {
             toast.error('Có lỗi xảy ra!');
