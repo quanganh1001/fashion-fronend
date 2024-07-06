@@ -86,7 +86,7 @@ export default function EditProductDetail() {
         }
 
         if (isValid) {
-            await updateProductDetail(pdid, productDetail)
+            updateProductDetail(pdid, productDetail)
                 .then((res) => {
                     toast.success('Sửa thành công');
                     navigate(`/admin/products/${id}/edit`);
