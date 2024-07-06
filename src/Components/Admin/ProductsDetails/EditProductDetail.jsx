@@ -17,7 +17,7 @@ export default function EditProductDetail() {
     const [quantityError, setQuantityError] = useState('');
 
     const [isActivatedError, setIsActivatedError] = useState('');
-    const [isLoading, setIsLoading] = useState(false);
+    const [isLoading] = useState(false);
     const [isLoadingDetail, setIsLoadingDetail] = useState(true);
     const [productDetail, setProductDetail] = useState({
         code: '',
@@ -32,8 +32,8 @@ export default function EditProductDetail() {
         fetchProductDetail();
     }, []);
 
-    const fetchProductDetail = async () => {
-        await getProductDetail(pdid).then((res) => {
+    const fetchProductDetail =  () => {
+         getProductDetail(pdid).then((res) => {
             setProductDetail({
                 code: res.data.code,
                 quantity: res.data.quantity,
@@ -53,7 +53,7 @@ export default function EditProductDetail() {
         setProductDetail({ ...productDetail, [name]: value });
     };
 
-    const updateProductDetailForm = async (e) => {
+    const updateProductDetailForm =  (e) => {
         e.preventDefault();
         let isValid = true;
 

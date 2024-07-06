@@ -196,10 +196,10 @@ export default function InvoicesDetails({
         });
     };
 
-    const fetchProductsDetail = async (key, abortController) => {
+    const fetchProductsDetail =  (key, abortController) => {
         setIsLoading(true);
         if (key !== '') {
-            await findAllProductsDetailByKey(key, {
+             findAllProductsDetailByKey(key, {
                 signal: abortController.signal,
             })
                 .then((res) => {
@@ -218,9 +218,9 @@ export default function InvoicesDetails({
         }
     };
 
-    const fetchDetail = async () => {
+    const fetchDetail =  () => {
         setIsLoadingPrice(true)
-        await getAllInvoicesDetail(id)
+         getAllInvoicesDetail(id)
             .then((res) => {
                 setDetails(res.data);
             })
@@ -232,8 +232,8 @@ export default function InvoicesDetails({
             });
     };
 
-    const handleDelete = async (detailId) => {
-        await deleteInvoiceDetail(detailId)
+    const handleDelete =  (detailId) => {
+         deleteInvoiceDetail(detailId)
             .then((res) => {
                 toast.success('Xóa thành công!');
                 fetchDetail();
@@ -249,10 +249,10 @@ export default function InvoicesDetails({
         
     };
 
-    const handleAdd = async (productDetailId, quantity) => {
+    const handleAdd =  (productDetailId, quantity) => {
         if (quantity > 0) {
             setIsLoadingDetail(true)
-            await addInvoiceDetail(id, productDetailId)
+             addInvoiceDetail(id, productDetailId)
                 .then(() => {
                     toast.success('Thêm thành công!');
                     fetchDetail();

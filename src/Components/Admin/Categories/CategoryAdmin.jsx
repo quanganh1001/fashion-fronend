@@ -25,9 +25,9 @@ export default function Category() {
         fetchListCategories();
     }, [id]);
 
-    const fetchListCategories = async () => {
+    const fetchListCategories = () => {
         setIsLoading(true);
-        await getChildCategories(id)
+         getChildCategories(id)
             .then((res) => {
                 setCategories(res.data);
             })
@@ -39,9 +39,9 @@ export default function Category() {
             });
     };
 
-    const fetchOldCategory = async () => {
+    const fetchOldCategory = () => {
         setIsLoading(true);
-        await getCategory(id)
+         getCategory(id)
             .then((res) => {
                 setId(res.data.catParent);
                 setOldCatName(res.data.catParentName);

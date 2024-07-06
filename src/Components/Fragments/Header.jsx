@@ -35,7 +35,6 @@ export default function Header() {
     const [isLoadingLogout, setIsLoadingLogout] = useState(false);
 
     useEffect(() => {
-         console.log(process.env.API_URL);
          if (email !== '' || showModal) {
              openModal(
                  'Cấp lại mật khẩu',
@@ -96,8 +95,8 @@ export default function Header() {
         fetchAllCategories();
     }, []);
 
-    const fetchAllCategories = async () => {
-        await getAllCategories()
+    const fetchAllCategories =  () => {
+         getAllCategories()
             .then((res) => {
                 setIsLoading(false)
                 const categories = res.data;
@@ -144,14 +143,14 @@ export default function Header() {
         }
     };
 
-    const logoutForm = async () => {
+    const logoutForm =  () => {
         setIsLoadingLogout(true);
-        await handleLogout()
+         handleLogout()
         setIsLoadingLogout(false);
         toast.success('Đã đăng xuất!');
     };
 
-    const formLogin = async (event) => {
+    const formLogin =  (event) => {
         event.preventDefault();
 
         let valid = true;
@@ -173,7 +172,7 @@ export default function Header() {
             setIsLoadingLogin(true);
             try {
                 
-                await handleLogin({ username, password });
+                 handleLogin({ username, password });
                 toast.success('Đăng nhập thành công!');
             } catch (error) {
                 if (error.response.data === 'Invalid username or password') {

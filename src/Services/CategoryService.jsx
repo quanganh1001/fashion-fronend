@@ -1,33 +1,33 @@
 import { apiPrivate, apiPublic } from '../Ultils/AxiosCustomize';
 
-const getAllCategories = async () => {
-    return await apiPublic.get('categories');
+const getAllCategories =  () => {
+    return  apiPublic.get('categories');
 };
 
-const getChildCategories = async (catParentId) => {
-    return await apiPrivate.get('categories/childCategories', {
+const getChildCategories =  (catParentId) => {
+    return  apiPrivate.get('categories/childCategories', {
         params: { catParentId: catParentId },
     });
 };
 
-const getCategory = async (id) => {
-    return await apiPrivate.get('/categories/' + id);
+const getCategory =  (id) => {
+    return  apiPrivate.get('/categories/' + id);
 };
 
-const createCategory = async (category) => {
-    return await apiPrivate.post('categories', category);
+const createCategory =  (category) => {
+    return  apiPrivate.post('categories', category);
 };
 
-const deleteCategory = async (id) => {
-    return await apiPrivate.delete('categories/' + id);
+const deleteCategory = (id) => {
+    return  apiPrivate.delete('categories/' + id);
 };
 
-const updateCategory = async (id, category) => {
-    return await apiPrivate.put('categories/' + id, category);
+const updateCategory =  (id, category) => {
+    return  apiPrivate.put('categories/' + id, category);
 };
 
-const updateBackgroundCategory = async (id, formData) => {
-    return await apiPrivate.post(
+const updateBackgroundCategory =  (id, formData) => {
+    return  apiPrivate.post(
         'categories/upBackgroundImgCategory/' + id,
         formData,
         {

@@ -140,7 +140,7 @@ export default function InfoAccount() {
         setAccountUpdateDto({ ...accountUpdateDto, [name]: value });
     };
 
-    const editAccountForm = async (e) => {
+    const editAccountForm =  (e) => {
         e.preventDefault();
         let isValid = true;
 
@@ -177,7 +177,7 @@ export default function InfoAccount() {
 
         if (isValid) {
             setIsLoading(true);
-            await updateAccount(accountUpdateDto)
+             updateAccount(accountUpdateDto)
                 .then(() => {
                     toast.success('Sửa thành công');
                 })

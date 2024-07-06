@@ -1,4 +1,4 @@
-import { Navigate, Outlet, useLocation, useParams } from 'react-router-dom';
+import { Navigate, Outlet, useLocation } from 'react-router-dom';
 import useAuth from '../CustomHooks/useAuth';
 import AdminLayout from '../Components/Layout/AdminLayout';
 import FeedbackProvider from '../ContextProvider/FeedbackProvider';

@@ -74,7 +74,7 @@ export default function Login() {
             setShowModal(true)
     };
 
-    const submitForm = async (event) => {
+    const submitForm =  (event) => {
         event.preventDefault();
 
         let valid = true;
@@ -96,7 +96,7 @@ export default function Login() {
         if (valid) {
             try {
                 setIsLoading(true);
-                await handleLogin({ username, password });
+                 handleLogin({ username, password });
                 toast.success('Đăng nhập thành công!');
             } catch (error) {
                 setIsLoading(false);

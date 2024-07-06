@@ -35,8 +35,8 @@ export default function AddProduct() {
         fetchImgSize();
     }, []);
 
-    const fetchImgSize = async () => {
-        await getImagesSize()
+    const fetchImgSize =  () => {
+         getImagesSize()
             .then((res) => {
                 
                 setImgSizeOptions(res.data);
@@ -46,9 +46,9 @@ export default function AddProduct() {
             });
     };
 
-    const fetchListCategories = async () => {
+    const fetchListCategories =  () => {
         try {
-            const response = await getAllCategories();
+            const response =  getAllCategories();
             setListCategories(response.data);
         } catch (error) {
             console.error('Error fetching list categories:', error);
@@ -60,7 +60,7 @@ export default function AddProduct() {
         setProduct({ ...product, [name]: value });
     };
 
-    const addProductForm = async (e) => {
+    const addProductForm =  (e) => {
         e.preventDefault();
         let isValid = true;
 
@@ -122,7 +122,7 @@ export default function AddProduct() {
              setIsLoading(true);
             try {
                 
-                await createProduct(product);
+                 createProduct(product);
                 navigator('/admin/products');
                 toast.success('Thêm mới thành công');
             } catch (error) {

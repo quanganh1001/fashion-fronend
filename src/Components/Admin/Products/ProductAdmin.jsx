@@ -27,9 +27,9 @@ export default function ProductAdmin() {
         setIsLoading(true);
     }, [searchParams]);
 
-    const fetchProducts = async () => {
+    const fetchProducts =  () => {
         try {
-            const response = await getAllProducts(searchParams);
+            const response =  getAllProducts(searchParams);
             setProducts(response.data.productsRes);
             setTotalPages(response.data.totalPages);
             setCurrentPage(response.data.currentPage);

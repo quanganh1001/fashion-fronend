@@ -10,7 +10,7 @@ import useCart from '../../CustomHooks/useCart';
 import useAuth from '../../CustomHooks/useAuth';
 import ImageGallery from 'react-image-gallery';
 import 'react-image-gallery/styles/css/image-gallery.css';
-import { getImagesSize, getUrlImgEnum } from '../../Services/EnumService';
+import { getUrlImgEnum } from '../../Services/EnumService';
 import LoadingSpinner from '../Fragments/LoadingSpinner';
 
 export default function Product() {
@@ -54,8 +54,8 @@ export default function Product() {
         }
     }, [size]);
 
-    const fetchListImage = async () => {
-        await getAllImageProducts(id)
+    const fetchListImage =  () => {
+         getAllImageProducts(id)
             .then((res) => {
                 setListImage(res.data);
             })
@@ -64,8 +64,8 @@ export default function Product() {
             });
     };
 
-    const fetchProduct = async () => {
-        await getProduct(id)
+    const fetchProduct =  () => {
+         getProduct(id)
             .then((res) => {
                 const uniqueSizes = [
                     ...new Set(

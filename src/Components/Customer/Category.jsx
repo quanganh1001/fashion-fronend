@@ -101,12 +101,12 @@ export default function Category() {
         setCurrentPage(page);
     };
 
-    const fetchGetProductByCategory = async () => {
+    const fetchGetProductByCategory =  () => {
         if (catId === 'sale') {
             catId = 0;
         }
         setLoading(true);
-        await getAllProductByCategory(catId, key)
+         getAllProductByCategory(catId, key)
             .then((res) => {
                 setListProducts(res.data);
                 setLoading(false);

@@ -99,7 +99,7 @@ export default function Cart() {
             openModal(
                 'Xác nhận',
                 <>Bạn có chắc chắn muốn đặt hàng?</>,
-                async () => {
+                 () => {
                     setIsLoading(true)
                     if (selectPay === 'vnpay') {
                         checkoutVnpay(customerInfo)

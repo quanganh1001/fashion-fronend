@@ -30,7 +30,6 @@ export default function EditInvoiceDetail() {
     const [phoneError, setPhoneError] = useState('');
     const [addressError, setAddressError] = useState('');
     const [accountError, setAccountError] = useState('');
-    const [accountId, setAccountId] = useState();
     const [isLoadingInvoice, setIsLoadingInvoice] = useState(true);
     const [isLoadingDetail, setIsLoadingDetail] = useState(true);
     const [isLoadingButton, setIsLoadingButton] = useState(false);
@@ -97,7 +96,7 @@ export default function EditInvoiceDetail() {
         setInputInvoice({ ...inputInvoice, [name]: value });
     };
 
-    const updateForm = async (e) => {
+    const updateForm =  (e) => {
         e.preventDefault();
         let isValid = true;
 
@@ -129,13 +128,13 @@ export default function EditInvoiceDetail() {
             isValid = false;
             setAccountError('Vui lòng chọn nhân viên');
         } else {
-            setAccountId('');
+            setAccountError('');
         }
 
         if (isValid) {
             setIsLoadingButton(true);
             
-            await updateInvoice(id, inputInvoice)
+             updateInvoice(id, inputInvoice)
                 .then(() => {
                     fetchInvoice();
                     toast.success('Cập nhập thành công');

@@ -129,8 +129,8 @@ export default function EditAccount() {
     const handleModal = () => {
         setShowModal(true);
     };
-    const fetchAccount = async () => {
-        await getCurrentAccount()
+    const fetchAccount = () => {
+         getCurrentAccount()
             .then((res) => {
                 setAccount({
                     phone: res.data.phone,
@@ -152,7 +152,7 @@ export default function EditAccount() {
         setAccount({ ...account, [name]: value });
     };
 
-    const editAccountForm = async (e) => {
+    const editAccountForm = (e) => {
         e.preventDefault();
         let isValid = true;
 
@@ -189,7 +189,7 @@ export default function EditAccount() {
 
         if (isValid) {
             setIsLoading(true);
-            await updateAccount(account)
+             updateAccount(account)
                 .then(() => {
                     toast.success('Sửa thành công');
                 })

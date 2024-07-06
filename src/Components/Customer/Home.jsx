@@ -25,14 +25,14 @@ export default function Home() {
         fetchProductSale();
     }, []);
 
-    const fetchProductSale = async () => {
-        await getAllProductByCategory(0).then((res) => {
+    const fetchProductSale =  () => {
+         getAllProductByCategory(0).then((res) => {
             setListProductSale(res.data);
         });
     };
 
-    const fetchCategories = async () => {
-        await getAllCategories()
+    const fetchCategories =  () => {
+         getAllCategories()
             .then((res) => {
                 const categories = res.data;
 

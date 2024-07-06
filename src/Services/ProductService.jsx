@@ -1,7 +1,7 @@
 import { apiPublic, apiPrivate } from '../Ultils/AxiosCustomize';
 
-export const getAllProducts = async (searchParams) => {
-    const response = await apiPublic.get('products', {
+export const getAllProducts =  (searchParams) => {
+    const response =  apiPublic.get('products', {
         params: {
             keyword: searchParams.get('keyword'),
             page: searchParams.get('page'),
@@ -12,28 +12,28 @@ export const getAllProducts = async (searchParams) => {
     return response;
 };
 
-export const createProduct = async (data) => {
-    return await apiPrivate.post('products', data);
+export const createProduct =  (data) => {
+    return  apiPrivate.post('products', data);
 };
 
-export const deleteProduct = async (productId) => {
-    return await apiPrivate.delete(`/products/${productId}`);
+export const deleteProduct =  (productId) => {
+    return  apiPrivate.delete(`/products/${productId}`);
 };
 
-export const getProduct = async (id) => {
-    return await apiPublic.get('/products/' + id);
+export const getProduct =  (id) => {
+    return  apiPublic.get('/products/' + id);
 };
 
-export const updateProduct = async (id, product) => {
-    return await apiPrivate.put('/products/' + id, product);
+export const updateProduct =  (id, product) => {
+    return  apiPrivate.put('/products/' + id, product);
 };
 
-export const getAllImageProducts = async (id) => {
-    return await apiPublic.get('products/' + id + '/images');
+export const getAllImageProducts =  (id) => {
+    return  apiPublic.get('products/' + id + '/images');
 };
 
-export const createImage = async (productId, formData) => {
-    return await apiPrivate.post(
+export const createImage =  (productId, formData) => {
+    return  apiPrivate.post(
         `products/${productId}/createImage`,
         formData,
         {
@@ -45,8 +45,8 @@ export const createImage = async (productId, formData) => {
    
 };
 
-export const updateImageBackground = async (productId, imageUrl) => {
-    return await apiPrivate.put(
+export const updateImageBackground =  (productId, imageUrl) => {
+    return  apiPrivate.put(
         `products/${productId}/updateProductBackground`,
         imageUrl,
         {
@@ -58,8 +58,8 @@ export const updateImageBackground = async (productId, imageUrl) => {
     
 };
 
-export const getAllProductByCategory = async (catId, key) => {
-    return await apiPublic.get(`products/getByCategory/` + catId, {
+export const getAllProductByCategory =  (catId, key) => {
+    return  apiPublic.get(`products/getByCategory/` + catId, {
         params: {
             keyword: key,
         },

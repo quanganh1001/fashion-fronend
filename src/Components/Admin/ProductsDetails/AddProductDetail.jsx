@@ -29,14 +29,14 @@ export default function AddProductDetail() {
         fetchListColor();
     }, []);
 
-    const fetchListSize = async () => {
-        await getSize().then((res) => {
+    const fetchListSize =  () => {
+         getSize().then((res) => {
             setListSize(res.data);
         });
     };
 
-    const fetchListColor = async () => {
-        await getAllColors().then((res) => {
+    const fetchListColor =  () => {
+         getAllColors().then((res) => {
             setListColor(res.data);
         });
     };
@@ -46,7 +46,7 @@ export default function AddProductDetail() {
         setProductDetail({ ...productDetail, [name]: value });
     };
 
-    const addProductDetailForm = async (e) => {
+    const addProductDetailForm =  (e) => {
         e.preventDefault();
         let isValid = true;
 
@@ -94,7 +94,7 @@ export default function AddProductDetail() {
 
         if (isValid) {
             setIsLoading(true);
-            await addProductDetail(productDetail)
+             addProductDetail(productDetail)
                 .then((res) => {
                     toast.success('Thêm thành công');
                     navigate(`/admin/products/${id}/edit`);

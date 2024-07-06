@@ -1,29 +1,29 @@
 import { apiPublic, apiPrivate } from '../Ultils/AxiosCustomize';
 
-export const getAllProductsDetails = async (productId) => {
-    return await apiPublic.get('products/' + productId + '/productsDetail');
+export const getAllProductsDetails =  (productId) => {
+    return  apiPublic.get('products/' + productId + '/productsDetail');
 };
 
-export const addProductDetail = async (data) => {
-    return await apiPrivate.post('productsDetail', data);
+export const addProductDetail =  (data) => {
+    return  apiPrivate.post('productsDetail', data);
 };
 
-export const updateProductDetail = async (id, data) => {
-    return await apiPrivate.put('productsDetail/' + id, data);
+export const updateProductDetail =  (id, data) => {
+    return  apiPrivate.put('productsDetail/' + id, data);
 };
 
-export const deleteProductDetail = async (id) => {
-    return await apiPrivate.delete('productsDetail/' + id);
+export const deleteProductDetail =  (id) => {
+    return  apiPrivate.delete('productsDetail/' + id);
 };
 
-export const getProductDetail = async (id) => {
-    return await apiPrivate.get('productsDetail/' + id);
+export const getProductDetail =  (id) => {
+    return  apiPrivate.get('productsDetail/' + id);
 };
 
 
 
-export const findAllProductsDetailByKey = async (key,options) => {
-    return await apiPrivate.get('productsDetail', {
+export const findAllProductsDetailByKey =  (key,options) => {
+    return  apiPrivate.get('productsDetail', {
         params: {
             key: key,
         },

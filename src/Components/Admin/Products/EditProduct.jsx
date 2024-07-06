@@ -78,9 +78,9 @@ export default function EditProduct() {
             });
     };
 
-    const fetchProductDetail = async () => {
+    const fetchProductDetail =  () => {
         setIsLoadingDetail(true)
-        await getAllProductsDetails(id)
+         getAllProductsDetails(id)
             .then((res) => {
                 setListProductsDetails(res.data);
             })
@@ -96,7 +96,7 @@ export default function EditProduct() {
         setProduct({ ...product, [name]: value });
     };
 
-    const updateProductForm = async (e) => {
+    const updateProductForm =  (e) => {
         e.preventDefault();
         let isValid = true;
 
@@ -147,7 +147,7 @@ export default function EditProduct() {
 
         if (isValid) {
             setIsLoading(true);
-            await updateProduct(id, product)
+             updateProduct(id, product)
                 .then(() => {
                     navigator('/admin/products');
                     toast.success('Lưu thành công!');
@@ -165,7 +165,7 @@ export default function EditProduct() {
         }
     };
 
-    const handleDelete = async (id) => {
+    const handleDelete =  (id) => {
         openModal(
             'Xóa chi tiết sản phẩm',
             `Bạn có chắc muốn xóa chi tiết sản phẩm này?`,

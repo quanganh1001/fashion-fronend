@@ -107,8 +107,8 @@ export default function Account() {
         }
     }, [newResetByEmail]);
 
-    const fetchGetAllAccount = async () => {
-        await getAllAccount(searchParams).then((res) => {
+    const fetchGetAllAccount =  () => {
+         getAllAccount(searchParams).then((res) => {
             setListAccount(res.data.accountsRes);
             setTotalPages(res.data.totalPages);
             setCurrentPage(res.data.currentPage);
@@ -120,13 +120,13 @@ export default function Account() {
         });
     };
 
-    const fetchGetAllRoles = async () => {
-        await getAllRoles().then((res) => {
+    const fetchGetAllRoles = () => {
+         getAllRoles().then((res) => {
             setListRoles(res.data);
         });
     };
 
-    const handleActivation = async (id, isActivated) => {
+    const handleActivation =  (id, isActivated) => {
         openModal(
             isActivated ? 'Hủy kích hoạt?' : 'Kích hoạt?',
             'Bạn có chắc muốn' +
@@ -167,11 +167,11 @@ export default function Account() {
         );
     };
 
-    const handleShowModalRole = async (id, role) => {
+    const handleShowModalRole =  (id, role) => {
         setNewIdRole({ id, role });
     };
 
-    const handleResetPass = async (email) => {
+    const handleResetPass =  (email) => {
         setNewResetByEmail(email);
     };
 

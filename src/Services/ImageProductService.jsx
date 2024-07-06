@@ -1,7 +1,7 @@
 import { apiPrivate } from '../Ultils/AxiosCustomize';
 
-const deleteImage = async (id) => {
-    const response = await apiPrivate.delete('imgProducts/' + id);
+const deleteImage =  (id) => {
+    const response =  apiPrivate.delete('imgProducts/' + id);
     return response;
 };
 

@@ -33,8 +33,8 @@ export default function AddAccount() {
         fetchGetAllRoles();
     }, []);
 
-     const fetchGetAllRoles = async () => {
-         await getAllRoles().then((res) => {
+     const fetchGetAllRoles =  () => {
+          getAllRoles().then((res) => {
              setListRoles(res.data);
          });
      };
@@ -44,7 +44,7 @@ export default function AddAccount() {
          setAccount({ ...account, [name]: value });
      };
 
-     const addAccountForm = async (e) => {
+     const addAccountForm =  (e) => {
          e.preventDefault();
          let isValid = true;
 
@@ -88,7 +88,7 @@ export default function AddAccount() {
 
          if (isValid) {
              console.log(account);
-             await createAccount(account)
+             createAccount(account)
                  .then(() => {
                      toast.success('Thêm mới thành công');
                      navigate('/admin/accounts');

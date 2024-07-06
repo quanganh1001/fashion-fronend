@@ -84,8 +84,8 @@ export default function Invoice() {
         setNewStatus('');
     }, [invoiceId, newStatus]);
 
-    const fetchGetAllInvoicesStatus = async () => {
-        await getAllInvoiceStatus()
+    const fetchGetAllInvoicesStatus =  () => {
+         getAllInvoiceStatus()
             .then((res) => {
                 setListInvoiceStatus(res.data);
             })

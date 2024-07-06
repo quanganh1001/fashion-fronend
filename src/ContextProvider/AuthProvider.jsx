@@ -37,8 +37,8 @@ export default function AuthProvider({ children }) {
         return () => clearInterval(interval);
     }, [auth]);
 
-    const handleLogin = async (data) => {
-        await login(data).then((res) => {
+    const handleLogin =  (data) => {
+         login(data).then((res) => {
             setAuth({
                 token: res.data.token,
                 refreshToken: res.data.refreshToken,
@@ -64,8 +64,8 @@ export default function AuthProvider({ children }) {
         });
     };
 
-    const handleLogout = async () => {
-        await logout().then((res) => {
+    const handleLogout =  () => {
+         logout().then((res) => {
             setAuth({});
             localStorage.removeItem("auth")
                 navigate('/');

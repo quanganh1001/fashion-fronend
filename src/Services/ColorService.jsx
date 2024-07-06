@@ -1,7 +1,7 @@
-import { apiPrivate, apiPublic } from '../Ultils/AxiosCustomize';
+import { apiPrivate } from '../Ultils/AxiosCustomize';
 
-const getAllColors = async () => {
-    const response = await apiPrivate.get('colors');
+const getAllColors =  () => {
+    const response =  apiPrivate.get('colors');
     return response;
 };
 

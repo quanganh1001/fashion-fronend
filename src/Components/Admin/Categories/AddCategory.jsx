@@ -26,8 +26,8 @@ export default function AddCategory() {
         fetchListCategories();
     }, []);
 
-    const fetchListCategories = async () => {
-        await getAllCategories()
+    const fetchListCategories =  () => {
+         getAllCategories()
             .then((res) => {
                 setListCategories(res.data);
             })
@@ -43,7 +43,7 @@ export default function AddCategory() {
         setCategory({ ...category, [name]: value });
     };
 
-    const addCategoryForm = async (e) => {
+    const addCategoryForm = (e) => {
         e.preventDefault();
         let isValid = true;
 
@@ -63,7 +63,7 @@ export default function AddCategory() {
 
         if (isValid) {
             setIsLoading(true);
-            await createCategory(category)
+             createCategory(category)
                 .then(() => {
                     navigator('/admin/categories');
                     toast.success('Thêm mới thành công');

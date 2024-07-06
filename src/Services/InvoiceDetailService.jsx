@@ -1,7 +1,7 @@
 import { apiPrivate } from "../Ultils/AxiosCustomize"
 
-export const updateQuantity = async (id, quantity) => {
-  return await apiPrivate.put('invoicesDetail/' + id + '/changeQuantity',null, {
+export const updateQuantity =  (id, quantity) => {
+  return  apiPrivate.put('invoicesDetail/' + id + '/changeQuantity',null, {
       params: {
           quantity: quantity,
       },
@@ -9,6 +9,6 @@ export const updateQuantity = async (id, quantity) => {
   
 }
 
-export const deleteInvoiceDetail = async (id) => {
-    return await apiPrivate.delete('invoicesDetail/' + id);
+export const deleteInvoiceDetail =  (id) => {
+    return  apiPrivate.delete('invoicesDetail/' + id);
 };

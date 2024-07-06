@@ -30,19 +30,19 @@ export default function ImageProduct() {
         fetchImageBackground();
     }, []);
 
-    const fetchImagesProduct = async () => {
-        await getAllImageProducts(id).then((res) => {
+    const fetchImagesProduct =  () => {
+         getAllImageProducts(id).then((res) => {
             setListImages(res.data);
         });
     };
 
-    const fetchImageBackground = async () => {
-        await getProduct(id).then((res) => {
+    const fetchImageBackground =  () => {
+         getProduct(id).then((res) => {
             setImageBackground(res.data.imageBackground);
         });
     };
 
-    const addImage = async (event) => {
+    const addImage =  (event) => {
         event.preventDefault();
         const imgFiles = event.target.file.files;
         if (imgFiles.length === 0) {
@@ -69,7 +69,7 @@ export default function ImageProduct() {
             formData.append('imgFiles', imgFiles[i]);
         }
 
-        await createImage(id, formData)
+         createImage(id, formData)
             .then(() => {
                 toast.success('Hình ảnh đã được tải lên thành công.');
                 fetchImagesProduct();
@@ -81,7 +81,7 @@ export default function ImageProduct() {
                 setIsLoading(false);
             });
     };
-    const handleDelete = async (id) => {
+    const handleDelete =  (id) => {
         openModal('Xóa sản phẩm', `Bạn có chắc muốn xóa ảnh này?`, () => {
             deleteImage(id)
                 .then(() => {

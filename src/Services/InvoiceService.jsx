@@ -1,7 +1,7 @@
 import { apiPrivate, apiPublic } from '../Ultils/AxiosCustomize';
 
-export const getAllInvoice = async (searchParams, accountId, invoiceStatus) => {
-    return await apiPrivate.get('invoices', {
+export const getAllInvoice =  (searchParams, accountId, invoiceStatus) => {
+    return  apiPrivate.get('invoices', {
         params: {
             invoiceStatus: invoiceStatus,
             keyword: searchParams.get('keyword'),
@@ -16,12 +16,12 @@ export const getInvoice =  (id) => {
     return  apiPrivate.get('invoices/'+id)
 }
 
-export const updateInvoice = async (id, invoice) => {
-    return await apiPrivate.put('invoices/' + id, invoice);
+export const updateInvoice =  (id, invoice) => {
+    return  apiPrivate.put('invoices/' + id, invoice);
 };
 
-export const updateStatusInvoice = async (id, invoiceStatus) => {
-    return await apiPrivate.put(
+export const updateStatusInvoice =  (id, invoiceStatus) => {
+    return  apiPrivate.put(
         'invoices/' + id + '/updateStatus',
         invoiceStatus
     );
@@ -31,8 +31,8 @@ export const getAllInvoicesDetail =  (id) => {
     return  apiPrivate.get('invoices/'+id + '/invoicesDetail');
 };
 
-export const addInvoiceDetail = async (invoiceId, productDetailId) => {
-    return await apiPrivate.post(
+export const addInvoiceDetail =  (invoiceId, productDetailId) => {
+    return  apiPrivate.post(
         'invoices/' + invoiceId + '/createInvoiceDetail',null,
         {
             params: { productDetailId: productDetailId },
@@ -40,8 +40,8 @@ export const addInvoiceDetail = async (invoiceId, productDetailId) => {
     );
 };
 
-export const editShippingFee = async (invoiceId, shippingFee) => {
-    return await apiPrivate.put(
+export const editShippingFee =  (invoiceId, shippingFee) => {
+    return  apiPrivate.put(
         'invoices/' + invoiceId + '/updateShippingFee',
         null,
         {
@@ -50,10 +50,10 @@ export const editShippingFee = async (invoiceId, shippingFee) => {
     );
 };
 
-export const checkoutVnpay = async (checkoutDto) => {
-    return await apiPublic.post('/invoices/checkout', checkoutDto);
+export const checkoutVnpay =  (checkoutDto) => {
+    return  apiPublic.post('/invoices/checkout', checkoutDto);
 };
 
-export const checkoutCash = async (checkoutDto) => {
-    return await apiPublic.post('/invoices/checkoutByCash', checkoutDto);
+export const checkoutCash =  (checkoutDto) => {
+    return  apiPublic.post('/invoices/checkoutByCash', checkoutDto);
 };

@@ -27,8 +27,8 @@ export default function EditCategory() {
         fetchCategory();
     }, []);
 
-    const fetchCategory = async () => {
-        await getCategory(id).then((res) => {
+    const fetchCategory = () => {
+         getCategory(id).then((res) => {
             setCategory({
                 categoryCode: res.data.categoryCode,
                 catName: res.data.catName,
@@ -49,7 +49,7 @@ export default function EditCategory() {
         setCatBackground(event.target.files[0]);
     };
 
-    const editCategoryForm = async (e) => {
+    const editCategoryForm = (e) => {
         e.preventDefault();
         let isValid = true;
 
@@ -69,7 +69,7 @@ export default function EditCategory() {
 
         if (isValid) {
             setIsLoadingButton(true);
-            await updateCategory(id, category)
+             updateCategory(id, category)
                 .then(() => {
                     setIsLoading(true);
                     // navigator("/admin/categories");
@@ -89,7 +89,7 @@ export default function EditCategory() {
             if (catBackground != null) {
                 const formData = new FormData();
                 formData.append('file', catBackground);
-                await updateBackgroundCategory(id, formData)
+                 updateBackgroundCategory(id, formData)
                     .then(() => {
                         fetchCategory();
                     })
