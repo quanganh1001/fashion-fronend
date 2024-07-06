@@ -124,9 +124,7 @@ export default function AddProduct() {
                 .then(() => {
                     navigator('/admin/products');
                     toast.success('Thêm mới thành công');
-                })
-
-                .catch((error) => {
+                }).catch((error) => {
                     if (error.response.status === 409) {
                         setCodeError('Mã sản phẩm đã tồn tại');
                         toast.error('Mã sản phẩm đã tồn tại');

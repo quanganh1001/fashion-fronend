@@ -123,6 +123,8 @@ export default function Account() {
     const fetchGetAllRoles = () => {
          getAllRoles().then((res) => {
             setListRoles(res.data);
+         }).catch((err) => {
+            console.error(err);
         });
     };
 

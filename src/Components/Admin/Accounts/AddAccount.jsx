@@ -34,9 +34,13 @@ export default function AddAccount() {
     }, []);
 
      const fetchGetAllRoles =  () => {
-          getAllRoles().then((res) => {
-             setListRoles(res.data);
-         });
+          getAllRoles()
+              .then((res) => {
+                  setListRoles(res.data);
+              })
+              .catch((err) => {
+                  console.error(err);
+              });
      };
 
      const handleInputChange = (e) => {

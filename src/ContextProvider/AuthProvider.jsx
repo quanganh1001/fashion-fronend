@@ -70,6 +70,9 @@ export default function AuthProvider({ children }) {
             localStorage.removeItem("auth")
                 navigate('/');
             
+        }).catch(() => {
+            setAuth({});
+            localStorage.removeItem('auth');
         });
     };
 

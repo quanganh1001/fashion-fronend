@@ -30,15 +30,23 @@ export default function AddProductDetail() {
     }, []);
 
     const fetchListSize =  () => {
-         getSize().then((res) => {
-            setListSize(res.data);
-        });
+         getSize()
+             .then((res) => {
+                 setListSize(res.data);
+             })
+             .catch((err) => {
+                 console.error(err);
+             });
     };
 
     const fetchListColor =  () => {
-         getAllColors().then((res) => {
-            setListColor(res.data);
-        });
+         getAllColors()
+             .then((res) => {
+                 setListColor(res.data);
+             })
+             .catch((err) => {
+                 console.error(err);
+             });
     };
 
     const handleInputChange = (e) => {

@@ -34,7 +34,6 @@ export const refreshToken = (refreshToken) => {
                 },
             }
         )
-        .then((res) => res.data);
 };
 
 export const resetPass = (email) => {

@@ -20,16 +20,18 @@ export default function Home() {
     const [animating, setAnimating] = useState(false);
     const [listCategoriesF2, setListCategoriesF2] = useState([]);
     const [listProductsSale, setListProductSale] = useState([]);
-    const { auth } = useAuth();
+
     useEffect(() => {
         fetchCategories();
         fetchProductSale();
-        console.log(auth);
+
     }, []);
 
     const fetchProductSale =  () => {
          getAllProductByCategory(0).then((res) => {
             setListProductSale(res.data);
+         }).catch((error) => {
+            console.error(error);
         });
     };
 

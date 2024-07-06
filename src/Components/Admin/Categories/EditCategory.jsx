@@ -28,16 +28,21 @@ export default function EditCategory() {
     }, []);
 
     const fetchCategory = () => {
-         getCategory(id).then((res) => {
-            setCategory({
-                categoryCode: res.data.categoryCode,
-                catName: res.data.catName,
-            });
-            setCurrentBackgound(res.data.catBackground);
-        }).then((res) => {
-            setIsLoadingCategory(false);
-            setIsLoading(false)
-        });
+         getCategory(id)
+             .then((res) => {
+                 setCategory({
+                     categoryCode: res.data.categoryCode,
+                     catName: res.data.catName,
+                 });
+                 setCurrentBackgound(res.data.catBackground);
+             })
+             .catch((err) => {
+                 console.error(err);
+             })
+             .finally((res) => {
+                 setIsLoadingCategory(false);
+                 setIsLoading(false);
+             });
     };
 
     const handleInputChange = (e) => {
