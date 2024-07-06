@@ -26,66 +26,66 @@ export default function Header() {
     const [hoveredF1, setHoveredF1] = useState(null);
     const [activeClass, setActiveClass] = useState('');
     const navigate = useNavigate();
-    const { totalCartItems,isLoadingCart } = useCart();
+    const { totalCartItems, isLoadingCart } = useCart();
     const { openModal, closeModal } = useModal();
-       const [email, setEmail] = useState('');
-       const [showModal, setShowModal] = useState(false);
+    const [email, setEmail] = useState('');
+    const [showModal, setShowModal] = useState(false);
     const [isLoading, setIsLoading] = useState(true);
     const [isLoadingLogin, setIsLoadingLogin] = useState(false);
     const [isLoadingLogout, setIsLoadingLogout] = useState(false);
 
     useEffect(() => {
-         if (email !== '' || showModal) {
-             openModal(
-                 'Cấp lại mật khẩu',
-                 <div>
-                     <div>Nhập email đăng ký</div>
-                     <input
-                         value={email}
-                         className="form-control mt-3"
-                         type="email"
-                         onChange={handleSetEmail}
-                     />
-                 </div>,
-                 () => {
-                     let isValid = true;
+        if (email !== '' || showModal) {
+            openModal(
+                'Cấp lại mật khẩu',
+                <div>
+                    <div>Nhập email đăng ký</div>
+                    <input
+                        value={email}
+                        className="form-control mt-3"
+                        type="email"
+                        onChange={handleSetEmail}
+                    />
+                </div>,
+                () => {
+                    let isValid = true;
 
-                     if (email === '') {
-                         isValid = false;
-                         toast.error('Email không được để trống');
-                     } else if (
-                         !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(
-                             String(email).toLowerCase()
-                         )
-                     ) {
-                         isValid = false;
-                         toast.error('Email không hợp lệ');
-                     }
+                    if (email === '') {
+                        isValid = false;
+                        toast.error('Email không được để trống');
+                    } else if (
+                        !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(
+                            String(email).toLowerCase()
+                        )
+                    ) {
+                        isValid = false;
+                        toast.error('Email không hợp lệ');
+                    }
 
-                     if (isValid) {
-                         resetPass(email)
-                             .then((res) => {
-                                 toast.success(
-                                     'Mật khẩu mới được gửi về email đăng ký!'
-                                 );
-                             })
-                             .catch((error) => {
-                                 toast.error('Có lỗi xảy ra!');
-                             });
-                         closeModal();
-                     }
-                 }
-             );
-         }
-         setShowModal(false);
-         setEmail('')
-     }, [email, showModal]);
-    
+                    if (isValid) {
+                        resetPass(email)
+                            .then((res) => {
+                                toast.success(
+                                    'Mật khẩu mới được gửi về email đăng ký!'
+                                );
+                            })
+                            .catch((error) => {
+                                toast.error('Có lỗi xảy ra!');
+                            });
+                        closeModal();
+                    }
+                }
+            );
+        }
+        setShowModal(false);
+        setEmail('');
+    }, [email, showModal]);
+
     useEffect(() => {
         if (hoveredF1 !== null) {
             setTimeout(() => {
                 setActiveClass('show');
-            }, 50); 
+            }, 50);
         } else {
             setActiveClass('');
         }
@@ -95,10 +95,10 @@ export default function Header() {
         fetchAllCategories();
     }, []);
 
-    const fetchAllCategories =  () => {
-         getAllCategories()
+    const fetchAllCategories = () => {
+        getAllCategories()
             .then((res) => {
-                setIsLoading(false)
+                setIsLoading(false);
                 const categories = res.data;
 
                 const categoriesF1 = categories.filter(
@@ -121,8 +121,6 @@ export default function Header() {
                     )
                 );
                 setListCategoriesF3(categoriesF3);
-
-
             })
             .catch((err) => {
                 console.error(err);
@@ -143,14 +141,14 @@ export default function Header() {
         }
     };
 
-    const logoutForm =  () => {
+    const logoutForm = () => {
         setIsLoadingLogout(true);
-         handleLogout()
+        handleLogout();
         setIsLoadingLogout(false);
         toast.success('Đã đăng xuất!');
     };
 
-    const formLogin =  (event) => {
+    const formLogin = async (event) => {
         event.preventDefault();
 
         let valid = true;
@@ -169,11 +167,9 @@ export default function Header() {
         }
 
         if (valid) {
-            setIsLoadingLogin(true);
+             setIsLoadingLogin(true);
             try {
-                
-                 handleLogin({ username, password });
-                toast.success('Đăng nhập thành công!');
+                await handleLogin({ username, password });
             } catch (error) {
                 if (error.response.data === 'Invalid username or password') {
                     toast.error('Sai tên đăng nhập hoặc mật khẩu');
@@ -183,6 +179,9 @@ export default function Header() {
                 ) {
                     toast.error('Tài khoản không hoạt động');
                     setError('Tài khoản không hoạt động');
+                } else {
+                    toast.error('Có lỗi xảy ra!');
+                    console.error(error);
                 }
             } finally {
                 setIsLoadingLogin(false);
@@ -190,19 +189,17 @@ export default function Header() {
         }
     };
 
-
     const handleToggleFormLogin = () => {
         setIsShowFormLogin(!isShowFormLogin);
     };
 
-       const handleSetEmail = (e) => {
-           setEmail(e.target.value);
+    const handleSetEmail = (e) => {
+        setEmail(e.target.value);
     };
     const handleResetPass = () => {
         setShowModal(true);
     };
-    
-    
+
     return (
         <>
             <style>

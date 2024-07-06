@@ -37,8 +37,8 @@ export default function AuthProvider({ children }) {
         return () => clearInterval(interval);
     }, [auth]);
 
-    const handleLogin =  (data) => {
-         login(data).then((res) => {
+    const handleLogin = async (data) => {
+        await login(data).then((res) => {
             setAuth({
                 token: res.data.token,
                 refreshToken: res.data.refreshToken,

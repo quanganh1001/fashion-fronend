@@ -74,7 +74,7 @@ export default function Login() {
             setShowModal(true)
     };
 
-    const submitForm =  (event) => {
+    const submitForm = async (event) => {
         event.preventDefault();
 
         let valid = true;
@@ -96,8 +96,7 @@ export default function Login() {
         if (valid) {
             try {
                 setIsLoading(true);
-                 handleLogin({ username, password });
-                toast.success('Đăng nhập thành công!');
+                await handleLogin({ username, password });
             } catch (error) {
                 setIsLoading(false);
                 if (error.response.data === 'Invalid username or password') {
@@ -108,7 +107,12 @@ export default function Login() {
                 ) {
                     toast.error('Tài khoản không hoạt động');
                     setError('Tài khoản không hoạt động');
+                } else {
+                    toast.error('Có lỗi xảy ra!');
+                    console.error(error);
                 }
+            } finally {
+                setIsLoading(false);
             }
         }
     };
