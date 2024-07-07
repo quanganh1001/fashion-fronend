@@ -1,0 +1,23 @@
+# Sử dụng một base image
+FROM node:14-alpine
+
+# Thiết lập thư mục làm việc
+WORKDIR /app
+
+# Sao chép file package.json và package-lock.json
+COPY package*.json ./
+
+# Cài đặt các dependency
+RUN npm install
+
+# Sao chép mã nguồn của ứng dụng
+COPY . .
+
+# Build ứng dụng
+RUN npm run build
+
+# Mở cổng 8080
+EXPOSE 8080
+
+# Chạy ứng dụng
+CMD ["npx", "serve", "-s", "build", "-l", "8080"]
