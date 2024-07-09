@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { Helmet } from 'react-helmet-async';
 
 export default function Store() {
     const [listStore, setListStore] = useState([
@@ -70,6 +71,9 @@ export default function Store() {
     };
     return (
         <div className="container-xl my-5">
+            <Helmet>
+                <title>Hệ thống cửa hàng</title>
+            </Helmet>
             <h2 className="col-12 d-flex justify-content-center">
                 Hệ thống cửa hàng
             </h2>

@@ -7,6 +7,7 @@ import usePagination from '../../../CustomHooks/usePagination';
 import useFeedback from '../../../CustomHooks/useFeedback';
 import { getAllFeedback } from '../../../Services/FeedbackCustomerService';
 import LoadingSpinner from '../../Fragments/LoadingSpinner';
+import Title from '../../Fragments/Title';
 
 export default function FeedbackCustomer() {
     const [totalPages, setTotalPages] = useState(1);
@@ -48,7 +49,7 @@ export default function FeedbackCustomer() {
 
     return (
         <>
-            <h2>Phản hồi khách hàng</h2>
+            <Title title="Phản hồi khách hàng"/>
             <div className="mt-5 bg-white p-5 shadow border">
                 <table className="table table-striped table-hover table-bordered border mt-5">
                     <thead>

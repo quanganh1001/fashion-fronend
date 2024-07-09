@@ -5,6 +5,7 @@ import { addProductDetail } from '../../../Services/ProductDetailService';
 import { toast } from 'react-toastify';
 import { getAllColors } from '../../../Services/ColorService';
 import LoadingSpinner from '../../Fragments/LoadingSpinner';
+import Title from '../../Fragments/Title';
 
 export default function AddProductDetail() {
     const { id } = useParams();
@@ -117,7 +118,7 @@ export default function AddProductDetail() {
     };
     return (
         <>
-            <h1>Thêm mã phân loại mới</h1>
+            <Title title="Thêm chi tiết sản phẩm"/>
             <hr />
             <div className="mt-5 bg-white p-5 shadow border">
                 <form onSubmit={addProductDetailForm}>

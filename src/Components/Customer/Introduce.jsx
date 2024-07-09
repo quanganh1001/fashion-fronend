@@ -1,6 +1,11 @@
+import { Helmet } from "react-helmet-async";
+
 export default function Introduce() {
   return (
       <>
+          <Helmet>
+              <title>Giới thiệu</title>
+          </Helmet>
           <div class="container-xxl d-flex flex-column align-items-center mb-5 my-5">
               <p style={{ letterSpacing: '5px' }}>VỀ CHÚNG TÔI</p>
               <div class="fw-bold h4">THƯƠNG HIỆU THỜI TRANG NAM TORANO</div>
@@ -35,7 +40,6 @@ export default function Introduce() {
                       />
                   </div>
                   <div class="col-6 d-flex flex-column justify-content-center align-items-center ps-5">
-                      
                       <div class="fw-bold h4">CÂU CHUYỆN THƯƠNG HIỆU</div>
                       <p>
                           Theo đuổi phong cách lịch lãm, sang trọng và trẻ trung
@@ -52,7 +56,6 @@ export default function Introduce() {
 
               <div class="d-flex justify-content-around mt-5 ">
                   <div class="col-6 d-flex flex-column justify-content-center align-items-center pe-5">
-                      
                       <div class="fw-bold h4">GIÁ TRỊ CỐT LÕI</div>
                       <p>
                           Lorem ipsum dolor sit amet. Est nihil obcaecati et

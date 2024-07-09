@@ -4,11 +4,11 @@ import {
     getCurrentAccount,
     updateAccount,
 } from '../../../Services/AccountService';
-import Tittle from '../../Fragments/Tittle';
 import { toast } from 'react-toastify';
 import LoadingSpinner from '../../Fragments/LoadingSpinner';
 import useAuth from '../../../CustomHooks/useAuth';
 import useModal from '../../../CustomHooks/useModal';
+import Title from '../../Fragments/Title';
 
 export default function EditAccount() {
     const [phoneError, setPhoneError] = useState('');
@@ -86,7 +86,6 @@ export default function EditAccount() {
                                 setCurrentPass('');
                                 setNewPass('');
                                 setReNewPass('');
-                                
                             })
                             .catch((error) => {
                                 if (
@@ -102,7 +101,7 @@ export default function EditAccount() {
                             .finally(() => {
                                 setIsLoading(false);
                             });
-                        
+
                         closeModal();
                     }
                 }
@@ -130,7 +129,7 @@ export default function EditAccount() {
         setShowModal(true);
     };
     const fetchAccount = () => {
-         getCurrentAccount()
+        getCurrentAccount()
             .then((res) => {
                 setAccount({
                     phone: res.data.phone,
@@ -189,7 +188,7 @@ export default function EditAccount() {
 
         if (isValid) {
             setIsLoading(true);
-             updateAccount(account)
+            updateAccount(account)
                 .then(() => {
                     toast.success('Sửa thành công');
                 })
@@ -212,7 +211,7 @@ export default function EditAccount() {
 
     return (
         <>
-            <Tittle tittle="Thông tin tài khoản" />
+            <Title title="Thông tin tài khoản" />
             <div className="mt-5 bg-white p-5 shadow border">
                 {isLoadingAccount ? (
                     <LoadingSpinner />

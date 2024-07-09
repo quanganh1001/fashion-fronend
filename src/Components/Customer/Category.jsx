@@ -6,6 +6,7 @@ import { Link, useParams, useNavigate, useLocation } from 'react-router-dom';
 import usePagination from '../../CustomHooks/usePagination';
 import CustomPagination from '../Fragments/CustomPagination';
 import LoadingSpinner from '../Fragments/LoadingSpinner';
+import { Helmet } from 'react-helmet-async';
 
 
 export default function Category() {
@@ -135,7 +136,9 @@ export default function Category() {
                 }   
                 `}
             </style>
-
+            <Helmet>
+                <title>Danh mục</title>
+            </Helmet>
             <div className="d-flex flex-wrap container-xl py-5">
                 <div className="col-3 bg-light p-3 align-self-start">
                     <h4 className="fw-bold">Bộ lọc</h4>
@@ -197,8 +200,8 @@ export default function Category() {
 
                 <div className="col ">
                     {loading ? (
-                        <div className='d-flex justify-content-center align-items-center col-12'>
-                            <LoadingSpinner/>
+                        <div className="d-flex justify-content-center align-items-center col-12">
+                            <LoadingSpinner />
                         </div>
                     ) : (
                         <>

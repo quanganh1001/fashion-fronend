@@ -1,7 +1,11 @@
+import { Helmet } from "react-helmet-async";
+
 export default function PrivatePolicy() {
     return (
         <div className="m-5">
-            
+            <Helmet>
+                <title>Chính sách bảo mật</title>
+            </Helmet>
             <p>
                 <b>1. Thu thập và sử dụng thông tin của TORANO</b>
             </p>

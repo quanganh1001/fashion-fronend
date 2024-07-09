@@ -5,9 +5,9 @@ import {
     updateCategory,
 } from '../../../Services/CategoryService';
 import { toast } from 'react-toastify';
-import Tittle from '../../Fragments/Tittle';
 import LoadingSpinner from '../../Fragments/LoadingSpinner';
 import { useParams } from 'react-router-dom';
+import Title from '../../Fragments/Title';
 
 export default function EditCategory() {
     const [category, setCategory] = useState({
@@ -28,21 +28,21 @@ export default function EditCategory() {
     }, []);
 
     const fetchCategory = () => {
-         getCategory(id)
-             .then((res) => {
-                 setCategory({
-                     categoryCode: res.data.categoryCode,
-                     catName: res.data.catName,
-                 });
-                 setCurrentBackgound(res.data.catBackground);
-             })
-             .catch((err) => {
-                 console.error(err);
-             })
-             .finally((res) => {
-                 setIsLoadingCategory(false);
-                 setIsLoading(false);
-             });
+        getCategory(id)
+            .then((res) => {
+                setCategory({
+                    categoryCode: res.data.categoryCode,
+                    catName: res.data.catName,
+                });
+                setCurrentBackgound(res.data.catBackground);
+            })
+            .catch((err) => {
+                console.error(err);
+            })
+            .finally((res) => {
+                setIsLoadingCategory(false);
+                setIsLoading(false);
+            });
     };
 
     const handleInputChange = (e) => {
@@ -74,10 +74,10 @@ export default function EditCategory() {
 
         if (isValid) {
             setIsLoadingButton(true);
-             updateCategory(id, category)
+            updateCategory(id, category)
                 .then(() => {
                     // navigator("/admin/categories");
-                    
+
                     toast.success('Sửa thành công thành công');
                 })
                 .catch((error) => {
@@ -86,8 +86,8 @@ export default function EditCategory() {
                         toast.error('Mã danh mục đã tồn tại');
                     }
                     return;
-                }).finally(() => {
-                    
+                })
+                .finally(() => {
                     setIsLoadingButton(false);
                 });
 
@@ -95,13 +95,14 @@ export default function EditCategory() {
                 setIsLoading(true);
                 const formData = new FormData();
                 formData.append('file', catBackground);
-                 updateBackgroundCategory(id, formData)
+                updateBackgroundCategory(id, formData)
                     .then(() => {
                         fetchCategory();
                     })
                     .catch((err) => {
                         console.error(err);
-                    }).finally(() => {
+                    })
+                    .finally(() => {
                         setIsLoading(false);
                     });
             } else {
@@ -112,7 +113,7 @@ export default function EditCategory() {
 
     return (
         <>
-            <Tittle tittle="Sửa danh mục" />
+            <Title title="Sửa danh mục" />
 
             <div className="mt-5 bg-white p-5 shadow border">
                 {isLoadingCategory ? (

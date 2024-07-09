@@ -4,6 +4,7 @@ import { toast } from 'react-toastify';
 import { useNavigate } from 'react-router-dom';
 import useAuth from '../../CustomHooks/useAuth';
 import LoadingSpinner from '../Fragments/LoadingSpinner';
+import Title from '../Fragments/Title';
 
 export default function Register() {
     const { auth } = useAuth();
@@ -102,7 +103,7 @@ export default function Register() {
     return (
         <>
             <div className="container-xl d-flex flex-column align-items-center my-5">
-                <h2 className="mb-4">Đăng ký tài khoản</h2>
+                <Title title="Đăng ký tài khoản" />
                 <div className="mt-3 bg-white p-5 shadow border">
                     <form onSubmit={registerForm}>
                         <div className="row">

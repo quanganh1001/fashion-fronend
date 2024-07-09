@@ -6,6 +6,7 @@ import LoadingSpinner from '../Fragments/LoadingSpinner';
 import { resetPass } from '../../Services/Auth';
 import useModal from '../../CustomHooks/useModal';
 import { Link } from 'react-router-dom';
+import Title from '../Fragments/Title';
 
 export default function Login() {
     const [username, setUsername] = useState('');
@@ -119,7 +120,7 @@ export default function Login() {
 
     return (
         <div className="p-5 d-flex flex-column align-items-center">
-            <h2>ĐĂNG NHẬP</h2>
+            <Title title="Đăng nhập"/>
             <div className="mt-5 bg-white p-5 shadow border col-8">
                 <div className="card-body">
                     <p className="login-box-msg">Đăng nhập</p>

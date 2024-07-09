@@ -10,7 +10,7 @@ import {
 } from '../../../Services/ProductService';
 import { deleteImage } from '../../../Services/ImageProductService';
 import LoadingSprinner from '../../Fragments/LoadingSpinner';
-import Tittle from '../../Fragments/Tittle';
+import Title from '../../Fragments/Title';
 
 export default function ImageProduct() {
     const { id } = useParams();
@@ -30,26 +30,28 @@ export default function ImageProduct() {
         fetchImageBackground();
     }, []);
 
-    const fetchImagesProduct =  () => {
-         getAllImageProducts(id)
-             .then((res) => {
-                 setListImages(res.data);
-             })
-             .catch((err) => {
-                 console.log(err);
-             });
+    const fetchImagesProduct = () => {
+        getAllImageProducts(id)
+            .then((res) => {
+                setListImages(res.data);
+            })
+            .catch((err) => {
+                console.log(err);
+            });
     };
 
-    const fetchImageBackground =  () => {
-        getProduct(id).then((res) => {
-             console.log(res);
-            setImageBackground(res.data.imageBackground);
-         }).catch((err) => {
-            console.log(err);
-        });
+    const fetchImageBackground = () => {
+        getProduct(id)
+            .then((res) => {
+                console.log(res);
+                setImageBackground(res.data.imageBackground);
+            })
+            .catch((err) => {
+                console.log(err);
+            });
     };
 
-    const addImage =  (event) => {
+    const addImage = (event) => {
         event.preventDefault();
         const imgFiles = event.target.file.files;
         if (imgFiles.length === 0) {
@@ -76,7 +78,7 @@ export default function ImageProduct() {
             formData.append('imgFiles', imgFiles[i]);
         }
 
-         createImage(id, formData)
+        createImage(id, formData)
             .then(() => {
                 toast.success('Hình ảnh đã được tải lên thành công.');
                 fetchImagesProduct();
@@ -88,7 +90,7 @@ export default function ImageProduct() {
                 setIsLoading(false);
             });
     };
-    const handleDelete =  (id) => {
+    const handleDelete = (id) => {
         openModal('Xóa sản phẩm', `Bạn có chắc muốn xóa ảnh này?`, () => {
             deleteImage(id)
                 .then(() => {
@@ -124,7 +126,7 @@ export default function ImageProduct() {
 
     return (
         <>
-            <Tittle tittle="Quản lý hình ảnh sản phẩm" />
+            <Title title="Quản lý hình ảnh sản phẩm" />
 
             <div className="mt-5 bg-white p-5 shadow border">
                 <div className="d-flex justify-content-between mb-5">
@@ -164,7 +166,7 @@ export default function ImageProduct() {
                         <h4>Ảnh nền</h4>
 
                         <div className="mt-3">
-                            {!imageBackground && <div>Chưa có ảnh nền</div> }
+                            {!imageBackground && <div>Chưa có ảnh nền</div>}
                             {imageBackground?.endsWith('.mp4') ? (
                                 <video width="250px" controls>
                                     <source
@@ -184,7 +186,7 @@ export default function ImageProduct() {
                 </div>
             </div>
             <div className="mt-3 bg-white p-5 shadow border">
-                <Tittle tittle="Danh sách hình ảnh" />
+                <Title title="Danh sách hình ảnh" />
                 <div className="d-flex flex-wrap justify-content-start">
                     <ul
                         className="d-flex flex-wrap overflow-auto"

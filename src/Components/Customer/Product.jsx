@@ -12,6 +12,7 @@ import ImageGallery from 'react-image-gallery';
 import 'react-image-gallery/styles/css/image-gallery.css';
 import { getUrlImgEnum } from '../../Services/EnumService';
 import LoadingSpinner from '../Fragments/LoadingSpinner';
+import { Helmet } from 'react-helmet-async';
 
 export default function Product() {
     const [listImage, setListImage] = useState([]);
@@ -563,6 +564,9 @@ export default function Product() {
                     </Tab>
                 </Tabs>
             </div>
+            <Helmet>
+                <title>{product.productName}</title>
+            </Helmet>
         </>
     );
 }

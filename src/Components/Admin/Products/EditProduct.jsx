@@ -9,8 +9,8 @@ import {
 import { Dropdown } from 'react-bootstrap';
 import useModal from '../../../CustomHooks/useModal';
 import { getImagesSize } from '../../../Services/EnumService';
-import Tittle from '../../Fragments/Tittle';
 import LoadingSpinner from '../../Fragments/LoadingSpinner';
+import Title from '../../Fragments/Title';
 
 export default function EditProduct() {
     const { id } = useParams();
@@ -73,21 +73,23 @@ export default function EditProduct() {
             })
             .catch((error) => {
                 console.error(error);
-            }).finally(() => {
+            })
+            .finally(() => {
                 setIsLoadingProduct(false);
             });
     };
 
-    const fetchProductDetail =  () => {
-        setIsLoadingDetail(true)
-         getAllProductsDetails(id)
+    const fetchProductDetail = () => {
+        setIsLoadingDetail(true);
+        getAllProductsDetails(id)
             .then((res) => {
                 setListProductsDetails(res.data);
             })
             .catch((err) => {
                 console.error(err);
-            }).finally(() => {
-                setIsLoadingDetail(false)
+            })
+            .finally(() => {
+                setIsLoadingDetail(false);
             });
     };
 
@@ -96,7 +98,7 @@ export default function EditProduct() {
         setProduct({ ...product, [name]: value });
     };
 
-    const updateProductForm =  (e) => {
+    const updateProductForm = (e) => {
         e.preventDefault();
         let isValid = true;
 
@@ -147,7 +149,7 @@ export default function EditProduct() {
 
         if (isValid) {
             setIsLoading(true);
-             updateProduct(id, product)
+            updateProduct(id, product)
                 .then(() => {
                     navigator('/admin/products');
                     toast.success('Lưu thành công!');
@@ -165,7 +167,7 @@ export default function EditProduct() {
         }
     };
 
-    const handleDelete =  (id) => {
+    const handleDelete = (id) => {
         openModal(
             'Xóa chi tiết sản phẩm',
             `Bạn có chắc muốn xóa chi tiết sản phẩm này?`,
@@ -189,7 +191,7 @@ export default function EditProduct() {
 
     return (
         <>
-            <Tittle tittle="Sửa sản phẩm" />
+            <Title title="Sửa sản phẩm" />
 
             <div className="mt-4 d-flex flex-wrap justify-content-between">
                 <div className="mb-4 col-12">

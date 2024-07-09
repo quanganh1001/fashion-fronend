@@ -14,6 +14,7 @@ import 'slick-carousel/slick/slick-theme.css';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { getAllProductByCategory } from '../../Services/ProductService';
 import useAuth from '../../CustomHooks/useAuth';
+import { Helmet } from 'react-helmet-async';
 
 export default function Home() {
     const [activeIndex, setActiveIndex] = useState(0);
@@ -189,6 +190,9 @@ export default function Home() {
             </Carousel>
 
             <section style={{ marginTop: '100px' }}>
+                <Helmet>
+                    <title>Trang chủ</title>
+                </Helmet>
                 <div className="container-xl">
                     <h2 className="fw-bold mb-5">DANH MỤC SẢN PHẨM</h2>
 

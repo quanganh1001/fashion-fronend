@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { sendMail } from '../../../Services/CustomerEmailService';
 import { toast } from 'react-toastify';
 import LoadingSpinner from '../../Fragments/LoadingSpinner';
+import Title from '../../Fragments/Title';
 
 export default function CustomerEmail() {
     const [subject, setSubject] = useState('');
@@ -68,7 +69,7 @@ export default function CustomerEmail() {
     return (
         <>
             <div className="content-admin p-4">
-                <h2>Gửi email tới toàn bộ khách hàng</h2>
+                <Title title="Gửi email tới toàn bộ khách hàng"/>
                 <div className="mt-5 bg-white p-5 shadow border">
                     <div className="mb-3">Nhập nội dung:</div>
                     <label className="col-5 mb-3">

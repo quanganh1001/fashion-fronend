@@ -1,6 +1,7 @@
 import { useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import useCart from '../../CustomHooks/useCart';
+import { Helmet } from 'react-helmet-async';
 
 export default function PaymentResponse() {
     const location = useLocation();
@@ -16,6 +17,9 @@ export default function PaymentResponse() {
    
     return (
         <>
+            <Helmet>
+                <title>Thanh toán</title>
+            </Helmet>
             <div className="d-flex my-5 flex-column align-items-center">
                 {success === '1' ? (
                     <>
@@ -30,7 +34,9 @@ export default function PaymentResponse() {
                             />
                         </div>
                         <h1 className="mt-5">Đặt hàng thành công</h1>
-                        <Link to="/" className='text-dark'>Về trang chủ</Link>
+                        <Link to="/" className="text-dark">
+                            Về trang chủ
+                        </Link>
                     </>
                 ) : (
                     <div>Đặt hàng thất bại</div>

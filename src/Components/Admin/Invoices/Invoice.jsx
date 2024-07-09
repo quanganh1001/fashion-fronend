@@ -4,7 +4,6 @@ import {
     updateStatusInvoice,
 } from '../../../Services/InvoiceService';
 import usePagination from '../../../CustomHooks/usePagination';
-import Tittle from '../../Fragments/Tittle';
 import useAuth from '../../../CustomHooks/useAuth';
 import { getAllInvoiceStatus } from '../../../Services/EnumService';
 import { getAllEmployees } from '../../../Services/AccountService';
@@ -16,6 +15,7 @@ import { parseISO, format } from 'date-fns';
 import useModal from '../../../CustomHooks/useModal';
 import { toast } from 'react-toastify';
 import LoadingSpinner from '../../Fragments/LoadingSpinner';
+import Title from '../../Fragments/Title';
 
 export default function Invoice() {
     const [listInvoice, setListInvoice] = useState([]);
@@ -64,7 +64,7 @@ export default function Invoice() {
                     </select>
                 </>,
                 () => {
-                    setIsLoading(true)
+                    setIsLoading(true);
                     updateStatusInvoice(invoiceId, newStatus)
                         .then(() => {
                             toast.success('Cập nhật trạng thái thành công!');
@@ -73,9 +73,10 @@ export default function Invoice() {
                         .catch((err) => {
                             console.error(err);
                             toast.error(err.response.data);
-                        }).finally(() => {
-                            setIsLoading(false);
                         })
+                        .finally(() => {
+                            setIsLoading(false);
+                        });
 
                     closeModal();
                 }
@@ -84,8 +85,8 @@ export default function Invoice() {
         setNewStatus('');
     }, [invoiceId, newStatus]);
 
-    const fetchGetAllInvoicesStatus =  () => {
-         getAllInvoiceStatus()
+    const fetchGetAllInvoicesStatus = () => {
+        getAllInvoiceStatus()
             .then((res) => {
                 setListInvoiceStatus(res.data);
             })
@@ -98,8 +99,8 @@ export default function Invoice() {
             });
     };
 
-    const fetchGetAllInvoices =  () => {
-         getAllInvoice(searchParams, accountId, invoiceStatus)
+    const fetchGetAllInvoices = () => {
+        getAllInvoice(searchParams, accountId, invoiceStatus)
             .then((res) => {
                 setListInvoice(res.data.invoices);
                 setTotalPages(res.data.totalPages);
@@ -115,7 +116,7 @@ export default function Invoice() {
             });
     };
 
-    const fetchGetAllEmployee =  () => {
+    const fetchGetAllEmployee = () => {
         setIsLoading(true);
         getAllEmployees()
             .then((res) => {
@@ -144,7 +145,7 @@ export default function Invoice() {
     };
     return (
         <>
-            <Tittle tittle="Danh sách đơn hàng" />
+            <Title title="Danh sách đơn hàng" />
             <div className="mt-5 bg-white p-5 shadow border">
                 <div className="mt-5 d-flex flex-wrap justify-content-start">
                     {isLoadingStatus ? (

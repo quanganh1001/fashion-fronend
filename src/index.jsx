@@ -9,13 +9,16 @@ import './fontawesome.js';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import ModalProvider from './ContextProvider/ModalProvider.jsx';
+import { HelmetProvider } from 'react-helmet-async';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
-    <ModalProvider>
-        <RouterProvider router={router} />
-        <ToastContainer autoClose={2000} />
-    </ModalProvider>
+    <HelmetProvider>
+        <ModalProvider>
+            <RouterProvider router={router} />
+            <ToastContainer autoClose={2000} />
+        </ModalProvider>
+    </HelmetProvider>
 );
 
 reportWebVitals();

@@ -10,8 +10,8 @@ import {
 } from '../../../Services/ProductService';
 import useModal from '../../../CustomHooks/useModal';
 import { toast } from 'react-toastify';
-import Tittle from '../../Fragments/Tittle';
 import LoadingSpinner from '../../Fragments/LoadingSpinner';
+import Title from '../../Fragments/Title';
 
 export default function ProductAdmin() {
     const [products, setProducts] = useState([]);
@@ -28,21 +28,21 @@ export default function ProductAdmin() {
     }, [searchParams]);
 
     const fetchProducts = () => {
-        setIsLoading(true)
+        setIsLoading(true);
         getAllProducts(searchParams)
             .then((response) => {
-            setProducts(response.data.productsRes);
-            setTotalPages(response.data.totalPages);
-            setCurrentPage(response.data.currentPage);
-            setTotalItems(response.data.totalItems);
-            setIsLoading(false);
-        }).catch((err) => {
-            console.error(err);
-        }).finally(() => {
-            setIsLoading(false);
-        });
-            
-        
+                setProducts(response.data.productsRes);
+                setTotalPages(response.data.totalPages);
+                setCurrentPage(response.data.currentPage);
+                setTotalItems(response.data.totalItems);
+                setIsLoading(false);
+            })
+            .catch((err) => {
+                console.error(err);
+            })
+            .finally(() => {
+                setIsLoading(false);
+            });
     };
 
     const handleDelete = (productId) => {
@@ -65,7 +65,7 @@ export default function ProductAdmin() {
 
     return (
         <>
-            <Tittle tittle="Sản phẩm" />
+            <Title title="Sản phẩm" />
 
             <div className="d-flex flex-wrap my-5 justify-content-between align-items-center">
                 <div className="col">
