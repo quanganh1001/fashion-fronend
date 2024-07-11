@@ -20,12 +20,13 @@ export default function AuthProvider({ children }) {
             if (auth.token && auth.refreshToken) {
                 refreshToken(auth.refreshToken)
                     .then((res) => {
+                        console.log(res.data);
                         setAuth({
-                            token: res.token,
-                            refreshToken: res.refreshToken,
-                            role: res.role,
-                            username: res.username,
+                            token: res.data.token,
+                            refreshToken: res.data.refreshToken,
+                            account: res.data.account
                         });
+                        
                     })
                     .catch((e) => {
                         setAuth({});
