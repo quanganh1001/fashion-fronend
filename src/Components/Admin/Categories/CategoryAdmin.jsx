@@ -9,8 +9,8 @@ import { AlertLink, Dropdown } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 import useModal from '../../../CustomHooks/useModal';
 import { toast } from 'react-toastify';
-import Tittle from '../../Fragments/Tittle';
 import LoadingSpinner from '../../Fragments/LoadingSpinner';
+import Title from '../../Fragments/Title';
 
 export default function Category() {
     const [id, setId] = useState('');
@@ -27,7 +27,7 @@ export default function Category() {
 
     const fetchListCategories = () => {
         setIsLoading(true);
-         getChildCategories(id)
+        getChildCategories(id)
             .then((res) => {
                 setCategories(res.data);
             })
@@ -35,13 +35,13 @@ export default function Category() {
                 console.error(error);
             })
             .finally(() => {
-                setIsLoading(false)
+                setIsLoading(false);
             });
     };
 
     const fetchOldCategory = () => {
         setIsLoading(true);
-         getCategory(id)
+        getCategory(id)
             .then((res) => {
                 setId(res.data.catParent);
                 setOldCatName(res.data.catParentName);
@@ -64,7 +64,8 @@ export default function Category() {
                 })
                 .catch((error) => {
                     toast.error('Không thể xóa!');
-                }).finally(() => {
+                })
+                .finally(() => {
                     setIsLoading(false);
                 });
             closeModal();
@@ -73,7 +74,7 @@ export default function Category() {
 
     return (
         <>
-            <Tittle tittle="Danh mục sản phẩm" />
+            <Title title="Danh mục sản phẩm" />
             <div className="mt-5 bg-white p-5 shadow border">
                 <div>
                     <span className="text-dark link-underline-dark link-underline-opacity-0 link-underline-opacity-100-hover">

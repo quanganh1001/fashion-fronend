@@ -1,4 +1,3 @@
-import Tittle from '../../Fragments/Tittle';
 import { useParams } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import { getInvoice, updateInvoice } from '../../../Services/InvoiceService';
@@ -9,6 +8,7 @@ import { toast } from 'react-toastify';
 import InvoicesDetails from './InvoiceDetail';
 import LoadingSpinner from '../../Fragments/LoadingSpinner';
 import useAuth from '../../../CustomHooks/useAuth';
+import Title from '../../Fragments/Title';
 
 export default function EditInvoiceDetail() {
     const { id } = useParams();
@@ -40,7 +40,7 @@ export default function EditInvoiceDetail() {
     const { auth } = useAuth();
     useEffect(() => {
         fetchGetAllInvoicesStatus();
-        if (auth.account.role === "ROLE_MANAGER") {
+        if (auth.account.role === 'ROLE_MANAGER') {
             fetchGetAllEmployee();
         }
     }, [inputInvoice]);
@@ -50,7 +50,7 @@ export default function EditInvoiceDetail() {
     }, []);
 
     const fetchInvoice = () => {
-        setIsLoadingDetail(true)
+        setIsLoadingDetail(true);
         getInvoice(id)
             .then((res) => {
                 setInputInvoice({
@@ -99,7 +99,7 @@ export default function EditInvoiceDetail() {
         setInputInvoice({ ...inputInvoice, [name]: value });
     };
 
-    const updateForm =  (e) => {
+    const updateForm = (e) => {
         e.preventDefault();
         let isValid = true;
 
@@ -136,8 +136,8 @@ export default function EditInvoiceDetail() {
 
         if (isValid) {
             setIsLoadingButton(true);
-            
-             updateInvoice(id, inputInvoice)
+
+            updateInvoice(id, inputInvoice)
                 .then(() => {
                     fetchInvoice();
                     toast.success('Cập nhập thành công');
@@ -147,7 +147,6 @@ export default function EditInvoiceDetail() {
                 })
                 .finally(() => {
                     setIsLoadingButton(false);
-                    
                 });
         }
     };
@@ -165,7 +164,7 @@ export default function EditInvoiceDetail() {
 
     return (
         <>
-            <Tittle tittle="Chi tiết đơn hàng" />
+            <Title title="Chi tiết đơn hàng" />
             <div className="mt-5 bg-white p-5 shadow border">
                 <div className="col-12 mb-3">
                     {isLoadingInvoice ? (

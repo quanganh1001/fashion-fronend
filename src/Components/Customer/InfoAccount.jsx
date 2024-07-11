@@ -9,6 +9,7 @@ import useAuth from '../../CustomHooks/useAuth';
 import { useNavigate } from 'react-router-dom';
 import LoadingSpinner from '../Fragments/LoadingSpinner';
 import useModal from '../../CustomHooks/useModal';
+import { Helmet } from 'react-helmet-async';
 
 export default function InfoAccount() {
     const { auth } = useAuth();
@@ -215,6 +216,9 @@ export default function InfoAccount() {
     };
     return (
         <>
+            <Helmet>
+                <title>Thông tin tài khoản</title>
+            </Helmet>
             <div className="container-xl" style={{ minHeight: ' 50vh' }}>
                 <div className="d-flex flex-column align-items-center p-5   ">
                     <h2>Cập nhập tài khoản</h2>

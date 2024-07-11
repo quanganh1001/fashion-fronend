@@ -5,8 +5,8 @@ import {
 } from '../../../Services/CategoryService';
 import { toast } from 'react-toastify';
 import { useNavigate } from 'react-router-dom';
-import Tittle from '../../Fragments/Tittle';
 import LoadingSpinner from '../../Fragments/LoadingSpinner';
+import Title from '../../Fragments/Title';
 
 export default function AddCategory() {
     const [category, setCategory] = useState({
@@ -26,16 +26,14 @@ export default function AddCategory() {
         fetchListCategories();
     }, []);
 
-    const fetchListCategories =  () => {
-         getAllCategories()
+    const fetchListCategories = () => {
+        getAllCategories()
             .then((res) => {
                 setListCategories(res.data);
             })
             .catch((error) => {
                 console.error('Error fetching list categories:', error);
-            })
-
-            ;
+            });
     };
 
     const handleInputChange = (e) => {
@@ -63,7 +61,7 @@ export default function AddCategory() {
 
         if (isValid) {
             setIsLoading(true);
-             createCategory(category)
+            createCategory(category)
                 .then(() => {
                     navigator('/admin/categories');
                     toast.success('Thêm mới thành công');
@@ -82,7 +80,7 @@ export default function AddCategory() {
 
     return (
         <>
-            <Tittle tittle="Thêm mới danh mục" />
+            <Title tittle="Thêm mới danh mục" />
             <div className="mt-5 bg-white p-5 shadow border">
                 <form onSubmit={addCategoryForm}>
                     <div className="row">
@@ -153,8 +151,7 @@ export default function AddCategory() {
                             >
                                 Thêm danh mục
                             </button>
-                            {isLoading &&
-                                <LoadingSpinner />}
+                            {isLoading && <LoadingSpinner />}
                         </div>
                     </div>
                 </form>

@@ -4,8 +4,8 @@ import { createProduct } from '../../../Services/ProductService';
 import { toast } from 'react-toastify';
 import { useNavigate } from 'react-router-dom';
 import { getImagesSize } from '../../../Services/EnumService';
-import Tittle from '../../Fragments/Tittle';
 import LoadingSpinner from '../../Fragments/LoadingSpinner';
+import Title from '../../Fragments/Title';
 
 export default function AddProduct() {
     const [product, setProduct] = useState({
@@ -35,8 +35,8 @@ export default function AddProduct() {
         fetchImgSize();
     }, []);
 
-    const fetchImgSize =  () => {
-         getImagesSize()
+    const fetchImgSize = () => {
+        getImagesSize()
             .then((res) => {
                 setImgSizeOptions(res.data);
             })
@@ -45,8 +45,8 @@ export default function AddProduct() {
             });
     };
 
-    const fetchListCategories =  () => {
-         getAllCategories()
+    const fetchListCategories = () => {
+        getAllCategories()
             .then((res) => {
                 setListCategories(res.data);
             })
@@ -124,7 +124,8 @@ export default function AddProduct() {
                 .then(() => {
                     navigator('/admin/products');
                     toast.success('Thêm mới thành công');
-                }).catch((error) => {
+                })
+                .catch((error) => {
                     if (error.response.status === 409) {
                         setCodeError('Mã sản phẩm đã tồn tại');
                         toast.error('Mã sản phẩm đã tồn tại');
@@ -138,7 +139,7 @@ export default function AddProduct() {
 
     return (
         <>
-            <Tittle tittle="Thêm mới sản phẩm" />
+            <Title title="Thêm mới sản phẩm" />
             <div className="mt-5 bg-white p-5 shadow border">
                 <form onSubmit={addProductForm}>
                     <div className="row">

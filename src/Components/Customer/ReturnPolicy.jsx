@@ -1,7 +1,12 @@
+import { Helmet } from "react-helmet-async";
+
 export default function ReturnPolicy() {
     return (
         <>
             <div className="content-pageDetail typeList-style m-5">
+                <Helmet>
+                    <title>Chính sách đổi trả</title>
+                </Helmet>
                 <p>
                     <strong>1. CHÍNH SÁCH ÁP DỤNG</strong>
                 </p>

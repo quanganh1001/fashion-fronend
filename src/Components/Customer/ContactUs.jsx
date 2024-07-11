@@ -2,6 +2,7 @@ import { useState } from "react";
 import { toast } from "react-toastify";
 import { sendFeedback } from "../../Services/FeedbackCustomerService";
 import LoadingSpinner from "../Fragments/LoadingSpinner";
+import { Helmet } from "react-helmet-async";
 
 export default function ContactUs() {
     const [feedbackCustomer, setFeedbackCustomer] = useState({
@@ -69,6 +70,9 @@ export default function ContactUs() {
     }
     return (
         <div className="my-5 container-xxl">
+            <Helmet>
+                <title>Liên hệ</title>
+            </Helmet>
             <iframe
                 src="https://www.google.com/maps/embed?pb=!1m14!1m8!1m3!1d931.1916877513049!2d105.823826!3d21.001985!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3135ac7d05b63945%3A0x619ab89bd0e306a5!2zMzEzIMSQLiBUcsaw4budbmcgQ2hpbmgsIEtoxrDGoW5nIE1haSwgxJDhu5FuZyDEkGEsIEjDoCBO4buZaSwgVmnhu4d0IE5hbQ!5e0!3m2!1svi!2sus!4v1708009163623!5m2!1svi!2sus"
                 width="100%"

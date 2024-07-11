@@ -6,6 +6,7 @@ import {
 } from '../../../Services/ProductDetailService';
 import { toast } from 'react-toastify';
 import LoadingSpinner from '../../Fragments/LoadingSpinner';
+import Title from '../../Fragments/Title';
 
 export default function EditProductDetail() {
     const { id, pdid } = useParams();
@@ -111,7 +112,7 @@ export default function EditProductDetail() {
 
     return (
         <>
-            <h1>Sửa mã phân loại</h1>
+            <Title title="Sửa mã phân loại"/>
             <hr />
             <div className="mt-5 bg-white p-5 shadow border">
                 {isLoadingDetail ? (

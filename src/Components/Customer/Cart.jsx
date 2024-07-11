@@ -6,6 +6,7 @@ import { checkoutCash, checkoutVnpay } from '../../Services/InvoiceService';
 import { toast } from 'react-toastify';
 import useModal from '../../CustomHooks/useModal';
 import LoadingSpinner from '../Fragments/LoadingSpinner';
+import { Helmet } from 'react-helmet-async';
 
 export default function Cart() {
     const {
@@ -139,6 +140,9 @@ export default function Cart() {
                     overflow-y: auto;
                 }
             `}</style>
+            <Helmet>
+                <title>Giỏ hàng</title>
+            </Helmet>
             <div
                 className="col-12 d-flex flex-wrap justify-content-between container-xl mb-5"
                 style={{ minHeight: '30vh' }}
@@ -340,7 +344,6 @@ export default function Cart() {
                             </>
                         )}
                     </div>
-                    
 
                     {cart?.length > 0 && (
                         <div className="align-self-top col-4 p-2">
@@ -514,7 +517,7 @@ export default function Cart() {
                                     ></textarea>
                                 </div>
                                 <button
-                                    disabled={isLoading||isLoadingCart}
+                                    disabled={isLoading || isLoadingCart}
                                     className="mt-3 col-4 button"
                                     type="submit"
                                 >

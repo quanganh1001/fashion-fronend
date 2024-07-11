@@ -1,7 +1,9 @@
+import Title from "../Fragments/Title";
+
 const HomeAdmin = () => {
     return (
         <>
-            <h1>Wellcome</h1>
+            <Title title="Welcome"/>
             <hr />
         </>
     );

@@ -1,5 +1,4 @@
 import { useEffect, useState } from 'react';
-import Tittle from '../../Fragments/Tittle';
 import {
     activation,
     deleteAccount,
@@ -17,6 +16,7 @@ import CustomPagination from '../../Fragments/CustomPagination';
 import usePagination from '../../../CustomHooks/usePagination';
 import { resetPass } from '../../../Services/Auth';
 import LoadingSpinner from '../../Fragments/LoadingSpinner';
+import Title from '../../Fragments/Title';
 
 export default function Account() {
     const [listAccount, setListAccount] = useState([]);
@@ -63,8 +63,8 @@ export default function Account() {
                     </select>
                 </>,
                 () => {
-                     setIsLoading(true);
-                     updateRole(newIdRole.id, newIdRole.role)
+                    setIsLoading(true);
+                    updateRole(newIdRole.id, newIdRole.role)
                         .then((res) => {
                             toast.success('Cập nhật quyền thành công!');
                             fetchGetAllAccount();
@@ -72,8 +72,9 @@ export default function Account() {
                         .catch((error) => {
                             console.error(error);
                             toast.error('Có lỗi xảy ra!');
-                        }).finally(() => {
-                           setIsLoading(false) 
+                        })
+                        .finally(() => {
+                            setIsLoading(false);
                         });
                     closeModal();
                 }
@@ -87,7 +88,7 @@ export default function Account() {
                 'Cấp lại mật khẩu',
                 `Bạn có chắc muốn cấp lại mật khẩu cho tải khoản này qua email ?`,
                 () => {
-                    setIsLoading(true)
+                    setIsLoading(true);
                     resetPass(newResetByEmail)
                         .then((res) => {
                             console.log(res);
@@ -107,35 +108,40 @@ export default function Account() {
         }
     }, [newResetByEmail]);
 
-    const fetchGetAllAccount =  () => {
-         getAllAccount(searchParams).then((res) => {
-            setListAccount(res.data.accountsRes);
-            setTotalPages(res.data.totalPages);
-            setCurrentPage(res.data.currentPage);
-            setTotalItems(res.data.totalItems);
-        }).catch((err) => {
-            console.error(err);
-        }).finally(() => {
-            setIsLoading(false)
-        });
+    const fetchGetAllAccount = () => {
+        getAllAccount(searchParams)
+            .then((res) => {
+                setListAccount(res.data.accountsRes);
+                setTotalPages(res.data.totalPages);
+                setCurrentPage(res.data.currentPage);
+                setTotalItems(res.data.totalItems);
+            })
+            .catch((err) => {
+                console.error(err);
+            })
+            .finally(() => {
+                setIsLoading(false);
+            });
     };
 
     const fetchGetAllRoles = () => {
-         getAllRoles().then((res) => {
-            setListRoles(res.data);
-         }).catch((err) => {
-            console.error(err);
-        });
+        getAllRoles()
+            .then((res) => {
+                setListRoles(res.data);
+            })
+            .catch((err) => {
+                console.error(err);
+            });
     };
 
-    const handleActivation =  (id, isActivated) => {
+    const handleActivation = (id, isActivated) => {
         openModal(
             isActivated ? 'Hủy kích hoạt?' : 'Kích hoạt?',
             'Bạn có chắc muốn' +
                 (isActivated ? ' hủy kích hoạt' : 'kích hoạt') +
                 ' tài khoản này?',
             () => {
-                setIsLoading(true)
+                setIsLoading(true);
                 activation(id)
                     .then((res) => {
                         fetchGetAllAccount();
@@ -143,7 +149,7 @@ export default function Account() {
                     .catch((error) => {
                         console.error(error);
                         toast.error('Có lỗi xảy ra!');
-                    })
+                    });
 
                 closeModal();
             }
@@ -169,11 +175,11 @@ export default function Account() {
         );
     };
 
-    const handleShowModalRole =  (id, role) => {
+    const handleShowModalRole = (id, role) => {
         setNewIdRole({ id, role });
     };
 
-    const handleResetPass =  (email) => {
+    const handleResetPass = (email) => {
         setNewResetByEmail(email);
     };
 
@@ -202,7 +208,7 @@ export default function Account() {
     };
     return (
         <>
-            <Tittle tittle="Quản lý tài khoản" />
+            <Title title="Quản lý tài khoản" />
 
             <div className="d-flex justify-content-between align-items-center mt-5">
                 <Link to="/admin/accounts/add">
