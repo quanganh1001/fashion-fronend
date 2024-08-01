@@ -68,8 +68,8 @@ export default function CustomerEmail() {
 
     return (
         <>
+            <Title title="Gửi email tới toàn bộ khách hàng" />
             <div className="content-admin p-4">
-                <Title title="Gửi email tới toàn bộ khách hàng"/>
                 <div className="mt-5 bg-white p-5 shadow border">
                     <div className="mb-3">Nhập nội dung:</div>
                     <label className="col-5 mb-3">
@@ -95,7 +95,6 @@ export default function CustomerEmail() {
                     </label>
 
                     <button
-                        
                         className="button"
                         onClick={handleSendEmail}
                         disabled={isButtonDisabled || isLoading}
