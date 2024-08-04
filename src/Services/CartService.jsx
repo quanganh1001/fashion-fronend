@@ -4,8 +4,8 @@ export const getCart = ()=> {
     return apiPrivate.get('/carts/get')
 }
 
-export const addCart = (productDetailId,quantity) => {
-    return apiPrivate.post('/carts/add', null, {
+export const addCart = async (productDetailId,quantity) => {
+    return  await apiPrivate.post('/carts/add', null, {
         params: {
             productDetailId: productDetailId,
             quantity: quantity,

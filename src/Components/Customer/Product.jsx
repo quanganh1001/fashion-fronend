@@ -55,8 +55,8 @@ export default function Product() {
         }
     }, [size]);
 
-    const fetchListImage =  () => {
-         getAllImageProducts(id)
+    const fetchListImage = () => {
+        getAllImageProducts(id)
             .then((res) => {
                 setListImage(res.data);
             })
@@ -65,8 +65,8 @@ export default function Product() {
             });
     };
 
-    const fetchProduct =  () => {
-         getProduct(id)
+    const fetchProduct = () => {
+        getProduct(id)
             .then((res) => {
                 const uniqueSizes = [
                     ...new Set(
@@ -87,8 +87,9 @@ export default function Product() {
             })
             .catch((err) => {
                 console.error(err);
-            }).finally(() => {
-                setIsLoadingProduct(false)
+            })
+            .finally(() => {
+                setIsLoadingProduct(false);
             });
     };
 
@@ -110,32 +111,25 @@ export default function Product() {
     };
 
     const handleShowImageChooseSize = (imgUrl) => {
-        
-        getUrlImgEnum(imgUrl).then((res) => {           
-             openModal(
-                 'Hướng dẫn chọn size',
-                 <img src={res.data} alt="Chọn size" width="100%" />,
-                 true,
-                 () => {}
-             );
-        }).catch((err) => {
-            console.error(err)
-        });
-
-       
+        getUrlImgEnum(imgUrl)
+            .then((res) => {
+                openModal(
+                    'Hướng dẫn chọn size',
+                    <img src={res.data} alt="Chọn size" width="100%" />,
+                    true,
+                    () => {}
+                );
+            })
+            .catch((err) => {
+                console.error(err);
+            });
     };
 
     const handleAddToCart = () => {
-        try {
-            if (auth.token) {
-                handleAddCartWithAuth(selectProductDetail.id, inputQuantity);
-            } else {
-                handleAddCart(selectProductDetail, inputQuantity);
-            }
-
-            toast.success('Thêm vào giỏ hàng thành công');
-        } catch {
-            toast.error('Có lỗi xảy ra!');
+        if (auth.token) {
+             handleAddCartWithAuth(selectProductDetail.id, inputQuantity);
+        } else {
+            handleAddCart(selectProductDetail, inputQuantity);
         }
     };
 

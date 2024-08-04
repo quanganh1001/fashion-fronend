@@ -54,6 +54,18 @@ export const checkoutVnpay =  (checkoutDto) => {
     return  apiPublic.post('/invoices/checkout', checkoutDto);
 };
 
-export const checkoutCash =  (checkoutDto) => {
-    return  apiPublic.post('/invoices/checkoutByCash', checkoutDto);
+export const checkoutVnpayWithAuth = (checkoutDto) => {
+    return apiPrivate.post('/invoices/checkout', checkoutDto);
 };
+
+export const checkoutCash = (checkoutDto) => {
+    return apiPublic.post('/invoices/checkoutByCash', checkoutDto);
+};
+
+export const checkoutCashWithAuth = (checkoutDto) => {
+    return apiPrivate.post('/invoices/checkoutByCash', checkoutDto);
+};
+
+export const getAllHistory = (id) => {
+    return apiPrivate.get('/invoices/history/' + id)
+}

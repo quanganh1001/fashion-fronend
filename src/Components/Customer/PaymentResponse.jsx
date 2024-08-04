@@ -23,9 +23,9 @@ export default function PaymentResponse() {
             <div className="d-flex my-5 flex-column align-items-center">
                 {success === '1' ? (
                     <>
-                        <div>
+                        <div className='col-2'>
                             <img
-                                style={{ with: '100%' }}
+                                className="col-12"
                                 src={
                                     process.env.PUBLIC_URL +
                                     '/success-icon-10-300x300.png'

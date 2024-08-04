@@ -151,6 +151,9 @@ export default function InfoAccount() {
         } else if (isNaN(accountUpdateDto.phone)) {
             isValid = false;
             setPhoneError('Số điện thoại không hợp lệ');
+        } else if (accountUpdateDto.phone.length !== 10) {
+            isValid = false;
+            setPhoneError('Số điện thoại phải có 10 ký tự');
         } else {
             setPhoneError('');
         }

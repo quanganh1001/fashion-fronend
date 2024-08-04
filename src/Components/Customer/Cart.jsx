@@ -2,7 +2,12 @@ import { useEffect, useState } from 'react';
 import useCart from '../../CustomHooks/useCart';
 import useAuth from '../../CustomHooks/useAuth';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { checkoutCash, checkoutVnpay } from '../../Services/InvoiceService';
+import {
+    checkoutCash,
+    checkoutCashWithAuth,
+    checkoutVnpay,
+    checkoutVnpayWithAuth,
+} from '../../Services/InvoiceService';
 import { toast } from 'react-toastify';
 import useModal from '../../CustomHooks/useModal';
 import LoadingSpinner from '../Fragments/LoadingSpinner';
@@ -87,6 +92,9 @@ export default function Cart() {
         } else if (isNaN(customerInfo.phone)) {
             isValid = false;
             setPhoneError('Số điện thoại không hợp lệ');
+        } else if (customerInfo.phone.length !== 10) {
+            isValid = false;
+            setPhoneError('Số điện thoại phải có 10 ký tự');
         } else {
             setPhoneError('');
         }
@@ -97,12 +105,10 @@ export default function Cart() {
         } else setAddressError('');
 
         if (isValid) {
-            openModal(
-                'Xác nhận',
-                <>Bạn có chắc chắn muốn đặt hàng?</>,
-                 () => {
-                    setIsLoading(true)
-                    if (selectPay === 'vnpay') {
+            openModal('Xác nhận', <>Bạn có chắc chắn muốn đặt hàng?</>, () => {
+                setIsLoading(true);
+                if (selectPay === 'vnpay') {
+                    if (!auth || auth === '') {
                         checkoutVnpay(customerInfo)
                             .then((res) => {
                                 window.location.href = res.data;
@@ -110,10 +116,41 @@ export default function Cart() {
                             .catch((error) => {
                                 toast.error(error);
                                 console.error(error);
-                            }).finally(() => {
-                                setIsLoading(false)
+                            })
+                            .finally(() => {
+                                setIsLoading(false);
                             });
                     } else {
+                        checkoutVnpayWithAuth(customerInfo)
+                            .then((res) => {
+                                window.location.href = res.data;
+                            })
+                            .catch((error) => {
+                                toast.error(error);
+                                console.error(error);
+                            })
+                            .finally(() => {
+                                setIsLoading(false);
+                            });
+                    }
+                } else {
+                    
+                    if (auth && auth.account) {
+                        
+                        checkoutCashWithAuth(customerInfo)
+                            .then((res) => {
+                                window.location.href = res.data;
+                            })
+                            .catch((err) => {
+                                toast.error(err);
+                                console.error(err);
+                            })
+                            .finally(() => {
+                                setIsLoading(false);
+                            });
+                        
+                    } else {
+                        console.log(auth);
                         checkoutCash(customerInfo)
                             .then((res) => {
                                 window.location.href = res.data;
@@ -126,9 +163,9 @@ export default function Cart() {
                                 setIsLoading(false);
                             });
                     }
-                    closeModal();
                 }
-            );
+                closeModal();
+            });
         }
     };
 

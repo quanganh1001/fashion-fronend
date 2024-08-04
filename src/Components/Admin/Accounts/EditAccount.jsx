@@ -161,6 +161,9 @@ export default function EditAccount() {
         } else if (isNaN(account.phone)) {
             isValid = false;
             setPhoneError('Số điện thoại không hợp lệ');
+        } else if (account.phone.length !== 10) {
+            isValid = false;
+            setPhoneError('Số điện thoại phải có 10 ký tự');
         } else {
             setPhoneError('');
         }

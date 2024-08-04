@@ -182,17 +182,19 @@ export default function CartProvider({ children }) {
 
         setCart(cartArray);
         localStorage.setItem('cart', JSON.stringify(cartItems));
+        toast.success('Thêm vào giỏ hàng thành công');
     };
 
-    const handleAddCartWithAuth = (id, quantity) => {
+    const handleAddCartWithAuth =  (id, quantity) => {
         setIsLoadingCart(true)
-        addCart(id, quantity)
+         addCart(id, quantity)
             .then((res) => {
                 setCart(res.data);
+                toast.success('Thêm vào giỏ hàng thành công');
             })
-            .catch((error) => {
+            .catch( (error) => {
                 console.error(error);
-                toast.error(error);
+                toast.error("Vui lòng đăng nhập lại");
             })
             .finally(() => {
                 setIsLoadingCart(false);

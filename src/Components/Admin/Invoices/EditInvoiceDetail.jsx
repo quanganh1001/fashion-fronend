@@ -1,6 +1,6 @@
 import { useParams } from 'react-router-dom';
 import { useEffect, useState } from 'react';
-import { getInvoice, updateInvoice } from '../../../Services/InvoiceService';
+import { getAllHistory, getInvoice, updateInvoice } from '../../../Services/InvoiceService';
 import { parseISO, format } from 'date-fns';
 import { getAllInvoiceStatus } from '../../../Services/EnumService';
 import { getAllEmployees } from '../../../Services/AccountService';
@@ -9,9 +9,12 @@ import InvoicesDetails from './InvoiceDetail';
 import LoadingSpinner from '../../Fragments/LoadingSpinner';
 import useAuth from '../../../CustomHooks/useAuth';
 import Title from '../../Fragments/Title';
+import useModal from '../../../CustomHooks/useModal';
 
 export default function EditInvoiceDetail() {
     const { id } = useParams();
+
+    const { openModal, closeModal } = useModal();
 
     const [inputInvoice, setInputInvoice] = useState({
         name: '',
@@ -116,6 +119,9 @@ export default function EditInvoiceDetail() {
         } else if (isNaN(inputInvoice.phone)) {
             isValid = false;
             setPhoneError('Số điện thoại không đúng');
+        } else if (inputInvoice.phone.length !== 10) {
+            isValid = false;
+            setPhoneError('Số điện thoại phải có 10 ký tự');
         } else {
             setPhoneError('');
         }
@@ -161,6 +167,45 @@ export default function EditInvoiceDetail() {
             return true;
         } else return false;
     };
+
+    const getHistory = () => {
+        getAllHistory(id)
+            .then((res) => {
+                openModal(
+                    'Lịch sử đơn hàng',
+                    res.data.length > 0 ? (
+                        <ul>
+                            {res.data.map((h) => (
+                                <li key={h.content}>
+                                    {' '}
+                                    <span
+                                        dangerouslySetInnerHTML={{
+                                            __html: h.content,
+                                        }}
+                                    ></span>
+                                    <div className="fw-lighter fs-9 mb-4">
+                                        {h.createAt}
+                                    </div>
+                                </li>
+                            ))}
+                        </ul>
+                    ) : (
+                        <div>Chưa có thông tin</div>
+                    ),
+                    true,
+                    () => {}
+                );
+            })
+            .catch((err) => {
+                console.error(err);
+            });
+    }
+    
+    
+    const showHistory = () =>{
+        getHistory();
+        closeModal()
+    }
 
     return (
         <>
@@ -349,10 +394,13 @@ export default function EditInvoiceDetail() {
                                 <label className="form-label">
                                     Ghi chú của khách hàng: {'  '}
                                 </label>
-
-                                <span className="bg-warning">
-                                    {invoice.customerNote}
-                                </span>
+                                <textarea
+                                    disabled
+                                    value={invoice.customerNote}
+                                    className="form-control"
+                                    rows="4"
+                                    cols="50"
+                                ></textarea>
                             </div>
 
                             <div className="mb-3 col-6">
@@ -397,19 +445,26 @@ export default function EditInvoiceDetail() {
                                 )}
                             </div>
 
-                            <button
-                                disabled={isLoadingButton}
-                                style={{ textAlign: 'center' }}
-                                type="submit"
-                                className="mt-3 button col-4"
-                            >
-                                Cập nhập đơn hàng
-                            </button>
-                            {isLoadingButton && <LoadingSpinner />}
+                            <div className="d-flex justify-content-between">
+                                <button
+                                    disabled={isLoadingButton}
+                                    style={{ textAlign: 'center' }}
+                                    type="submit"
+                                    className="mt-3 button col-4"
+                                >
+                                    Cập nhập đơn hàng
+                                </button>
+                                {isLoadingButton && <LoadingSpinner />}
+                                    <div
+                                        onClick={() => showHistory()}
+                                        className=' text-decoration-underline'
+                                        style={{cursor:'pointer'}}>Xem lịch sử đơn hàng</div>
+                            </div>
                         </form>
                     )}
                 </div>
             </div>
+
             <div className="col-12">
                 {isLoadingDetail ? (
                     <LoadingSpinner />

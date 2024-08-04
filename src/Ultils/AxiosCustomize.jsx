@@ -1,5 +1,6 @@
 import axios from 'axios';
 import { getAuth } from '../Services/Auth';
+import { useLocation } from 'react-router-dom';
 
 const apiPrivate = axios.create({
     baseURL: 'http://localhost:8080/',
@@ -17,7 +18,7 @@ apiPrivate.interceptors.request.use(
         const { token } = getAuth();
         if (token) {
             config.headers['Authorization'] = `Bearer ${token}`;
-        }
+        } 
 
         return config;
     },
@@ -35,8 +36,11 @@ apiPrivate.interceptors.response.use(
             error.response &&
             (error.response.status === 403 || error.response.status === 401)
         ) {
-            console.error(error);
-            // window.location.href = '/error/403';
+            
+            if (window.location.pathname !== '/error/403') {
+                window.location.href = '/error/403';
+            }
+
         }
         if (
             error.response &&

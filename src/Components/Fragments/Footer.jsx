@@ -265,9 +265,7 @@ export default function Footer() {
                             <button
                                 onClick={handleRegisterEmail}
                                 disabled={isLoading}
-                                className="button"
-                                id="btn-send-mail"
-                            >
+                                className="button"                            >
                                 Đăng ký
                             </button>
                         </div>
