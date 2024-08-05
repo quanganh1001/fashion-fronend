@@ -12,8 +12,7 @@ import Slider from 'react-slick';
 import 'slick-carousel/slick/slick.css';
 import 'slick-carousel/slick/slick-theme.css';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { getAllProductByCategory } from '../../Services/ProductService';
-import useAuth from '../../CustomHooks/useAuth';
+import { getAllProductByCategory, getSelectedListProducts } from '../../Services/ProductService';
 import { Helmet } from 'react-helmet-async';
 
 export default function Home() {
@@ -21,12 +20,27 @@ export default function Home() {
     const [animating, setAnimating] = useState(false);
     const [listCategoriesF2, setListCategoriesF2] = useState([]);
     const [listProductsSale, setListProductSale] = useState([]);
+    const [listProducts, setListProducts] = useState([]);
+    const [isSelected, setIsSelected] = useState('best'); 
 
     useEffect(() => {
         fetchCategories();
         fetchProductSale();
-
     }, []);
+
+    useEffect(() => {
+        fetchGetSelectedListProducts();
+    },[isSelected])
+
+    const fetchGetSelectedListProducts = () => {
+        getSelectedListProducts(isSelected)
+            .then((res) => {
+                setListProducts(res.data);
+            })
+            .catch((error) => {
+                console.error(error);
+            });
+    };
 
     const fetchProductSale =  () => {
          getAllProductByCategory(0).then((res) => {
@@ -65,6 +79,7 @@ export default function Home() {
         'https://res.cloudinary.com/dmmvhjl0m/image/upload/v1711885307/tzbdiicr7ds9ncao7jxj.webp',
         'https://res.cloudinary.com/dmmvhjl0m/image/upload/v1711885309/k6eyr9bcnhwppvvmshq2.webp',
     ];
+
 
     const next = () => {
         if (animating) return;
@@ -166,7 +181,33 @@ export default function Home() {
                 .btn-sale:hover{
                     background-color: black!important;
                     color: white;
-}
+                }
+                
+                .nav-item .nav-link {
+                    position: relative;
+                    text-decoration: none;
+                    transition: color 0.3s, font-weight 0.3s;
+                }   
+
+                .nav-item .nav-link:hover {
+                    color: black;
+                    font-weight: bold;
+                }
+
+                .nav-item .underline {
+                    content: '';
+                    position: absolute;
+                    left: 0;
+                    bottom: -1px;
+                    width: 0;
+                    height: 2px;
+                    background-color: black;
+                    transition: width 0.3s;
+                }
+
+                .nav-item:hover .underline {
+                    width: 100%;
+                }
                 `}
             </style>
 
@@ -292,8 +333,11 @@ export default function Home() {
                                     </Link>
                                 </div>
 
-                                <div className="card-body px-2 pb-3 bg-white">
-                                    <div className="d-flex justify-content-between">
+                                <div
+                                    className="card-body px-2 pb-3 bg-white"
+                                    style={{ minHeight: '20vh' }}
+                                >
+                                    <div className="d-flex justify-content-between p-2">
                                         <span
                                             className="fw-light"
                                             style={{ fontSize: '14px' }}
@@ -307,13 +351,14 @@ export default function Home() {
                                             +{product.totalSize} Kích thước
                                         </span>
                                     </div>
-                                    <h5 className="card-title fs-5 my-2">
+                                    <h5 className="card-title fs-6">
                                         {product.productName}
                                     </h5>
 
                                     {product.discountPrice !== null ? (
                                         <div>
                                             <span
+                                                className="me-2"
                                                 style={{
                                                     textDecorationLine:
                                                         'line-through',
@@ -328,7 +373,6 @@ export default function Home() {
                                                 )}
                                             </span>
                                             <span
-                                                className="ms-2"
                                                 style={{
                                                     color: 'red',
                                                     fontWeight: 'bold',
@@ -382,6 +426,244 @@ export default function Home() {
                     </div>
                 </div>
             </section>
+
+            <section className="pt-5">
+                <div className="container text-center">
+                    <nav className="nav justify-content-center">
+                        <div className="nav-item position-relative mx-2">
+                            <p
+                                onClick={() => setIsSelected('best')}
+                                className="nav-link text-muted fs-4 "
+                                style={
+                                    isSelected === 'best'
+                                        ? {
+                                              color: 'black',
+                                              fontWeight: 'bold',
+                                              cursor: 'pointer',
+                                          }
+                                        : { cursor: 'pointer' }
+                                }
+                            >
+                                SẢN PHẨM BÁN CHẠY
+                            </p>
+                            <div
+                                className="underline"
+                                style={
+                                    isSelected === 'best'
+                                        ? {
+                                              width: '100%',
+                                          }
+                                        : {}
+                                }
+                            ></div>
+                        </div>
+                        <div className="nav-item position-relative mx-2">
+                            <p
+                                onClick={() => setIsSelected('polo')}
+                                className="nav-link text-muted fs-4 "
+                                style={
+                                    isSelected === 'polo'
+                                        ? {
+                                              color: 'black',
+                                              fontWeight: 'bold',
+                                              cursor: 'pointer',
+                                          }
+                                        : { cursor: 'pointer' }
+                                }
+                            >
+                                ÁO POLO
+                            </p>
+                            <div
+                                className="underline"
+                                style={
+                                    isSelected === 'polo'
+                                        ? {
+                                              width: '100%',
+                                          }
+                                        : {}
+                                }
+                            ></div>
+                        </div>
+                        <div className="nav-item position-relative mx-2">
+                            <p
+                                onClick={() => setIsSelected('pants')}
+                                className="nav-link text-muted fs-4 "
+                                style={
+                                    isSelected === 'pants'
+                                        ? {
+                                              color: 'black',
+                                              fontWeight: 'bold',
+                                              cursor: 'pointer',
+                                          }
+                                        : { cursor: 'pointer' }
+                                }
+                            >
+                                QUẦN ÂU
+                            </p>
+                            <div
+                                className="underline"
+                                style={
+                                    isSelected === 'pants'
+                                        ? {
+                                              width: '100%',
+                                          }
+                                        : {}
+                                }
+                            ></div>
+                        </div>
+                        <div className="nav-item position-relative mx-2">
+                            <p
+                                onClick={() => setIsSelected('shirt')}
+                                className="nav-link text-muted fs-4 "
+                                style={
+                                    isSelected === 'shirt'
+                                        ? {
+                                              color: 'black',
+                                              fontWeight: 'bold',
+                                              cursor: 'pointer',
+                                          }
+                                        : { cursor: 'pointer' }
+                                }
+                            >
+                                ÁO SƠ MI
+                            </p>
+                            <div
+                                className="underline"
+                                style={
+                                    isSelected === 'shirt'
+                                        ? {
+                                              width: '100%',
+                                          }
+                                        : {}
+                                }
+                            ></div>
+                        </div>
+                    </nav>
+                </div>
+                <div className="pt-5 d-flex flex-wrap justify-content-center">
+                    {listProducts.map((product) => (
+                        <div className="col-2 m-2" key={product.id}>
+                            <div className=" card position-relative">
+                                {product.discountPercent != null && (
+                                    <div
+                                        style={{
+                                            zIndex: '2',
+                                            backgroundColor: 'red',
+                                            width: '50px',
+                                        }}
+                                        className="position-absolute top-0 start-0 text-white rounded-pill m-2 fw-bold d-flex justify-content-center"
+                                    >
+                                        -{product.discountPercent}%
+                                    </div>
+                                )}
+
+                                {product.imageBackground &&
+                                product.imageBackground.endsWith('.mp4') ? (
+                                    <video
+                                        style={{
+                                            height: '270px',
+                                            width: '100%',
+                                        }}
+                                        controls
+                                        autoplay
+                                        muted
+                                        src={product.imageBackground}
+                                    ></video>
+                                ) : (
+                                    <img
+                                        src={product.imageBackground}
+                                        alt="..."
+                                        style={{
+                                            height: '270px',
+                                            width: '100%',
+                                        }}
+                                    />
+                                )}
+
+                                <Link
+                                    to={'/product/' + product.id}
+                                    style={{ width: '80%' }}
+                                    className="add-to-cart-btn position-absolute button border-white shadow fw-bold"
+                                >
+                                    Chi tiết sản phẩm
+                                </Link>
+                            </div>
+
+                            <div className="card-body px-2 pb-3 bg-white">
+                                <div className="d-flex justify-content-between">
+                                    <span
+                                        className="fw-light"
+                                        style={{ fontSize: '14px' }}
+                                    >
+                                        +{product.totalColor} Màu sắc
+                                    </span>
+                                    <span
+                                        className="fw-light"
+                                        style={{ fontSize: '14px' }}
+                                    >
+                                        +{product.totalSize} Kích thước
+                                    </span>
+                                </div>
+                                <h5 className="card-title fs-6 my-2">
+                                    {product.productName}
+                                </h5>
+
+                                {product.discountPrice !== null ? (
+                                    <div>
+                                        <span
+                                            style={{
+                                                textDecorationLine:
+                                                    'line-through',
+                                            }}
+                                        >
+                                            {product.price.toLocaleString(
+                                                'vi-VN',
+                                                {
+                                                    style: 'currency',
+                                                    currency: 'VND',
+                                                }
+                                            )}
+                                        </span>
+                                        <span
+                                            className="ms-2"
+                                            style={{
+                                                color: 'red',
+                                                fontWeight: 'bold',
+                                            }}
+                                        >
+                                            {product.discountPrice.toLocaleString(
+                                                'vi-VN',
+                                                {
+                                                    style: 'currency',
+                                                    currency: 'VND',
+                                                }
+                                            )}
+                                        </span>
+                                    </div>
+                                ) : (
+                                    <div>
+                                        <span
+                                            style={{
+                                                color: 'red',
+                                                fontWeight: 'bold',
+                                            }}
+                                        >
+                                            {product.price.toLocaleString(
+                                                'vi-VN',
+                                                {
+                                                    style: 'currency',
+                                                    currency: 'VND',
+                                                }
+                                            )}
+                                        </span>
+                                    </div>
+                                )}
+                            </div>
+                        </div>
+                    ))}
+                </div>
+            </section>
+            <hr />
 
             <section className="py-5">
                 <div className="container-xxl">

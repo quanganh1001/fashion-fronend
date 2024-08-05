@@ -66,3 +66,10 @@ export const getAllProductByCategory =  (catId, key) => {
     });
 };
 
+export const getSelectedListProducts = (selected) => {
+    return apiPublic.get(`products/selectListProducts`, {
+        params: {
+            selected: selected,
+        },
+    });
+};
