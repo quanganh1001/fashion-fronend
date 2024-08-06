@@ -1,5 +1,8 @@
 import { useState, useEffect } from 'react';
-import { getProduct, updateProduct } from '../../../Services/ProductService';
+import {
+    getProductForAdminPage,
+    updateProduct,
+} from '../../../Services/ProductService';
 import { toast } from 'react-toastify';
 import { useNavigate, useParams, Link } from 'react-router-dom';
 import {
@@ -58,7 +61,7 @@ export default function EditProduct() {
             });
     };
     const fetchProduct = async () => {
-        await getProduct(id)
+        await getProductForAdminPage(id)
             .then((res) => {
                 setProduct({
                     productCode: res.data.productCode,

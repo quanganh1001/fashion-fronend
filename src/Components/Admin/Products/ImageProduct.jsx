@@ -5,7 +5,7 @@ import useModal from '../../../CustomHooks/useModal';
 import {
     createImage,
     getAllImageProducts,
-    getProduct,
+    getProductForAdminPage,
     updateImageBackground,
 } from '../../../Services/ProductService';
 import { deleteImage } from '../../../Services/ImageProductService';
@@ -41,7 +41,7 @@ export default function ImageProduct() {
     };
 
     const fetchImageBackground = () => {
-        getProduct(id)
+        getProductForAdminPage(id)
             .then((res) => {
                 console.log(res);
                 setImageBackground(res.data.imageBackground);

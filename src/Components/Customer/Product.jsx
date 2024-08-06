@@ -1,11 +1,10 @@
 import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
-import { getAllImageProducts, getProduct } from '../../Services/ProductService';
+import { getAllImageProducts, getProductForClientPage } from '../../Services/ProductService';
 import { Tab, Tabs } from 'react-bootstrap';
 import ReturnPolicy from './ReturnPolicy';
 import PrivatePolicy from './PrivatePolicy';
 import useModal from '../../CustomHooks/useModal';
-import { toast } from 'react-toastify';
 import useCart from '../../CustomHooks/useCart';
 import useAuth from '../../CustomHooks/useAuth';
 import ImageGallery from 'react-image-gallery';
@@ -66,8 +65,12 @@ export default function Product() {
     };
 
     const fetchProduct = () => {
-        getProduct(id)
+        getProductForClientPage(id)
             .then((res) => {
+                if (res.data === '') {
+                    window.location.href = "/error/404"
+                }
+                
                 const uniqueSizes = [
                     ...new Set(
                         res.data.productsDetails.map((product) => product.size)

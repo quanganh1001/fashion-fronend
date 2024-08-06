@@ -1,7 +1,7 @@
 import { apiPublic, apiPrivate } from '../Ultils/AxiosCustomize';
 
 export const getAllProducts =  (searchParams) => {
-    const response =  apiPublic.get('products', {
+    const response =  apiPrivate.get('products', {
         params: {
             keyword: searchParams.get('keyword'),
             page: searchParams.get('page'),
@@ -20,8 +20,12 @@ export const deleteProduct =  (productId) => {
     return  apiPrivate.delete(`/products/${productId}`);
 };
 
-export const getProduct =  (id) => {
+export const getProductForAdminPage =  (id) => {
     return  apiPublic.get('/products/' + id);
+};
+
+export const getProductForClientPage = (id) => {
+    return apiPublic.get('/products/client/' + id);
 };
 
 export const updateProduct =  (id, product) => {
