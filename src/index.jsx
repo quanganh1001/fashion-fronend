@@ -11,6 +11,7 @@ import 'react-toastify/dist/ReactToastify.css';
 import ModalProvider from './ContextProvider/ModalProvider.jsx';
 import { HelmetProvider } from 'react-helmet-async';
 
+
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
     <HelmetProvider>

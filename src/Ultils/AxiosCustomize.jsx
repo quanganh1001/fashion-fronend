@@ -1,6 +1,5 @@
 import axios from 'axios';
 import { getAuth } from '../Services/Auth';
-import { useLocation } from 'react-router-dom';
 
 const apiPrivate = axios.create({
     baseURL: 'http://localhost:8080/',
@@ -46,7 +45,7 @@ apiPrivate.interceptors.response.use(
             error.response &&
             (error.response.status === 500 || error.response.status === 500)
         ) {
-            window.location.href = '/error/500';
+            // window.location.href = '/error/500';
         }
 
         return Promise.reject(error);
