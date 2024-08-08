@@ -29,10 +29,11 @@ export default function Account() {
         role: '',
     });
     const [newResetByEmail, setNewResetByEmail] = useState('');
-    const { searchParams } = usePagination();
+    const { searchParams,setPage } = usePagination();
     const [totalPages, setTotalPages] = useState(1);
     const [totalItems, setTotalItems] = useState();
     const [currentPage, setCurrentPage] = useState();
+    const [selectRole, setSelectRole] = useState("");
 
     useEffect(() => {
         fetchGetAllRoles();
@@ -41,7 +42,7 @@ export default function Account() {
     useEffect(() => {
         setIsLoading(true);
         fetchGetAllAccount();
-    }, [searchParams]);
+    }, [searchParams, selectRole]);
 
     useEffect(() => {
         if (newIdRole.role !== '') {
@@ -109,7 +110,7 @@ export default function Account() {
     }, [newResetByEmail]);
 
     const fetchGetAllAccount = () => {
-        getAllAccount(searchParams)
+        getAllAccount(searchParams,selectRole)
             .then((res) => {
                 setListAccount(res.data.accountsRes);
                 setTotalPages(res.data.totalPages);
@@ -206,6 +207,11 @@ export default function Account() {
             true
         );
     };
+
+    const handleSelectRole = (role) => {
+        setSelectRole(role);
+        setPage(1);
+    }
     return (
         <>
             <Title title="Quản lý tài khoản" />
@@ -216,6 +222,18 @@ export default function Account() {
                 </Link>
                 <div className="col-4">
                     <SearchForm placeholder={'Nhập tên hoặc số điện thoại'} />
+                </div>
+                <div className="col-3">
+                    <select
+                        className="form-select "
+                        value={selectRole || ''}
+                        onChange={(e) => handleSelectRole(e.target.value)}
+                    >
+                        <option value="">Tất cả</option>
+                        <option value="ROLE_MANAGER">Quản lý</option>
+                        <option value="ROLE_EMPLOYEE">Nhân viên</option>
+                        <option value="ROLE_CUSTOMER">Khách hàng</option>
+                    </select>
                 </div>
             </div>
             <div className="mt-5 bg-white p-5 shadow border">

@@ -40,7 +40,7 @@ const HomeAdmin = () => {
         <>
             <Title title="Trang chủ" />
 
-            <div className="col-12 mt-5">
+            <div className="col-5 mt-5">
                 <div className="card">
                     <div className="card-header border-0">
                         <div className="d-flex justify-content-between">

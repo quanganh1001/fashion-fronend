@@ -1,11 +1,12 @@
 import { apiPrivate } from '../Ultils/AxiosCustomize';
 
-export const getAllAccount = (searchParams) => {
+export const getAllAccount = (searchParams, selectRole) => {
     return apiPrivate.get('accounts', {
         params: {
             keyword: searchParams.get('keyword'),
             page: searchParams.get('page'),
             limit: searchParams.get('limit'),
+            role: selectRole,
         },
     });
 };

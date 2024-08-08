@@ -427,8 +427,8 @@ export default function Home() {
                 </div>
             </section>
 
-            <section className="pt-5">
-                <div className="container text-center">
+            <section className="pt-5 container-xl">
+                <div className=" text-center">
                     <nav className="nav justify-content-center">
                         <div className="nav-item position-relative mx-2">
                             <p
