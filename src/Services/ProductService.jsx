@@ -78,16 +78,3 @@ export const getSelectedListProducts = (selected) => {
     });
 };
 
-export const getTopProduct = (startDate, endDate) => {
-    console.log(
-        startDate.format('YYYY-MM-DD'),
-        endDate.format('YYYY-MM-DD')
-    );
-        
-    return apiPrivate.get(`products/selectByDate`, {
-        params: {
-            startDate: startDate.format('YYYY-MM-DD'),
-            endDate: endDate.format('YYYY-MM-DD'),
-        },
-    });
-};
