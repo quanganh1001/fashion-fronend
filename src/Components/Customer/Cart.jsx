@@ -25,7 +25,7 @@ export default function Cart() {
     const { auth } = useAuth();
     const { openModal, closeModal } = useModal();
     const [isLoading, setIsLoading] = useState(false);
-
+    const [tab, setTab] = useState('cart');
     const [selectPay, setSelectPay] = useState('cash');
     const [nameError, setNameError] = useState('');
     const [phoneError, setPhoneError] = useState('');
@@ -180,112 +180,196 @@ export default function Cart() {
             <Helmet>
                 <title>Giỏ hàng</title>
             </Helmet>
+            <nav className="nav justify-content-center mt-5">
+                <div className="nav-item position-relative mx-2">
+                    <p
+                        onClick={() => setTab('cart')}
+                        className="nav-link text-muted fs-4 "
+                        style={
+                            tab === 'cart'
+                                ? {
+                                      color: 'black',
+                                      fontWeight: 'bold',
+                                      cursor: 'pointer',
+                                  }
+                                : { cursor: 'pointer' }
+                        }
+                    >
+                        Giỏ hàng của bạn
+                    </p>
+                    <div
+                        className="underline"
+                        style={
+                            tab === 'cart'
+                                ? {
+                                      width: '100%',
+                                  }
+                                : {}
+                        }
+                    ></div>
+                </div>
+
+                <div className="nav-item position-relative mx-2">
+                    <p
+                        onClick={() => setTab('info')}
+                        className="nav-link text-muted fs-4 "
+                        style={
+                            tab === 'info'
+                                ? {
+                                      color: 'black',
+                                      fontWeight: 'bold',
+                                      cursor: 'pointer',
+                                  }
+                                : { cursor: 'pointer' }
+                        }
+                    >
+                        Thông tin thanh toán
+                    </p>
+                    <div
+                        className="underline"
+                        style={
+                            tab === 'info'
+                                ? {
+                                      width: '100%',
+                                  }
+                                : {}
+                        }
+                    ></div>
+                </div>
+            </nav>
             <div
                 className="col-12 d-flex flex-wrap justify-content-between container-xl mb-5"
-                style={{ minHeight: '30vh' }}
+                style={{ minHeight: '50vh' }}
             >
-                <h3 className="text-danger my-5">Giỏ hàng của bạn</h3>
-                <div className="  col-12 d-flex justify-content-between">
-                    <div className="col-8">
-                        {isLoadingCart ? (
-                            <LoadingSpinner />
-                        ) : (
-                            <>
-                                {cart?.length > 0 ? (
-                                    <div
-                                        id="cart"
-                                        className="  d-flex flex-column"
-                                    >
-                                        {cart.map((c) => (
-                                            <div
-                                                key={c.productDetail.id}
-                                                className=" d-flex mt-3 align-items-center"
-                                            >
-                                                <FontAwesomeIcon
-                                                    onClick={() => {
-                                                        handleRemoveCartItem(
-                                                            c.productDetail.id
-                                                        );
-                                                    }}
-                                                    className="mx-3"
-                                                    icon="fa-solid fa-square-minus"
-                                                    size="2xl"
-                                                    style={{ color: '#750000' }}
-                                                />
-                                                <div className="border border-light-subtle p-2 d-flex align-items-center col-11">
-                                                    {c.productDetail.imageBackground.endsWith(
-                                                        '.mp4'
-                                                    ) ? (
-                                                        <video
-                                                            width="250px"
-                                                            maxHeight="150px"
-                                                            controls
-                                                        >
-                                                            <source
+                {tab === 'cart' ? (
+                    <div className="  col-12 d-flex justify-content-between">
+                        <div className="col-8">
+                            {isLoadingCart ? (
+                                <LoadingSpinner />
+                            ) : (
+                                <>
+                                    {cart?.length > 0 ? (
+                                        <div
+                                            id="cart"
+                                            className="  d-flex flex-column"
+                                        >
+                                            {cart.map((c) => (
+                                                <div
+                                                    key={c.productDetail.id}
+                                                    className=" d-flex mt-3 align-items-center"
+                                                >
+                                                    <FontAwesomeIcon
+                                                        onClick={() => {
+                                                            handleRemoveCartItem(
+                                                                c.productDetail
+                                                                    .id
+                                                            );
+                                                        }}
+                                                        className="mx-3"
+                                                        icon="fa-solid fa-square-minus"
+                                                        size="2xl"
+                                                        style={{
+                                                            color: '#750000',
+                                                        }}
+                                                    />
+                                                    <div className="border border-light-subtle p-2 d-flex align-items-center col-11">
+                                                        {c.productDetail.imageBackground.endsWith(
+                                                            '.mp4'
+                                                        ) ? (
+                                                            <video
+                                                                width="250px"
+                                                                maxHeight="150px"
+                                                                controls
+                                                            >
+                                                                <source
+                                                                    src={
+                                                                        c
+                                                                            .productDetail
+                                                                            .imageBackground
+                                                                    }
+                                                                    type="video/mp4"
+                                                                />
+                                                            </video>
+                                                        ) : (
+                                                            <img
                                                                 src={
                                                                     c
                                                                         .productDetail
                                                                         .imageBackground
                                                                 }
-                                                                type="video/mp4"
+                                                                alt="..."
+                                                                style={{
+                                                                    maxHeight:
+                                                                        '150px',
+                                                                }}
+                                                                className="img-thumbnail col-2"
                                                             />
-                                                        </video>
-                                                    ) : (
-                                                        <img
-                                                            src={
-                                                                c.productDetail
-                                                                    .imageBackground
-                                                            }
-                                                            alt="..."
-                                                            style={{
-                                                                maxHeight:
-                                                                    '150px',
-                                                            }}
-                                                            className="img-thumbnail col-2"
-                                                        />
-                                                    )}
+                                                        )}
 
-                                                    <div className=" p-3 col-10 ">
-                                                        <div className="d-flex justify-content-between col-12 ">
-                                                            <div>
-                                                                <span className="overflow-wrap fw-bold">
-                                                                    {
-                                                                        c
-                                                                            .productDetail
-                                                                            .productName
-                                                                    }
-                                                                </span>
+                                                        <div className=" p-3 col-10 ">
+                                                            <div className="d-flex justify-content-between col-12 ">
+                                                                <div>
+                                                                    <span className="overflow-wrap fw-bold">
+                                                                        {
+                                                                            c
+                                                                                .productDetail
+                                                                                .productName
+                                                                        }
+                                                                    </span>
+                                                                </div>
+                                                                <div>
+                                                                    <span className="fw-light">
+                                                                        {
+                                                                            c
+                                                                                .productDetail
+                                                                                .color
+                                                                        }{' '}
+                                                                        -{' '}
+                                                                        {
+                                                                            c
+                                                                                .productDetail
+                                                                                .size
+                                                                        }
+                                                                    </span>
+                                                                </div>
                                                             </div>
-                                                            <div>
-                                                                <span className="fw-light">
-                                                                    {
-                                                                        c
-                                                                            .productDetail
-                                                                            .color
-                                                                    }{' '}
-                                                                    -{' '}
-                                                                    {
-                                                                        c
-                                                                            .productDetail
-                                                                            .size
-                                                                    }
-                                                                </span>
-                                                            </div>
-                                                        </div>
 
-                                                        <div className="mt-3 d-flex">
-                                                            <div>
-                                                                Giá tiền:{' '}
-                                                                {c.productDetail
-                                                                    .discountPrice !==
-                                                                null ? (
-                                                                    <span>
-                                                                        <span
-                                                                            style={{
-                                                                                textDecorationLine:
-                                                                                    'line-through',
-                                                                            }}
-                                                                        >
+                                                            <div className="mt-3 d-flex">
+                                                                <div>
+                                                                    Giá tiền:{' '}
+                                                                    {c
+                                                                        .productDetail
+                                                                        .discountPrice !==
+                                                                    null ? (
+                                                                        <span>
+                                                                            <span
+                                                                                style={{
+                                                                                    textDecorationLine:
+                                                                                        'line-through',
+                                                                                }}
+                                                                            >
+                                                                                {c.productDetail.price.toLocaleString(
+                                                                                    'vi-VN',
+                                                                                    {
+                                                                                        style: 'currency',
+                                                                                        currency:
+                                                                                            'VND',
+                                                                                    }
+                                                                                )}
+                                                                            </span>
+                                                                            <span className="ms-2">
+                                                                                {c.productDetail.discountPrice.toLocaleString(
+                                                                                    'vi-VN',
+                                                                                    {
+                                                                                        style: 'currency',
+                                                                                        currency:
+                                                                                            'VND',
+                                                                                    }
+                                                                                )}
+                                                                            </span>
+                                                                        </span>
+                                                                    ) : (
+                                                                        <span>
                                                                             {c.productDetail.price.toLocaleString(
                                                                                 'vi-VN',
                                                                                 {
@@ -295,275 +379,287 @@ export default function Cart() {
                                                                                 }
                                                                             )}
                                                                         </span>
-                                                                        <span className="ms-2">
-                                                                            {c.productDetail.discountPrice.toLocaleString(
-                                                                                'vi-VN',
-                                                                                {
-                                                                                    style: 'currency',
-                                                                                    currency:
-                                                                                        'VND',
-                                                                                }
-                                                                            )}
-                                                                        </span>
-                                                                    </span>
-                                                                ) : (
-                                                                    <span>
-                                                                        {c.productDetail.price.toLocaleString(
-                                                                            'vi-VN',
-                                                                            {
-                                                                                style: 'currency',
-                                                                                currency:
-                                                                                    'VND',
-                                                                            }
-                                                                        )}
-                                                                    </span>
-                                                                )}
+                                                                    )}
+                                                                </div>
                                                             </div>
-                                                        </div>
 
-                                                        <div className="mt-3">
-                                                            <div className="d-flex align-items-center">
-                                                                <div>
-                                                                    Số lượng:
-                                                                </div>
-                                                                <div>
-                                                                    <input
-                                                                        className="form-control ms-2"
-                                                                        type="number"
-                                                                        defaultValue={
-                                                                            c.quantity
-                                                                        }
-                                                                        onChange={(
-                                                                            e
-                                                                        ) => {
-                                                                            handleChangeQuantity(
-                                                                                c.productDetail,
+                                                            <div className="mt-3">
+                                                                <div className="d-flex align-items-center">
+                                                                    <div>
+                                                                        Số
+                                                                        lượng:
+                                                                    </div>
+                                                                    <div>
+                                                                        <input
+                                                                            className="form-control ms-2"
+                                                                            type="number"
+                                                                            defaultValue={
+                                                                                c.quantity
+                                                                            }
+                                                                            onChange={(
                                                                                 e
-                                                                                    .target
-                                                                                    .value
-                                                                            );
-                                                                        }}
-                                                                        min="1"
-                                                                        max="99"
-                                                                    />
+                                                                            ) => {
+                                                                                handleChangeQuantity(
+                                                                                    c.productDetail,
+                                                                                    e
+                                                                                        .target
+                                                                                        .value
+                                                                                );
+                                                                            }}
+                                                                            min="1"
+                                                                            max="99"
+                                                                        />
+                                                                    </div>
                                                                 </div>
                                                             </div>
-                                                        </div>
-                                                        <div className="mt-3">
-                                                            Tổng:{' '}
-                                                            <span
-                                                                style={{
-                                                                    color: 'red',
-                                                                    fontWeight:
-                                                                        'bold',
-                                                                }}
-                                                            >
-                                                                {c.totalPriceItem.toLocaleString(
-                                                                    'vi-VN',
-                                                                    {
-                                                                        style: 'currency',
-                                                                        currency:
-                                                                            'VND',
-                                                                    }
-                                                                )}
-                                                            </span>
+                                                            <div className="mt-3">
+                                                                Tổng:{' '}
+                                                                <span
+                                                                    style={{
+                                                                        color: 'red',
+                                                                        fontWeight:
+                                                                            'bold',
+                                                                    }}
+                                                                >
+                                                                    {c.totalPriceItem.toLocaleString(
+                                                                        'vi-VN',
+                                                                        {
+                                                                            style: 'currency',
+                                                                            currency:
+                                                                                'VND',
+                                                                        }
+                                                                    )}
+                                                                </span>
+                                                            </div>
                                                         </div>
                                                     </div>
                                                 </div>
-                                            </div>
-                                        ))}
+                                            ))}
+                                        </div>
+                                    ) : (
+                                        <p className="mt-5">
+                                            Bạn chưa có sản phẩm nào trong giỏ
+                                            hàng
+                                        </p>
+                                    )}
+                                </>
+                            )}
+                        </div>
+
+                        {cart?.length > 0 && (
+                            <div className="align-self-top col-4 p-2">
+                                <div className="border p-2 bg-light">
+                                    <div className="d-flex justify-content-between p-2">
+                                        <span>Tổng tiền:</span>
+                                        <span className="fw-bold">
+                                            {totalPrice.toLocaleString(
+                                                'vi-VN',
+                                                {
+                                                    style: 'currency',
+                                                    currency: 'VND',
+                                                }
+                                            )}
+                                        </span>
                                     </div>
-                                ) : (
-                                    <p>
-                                        Bạn chưa có sản phẩm nào trong giỏ hàng
+                                    <div className="d-flex justify-content-between p-2">
+                                        <span>Phí ship:</span>
+                                        <span className="fw-bold">
+                                            {totalPrice >= 500000
+                                                ? (0).toLocaleString('vi-VN', {
+                                                      style: 'currency',
+                                                      currency: 'VND',
+                                                  })
+                                                : (30000).toLocaleString(
+                                                      'vi-VN',
+                                                      {
+                                                          style: 'currency',
+                                                          currency: 'VND',
+                                                      }
+                                                  )}
+                                        </span>
+                                    </div>
+                                    <div className="d-flex justify-content-between p-2">
+                                        <span>Tổng đơn:</span>
+                                        <h4
+                                            style={{ color: 'red' }}
+                                            className="fw-bold"
+                                        >
+                                            {totalBill.toLocaleString('vi-VN', {
+                                                style: 'currency',
+                                                currency: 'VND',
+                                            })}
+                                        </h4>
+                                    </div>
+                                    <p className="p-2 fw-light">
+                                        *Miễn phí vận chuyển với đơn hàng từ
+                                        500.000đ{' '}
                                     </p>
-                                )}
-                            </>
+                                </div>
+                            </div>
                         )}
                     </div>
-
-                    {cart?.length > 0 && (
-                        <div className="align-self-top col-4 p-2">
-                            <div className="border p-2 bg-light">
-                                <div className="d-flex justify-content-between p-2">
-                                    <span>Tổng tiền:</span>
-                                    <span className="fw-bold">
-                                        {totalPrice.toLocaleString('vi-VN', {
-                                            style: 'currency',
-                                            currency: 'VND',
-                                        })}
-                                    </span>
-                                </div>
-                                <div className="d-flex justify-content-between p-2">
-                                    <span>Phí ship:</span>
-                                    <span className="fw-bold">
-                                        {totalPrice >= 500000
-                                            ? (0).toLocaleString('vi-VN', {
-                                                  style: 'currency',
-                                                  currency: 'VND',
-                                              })
-                                            : (30000).toLocaleString('vi-VN', {
-                                                  style: 'currency',
-                                                  currency: 'VND',
-                                              })}
-                                    </span>
-                                </div>
-                                <div className="d-flex justify-content-between p-2">
-                                    <span>Tổng đơn:</span>
-                                    <h4
-                                        style={{ color: 'red' }}
-                                        className="fw-bold"
+                ) : (
+                    <>
+                        {cart?.length > 0 ? (
+                            <div className="d-flex flex-column align-items-center col-12 mt-5">
+                                <div className="d-flex justify-content-between">
+                                    <form
+                                        onSubmit={handleSubmit}
+                                        className="col-6"
                                     >
-                                        {totalBill.toLocaleString('vi-VN', {
-                                            style: 'currency',
-                                            currency: 'VND',
-                                        })}
-                                    </h4>
+                                        <div className="row">
+                                            <div className="mb-3">
+                                                <label className="form-label">
+                                                    Họ Tên
+                                                    <span
+                                                        style={{ color: 'red' }}
+                                                    >
+                                                        *
+                                                    </span>
+                                                </label>
+                                                <input
+                                                    type="text"
+                                                    className={
+                                                        nameError !== ''
+                                                            ? 'border-danger form-control'
+                                                            : 'form-control'
+                                                    }
+                                                    value={customerInfo.name}
+                                                    onChange={handleChange}
+                                                    name="name"
+                                                />
+                                                <span className="text-danger">
+                                                    {nameError}
+                                                </span>
+                                            </div>
+
+                                            <div className="mb-3">
+                                                <label className="form-label">
+                                                    Số điện thoại
+                                                    <span
+                                                        style={{ color: 'red' }}
+                                                    >
+                                                        *
+                                                    </span>
+                                                </label>
+                                                <input
+                                                    value={customerInfo.phone}
+                                                    onChange={handleChange}
+                                                    type="text"
+                                                    className={
+                                                        phoneError !== ''
+                                                            ? 'border-danger form-control'
+                                                            : 'form-control'
+                                                    }
+                                                    name="phone"
+                                                />
+                                                <span className="text-danger">
+                                                    {phoneError}
+                                                </span>
+                                            </div>
+
+                                            <div className="mb-3">
+                                                <label className="form-label">
+                                                    Địa chỉ
+                                                    <span
+                                                        style={{ color: 'red' }}
+                                                    >
+                                                        *
+                                                    </span>
+                                                </label>
+                                                <input
+                                                    value={customerInfo.address}
+                                                    onChange={handleChange}
+                                                    type="text"
+                                                    className={
+                                                        addressError !== ''
+                                                            ? 'border-danger form-control'
+                                                            : 'form-control'
+                                                    }
+                                                    name="address"
+                                                />
+                                                <span className="text-danger">
+                                                    {addressError}
+                                                </span>
+                                            </div>
+
+                                            <div className="mb-3">
+                                                <label className="form-label">
+                                                    Lời nhắn của bạn
+                                                </label>
+                                                <textarea
+                                                    value={
+                                                        customerInfo.customerNote
+                                                    }
+                                                    onChange={handleChange}
+                                                    className="form-control"
+                                                    name="customerNote"
+                                                ></textarea>
+                                            </div>
+                                            <button
+                                                disabled={
+                                                    isLoading || isLoadingCart
+                                                }
+                                                className="mt-3 col-4 button"
+                                                type="submit"
+                                            >
+                                                Đặt hàng
+                                            </button>
+                                            {isLoading && <LoadingSpinner />}
+                                        </div>
+                                    </form>
+
+                                    <div className="border mt-5 p-3 bg-light">
+                                        <h4>Hình thức thanh toán</h4>
+                                        <div className="mt-3 border p-5 bg-white">
+                                            <input
+                                                className="form-check-input"
+                                                type="radio"
+                                                name="paymentMethod"
+                                                value="cash"
+                                                checked={selectPay === 'cash'}
+                                                onChange={handlePaymentChange}
+                                            />
+                                            <img
+                                                className="mx-3"
+                                                src={
+                                                    process.env.PUBLIC_URL +
+                                                    '/kisspng-cash-on-delivery-money-electronic-bill-payment-5c80924abdc4d0.4008274915519299307773.jpg'
+                                                }
+                                                alt=""
+                                                width="20px"
+                                            />
+                                            Thanh toán bằng tiền mặt
+                                        </div>
+                                        <div className="mt-3 border bg-white p-5">
+                                            <input
+                                                className="form-check-input"
+                                                type="radio"
+                                                name="paymentMethod"
+                                                value="vnpay"
+                                                checked={selectPay === 'vnpay'}
+                                                onChange={handlePaymentChange}
+                                            />
+                                            <img
+                                                className="ms-1"
+                                                src={
+                                                    process.env.PUBLIC_URL +
+                                                    '/vnpay-logo_64dc3da9d7a11.jpg'
+                                                }
+                                                alt=""
+                                                width="50px"
+                                            />
+                                            Thanh toán qua VNPay
+                                        </div>
+                                    </div>
                                 </div>
-                                <p className="p-2 fw-light">
-                                    *Miễn phí vận chuyển với đơn hàng từ
-                                    500.000đ{' '}
-                                </p>
                             </div>
-
-                            <div className="border mt-5 p-3 bg-light">
-                                <h4>Hình thức thanh toán</h4>
-                                <div className="mt-3 border p-5 bg-white">
-                                    <input
-                                        className="form-check-input"
-                                        type="radio"
-                                        name="paymentMethod"
-                                        value="cash"
-                                        checked={selectPay === 'cash'}
-                                        onChange={handlePaymentChange}
-                                    />
-                                    <img
-                                        className="mx-3"
-                                        src={
-                                            process.env.PUBLIC_URL +
-                                            '/kisspng-cash-on-delivery-money-electronic-bill-payment-5c80924abdc4d0.4008274915519299307773.jpg'
-                                        }
-                                        alt=""
-                                        width="20px"
-                                    />
-                                    Thanh toán bằng tiền mặt
-                                </div>
-                                <div className="mt-3 border bg-white p-5">
-                                    <input
-                                        className="form-check-input"
-                                        type="radio"
-                                        name="paymentMethod"
-                                        value="vnpay"
-                                        checked={selectPay === 'vnpay'}
-                                        onChange={handlePaymentChange}
-                                    />
-                                    <img
-                                        className="ms-1"
-                                        src={
-                                            process.env.PUBLIC_URL +
-                                            '/vnpay-logo_64dc3da9d7a11.jpg'
-                                        }
-                                        alt=""
-                                        width="50px"
-                                    />
-                                    Thanh toán qua VNPay
-                                </div>
-                            </div>
-                        </div>
-                    )}
-                </div>
-                {cart?.length > 0 && (
-                    <div className="d-flex flex-column align-items-center col-12 mt-5">
-                        <h1 className="border-bottom p-2">
-                            Thông tin người nhận
-                        </h1>
-                        <form onSubmit={handleSubmit}>
-                            <div className="row">
-                                <div className="mb-3">
-                                    <label className="form-label">
-                                        Họ Tên
-                                        <span style={{ color: 'red' }}>*</span>
-                                    </label>
-                                    <input
-                                        type="text"
-                                        className={
-                                            nameError !== ''
-                                                ? 'border-danger form-control'
-                                                : 'form-control'
-                                        }
-                                        value={customerInfo.name}
-                                        onChange={handleChange}
-                                        name="name"
-                                    />
-                                    <span className="text-danger">
-                                        {nameError}
-                                    </span>
-                                </div>
-
-                                <div className="mb-3">
-                                    <label className="form-label">
-                                        Số điện thoại
-                                        <span style={{ color: 'red' }}>*</span>
-                                    </label>
-                                    <input
-                                        value={customerInfo.phone}
-                                        onChange={handleChange}
-                                        type="text"
-                                        className={
-                                            phoneError !== ''
-                                                ? 'border-danger form-control'
-                                                : 'form-control'
-                                        }
-                                        name="phone"
-                                    />
-                                    <span className="text-danger">
-                                        {phoneError}
-                                    </span>
-                                </div>
-
-                                <div className="mb-3">
-                                    <label className="form-label">
-                                        Địa chỉ
-                                        <span style={{ color: 'red' }}>*</span>
-                                    </label>
-                                    <input
-                                        value={customerInfo.address}
-                                        onChange={handleChange}
-                                        type="text"
-                                        className={
-                                            addressError !== ''
-                                                ? 'border-danger form-control'
-                                                : 'form-control'
-                                        }
-                                        name="address"
-                                    />
-                                    <span className="text-danger">
-                                        {addressError}
-                                    </span>
-                                </div>
-
-                                <div className="mb-3">
-                                    <label className="form-label">
-                                        Lời nhắn của bạn
-                                    </label>
-                                    <textarea
-                                        value={customerInfo.customerNote}
-                                        onChange={handleChange}
-                                        className="form-control"
-                                        name="customerNote"
-                                    ></textarea>
-                                </div>
-                                <button
-                                    disabled={isLoading || isLoadingCart}
-                                    className="mt-3 col-4 button"
-                                    type="submit"
-                                >
-                                    Đặt hàng
-                                </button>
-                                {isLoading && <LoadingSpinner />}
-                            </div>
-                        </form>
-                    </div>
+                        ) : (
+                            <p className="mt-5">
+                                Bạn chưa có sản phẩm nào trong giỏ hàng
+                            </p>
+                        )}
+                    </>
                 )}
             </div>
         </>

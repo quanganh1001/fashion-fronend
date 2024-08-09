@@ -21,7 +21,7 @@ export default function Home() {
     const [listCategoriesF2, setListCategoriesF2] = useState([]);
     const [listProductsSale, setListProductSale] = useState([]);
     const [listProducts, setListProducts] = useState([]);
-    const [isSelected, setIsSelected] = useState('best'); 
+    const [tab, setTab] = useState('best'); 
 
     useEffect(() => {
         fetchCategories();
@@ -30,10 +30,10 @@ export default function Home() {
 
     useEffect(() => {
         fetchGetSelectedListProducts();
-    },[isSelected])
+    }, [tab]);
 
     const fetchGetSelectedListProducts = () => {
-        getSelectedListProducts(isSelected)
+        getSelectedListProducts(tab)
             .then((res) => {
                 setListProducts(res.data);
             })
@@ -181,32 +181,6 @@ export default function Home() {
                 .btn-sale:hover{
                     background-color: black!important;
                     color: white;
-                }
-                
-                .nav-item .nav-link {
-                    position: relative;
-                    text-decoration: none;
-                    transition: color 0.3s, font-weight 0.3s;
-                }   
-
-                .nav-item .nav-link:hover {
-                    color: black;
-                    font-weight: bold;
-                }
-
-                .nav-item .underline {
-                    content: '';
-                    position: absolute;
-                    left: 0;
-                    bottom: -1px;
-                    width: 0;
-                    height: 2px;
-                    background-color: black;
-                    transition: width 0.3s;
-                }
-
-                .nav-item:hover .underline {
-                    width: 100%;
                 }
                 `}
             </style>
@@ -432,10 +406,10 @@ export default function Home() {
                     <nav className="nav justify-content-center">
                         <div className="nav-item position-relative mx-2">
                             <p
-                                onClick={() => setIsSelected('best')}
+                                onClick={() => setTab('best')}
                                 className="nav-link text-muted fs-4 "
                                 style={
-                                    isSelected === 'best'
+                                    tab === 'best'
                                         ? {
                                               color: 'black',
                                               fontWeight: 'bold',
@@ -449,7 +423,7 @@ export default function Home() {
                             <div
                                 className="underline"
                                 style={
-                                    isSelected === 'best'
+                                    tab === 'best'
                                         ? {
                                               width: '100%',
                                           }
@@ -459,10 +433,10 @@ export default function Home() {
                         </div>
                         <div className="nav-item position-relative mx-2">
                             <p
-                                onClick={() => setIsSelected('polo')}
+                                onClick={() => setTab('polo')}
                                 className="nav-link text-muted fs-4 "
                                 style={
-                                    isSelected === 'polo'
+                                    tab === 'polo'
                                         ? {
                                               color: 'black',
                                               fontWeight: 'bold',
@@ -476,7 +450,7 @@ export default function Home() {
                             <div
                                 className="underline"
                                 style={
-                                    isSelected === 'polo'
+                                    tab === 'polo'
                                         ? {
                                               width: '100%',
                                           }
@@ -486,10 +460,10 @@ export default function Home() {
                         </div>
                         <div className="nav-item position-relative mx-2">
                             <p
-                                onClick={() => setIsSelected('pants')}
+                                onClick={() => setTab('pants')}
                                 className="nav-link text-muted fs-4 "
                                 style={
-                                    isSelected === 'pants'
+                                    tab === 'pants'
                                         ? {
                                               color: 'black',
                                               fontWeight: 'bold',
@@ -503,7 +477,7 @@ export default function Home() {
                             <div
                                 className="underline"
                                 style={
-                                    isSelected === 'pants'
+                                    tab === 'pants'
                                         ? {
                                               width: '100%',
                                           }
@@ -513,10 +487,10 @@ export default function Home() {
                         </div>
                         <div className="nav-item position-relative mx-2">
                             <p
-                                onClick={() => setIsSelected('shirt')}
+                                onClick={() => setTab('shirt')}
                                 className="nav-link text-muted fs-4 "
                                 style={
-                                    isSelected === 'shirt'
+                                    tab === 'shirt'
                                         ? {
                                               color: 'black',
                                               fontWeight: 'bold',
@@ -530,7 +504,7 @@ export default function Home() {
                             <div
                                 className="underline"
                                 style={
-                                    isSelected === 'shirt'
+                                    tab === 'shirt'
                                         ? {
                                               width: '100%',
                                           }

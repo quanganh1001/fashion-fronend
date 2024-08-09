@@ -97,10 +97,10 @@ export default function Store() {
                     </div>
                     <div id="store-info">
                         {filteredStores.map((store) => (
-                            <div key={store.id} className="border d-flex mt-5">
-                                <div className="m-3">
-                                    <i className="fa-solid fa-location-dot"></i>
-                                </div>
+                            <div
+                                key={store.id}
+                                className="border d-flex mt-5 bg-body-tertiary px-3 rounded"
+                            >
                                 <div>
                                     <div className="mt-3">{store.name}</div>
                                     <div className="mt-3">{store.address}</div>

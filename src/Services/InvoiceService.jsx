@@ -69,3 +69,12 @@ export const checkoutCashWithAuth = (checkoutDto) => {
 export const getAllHistory = (id) => {
     return apiPrivate.get('/invoices/history/' + id)
 }
+
+export const getAllPurchasedOrders = (searchParams) => {
+    return apiPrivate.get('/invoices/viewPurchasedOrders', {
+        params: {
+            page: searchParams.get('page'),
+            limit: searchParams.get('limit'),
+        },
+    });
+};

@@ -126,7 +126,11 @@ export const router = createBrowserRouter([
                     },
                     {
                         path: 'infoAccount',
-                        element: <InfoAccount />,
+                        element: (
+                            <PaginationProvider>
+                                <InfoAccount />
+                            </PaginationProvider>
+                        ),
                     },
                     {
                         path: 'response',

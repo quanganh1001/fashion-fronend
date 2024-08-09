@@ -11,7 +11,6 @@ import useModal from '../../../CustomHooks/useModal';
 import Title from '../../Fragments/Title';
 
 export default function EditAccount() {
-    const [phoneError, setPhoneError] = useState('');
 
     const [emailError, setEmailError] = useState('');
     const [isLoading, setIsLoading] = useState(false);
@@ -155,18 +154,7 @@ export default function EditAccount() {
         e.preventDefault();
         let isValid = true;
 
-        if (account.phone === '') {
-            isValid = false;
-            setPhoneError('Số điện thoại không được để trống');
-        } else if (isNaN(account.phone)) {
-            isValid = false;
-            setPhoneError('Số điện thoại không hợp lệ');
-        } else if (account.phone.length !== 10) {
-            isValid = false;
-            setPhoneError('Số điện thoại phải có 10 ký tự');
-        } else {
-            setPhoneError('');
-        }
+        
 
         if (account.email === '') {
             isValid = false;
@@ -197,14 +185,10 @@ export default function EditAccount() {
                 })
                 .catch((error) => {
                     if (error.response.status === 409) {
-                        if (error.response.message.startsWith('Phone')) {
-                            toast.error('Số điện thoại đã tồn tại');
-                            setPhoneError('Số điện thoại đã tồn tại');
-                        } else {
                             toast.error('Email đã tồn tại');
-                            setPhoneError('Email đã tồn tại');
-                        }
+                            setEmailError('Email đã tồn tại');
                     }
+                    console.error(error);
                 })
                 .finally(() => {
                     setIsLoading(false);
@@ -245,20 +229,13 @@ export default function EditAccount() {
                                     Số điện thoại
                                     <span style={{ color: 'red' }}>*</span>
                                 </label>
-                                <input
+                                    <input
+                                    disabled
                                     name="phone"
                                     type="text"
-                                    className={
-                                        phoneError !== ''
-                                            ? 'border-danger form-control'
-                                            : 'form-control'
-                                    }
+                                    className="form-control"
                                     value={account.phone}
-                                    onChange={handleInputChange}
                                 />
-                                <span className=" text-danger">
-                                    {phoneError}
-                                </span>
                             </div>
 
                             <div className="mb-3">

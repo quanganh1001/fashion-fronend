@@ -70,10 +70,10 @@ export const getAllProductByCategory =  (catId, key) => {
     });
 };
 
-export const getSelectedListProducts = (selected) => {
+export const getSelectedListProducts = (tab) => {
     return apiPublic.get(`products/selectListProducts`, {
         params: {
-            selected: selected,
+            selected: tab,
         },
     });
 };

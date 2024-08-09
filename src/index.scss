@@ -8,7 +8,7 @@
 
 li {
     list-style-type: none;
-     text-decoration: none;
+    text-decoration: none;
 }
 
 .btn-active {
@@ -22,9 +22,9 @@ li {
     color: rgba(0, 0, 0, 0.871) !important;
 }
 
-.button-non-active{
-     @extend .btn;
-      @extend .border-dark;
+.button-non-active {
+    @extend .btn;
+    @extend .border-dark;
 }
 .button {
     @extend .btn;
@@ -32,3 +32,28 @@ li {
     @extend .bg-gradient;
 }
 
+.nav-item .nav-link {
+    position: relative;
+    text-decoration: none;
+    transition: color 0.3s, font-weight 0.3s;
+}
+
+.nav-item .nav-link:hover {
+    color: black;
+    font-weight: bold;
+}
+
+.nav-item .underline {
+    content: '';
+    position: absolute;
+    left: 0;
+    bottom: -1px;
+    width: 0;
+    height: 2px;
+    background-color: black;
+    transition: width 0.3s;
+}
+
+.nav-item:hover .underline {
+    width: 100%;
+}
