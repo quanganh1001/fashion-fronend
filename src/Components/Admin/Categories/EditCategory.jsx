@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import {
+    getAllCategories,
     getCategory,
     updateBackgroundCategory,
     updateCategory,
@@ -13,19 +14,34 @@ export default function EditCategory() {
     const [category, setCategory] = useState({
         categoryCode: '',
         catName: '',
+        catParent: "",
     });
     const [catBackground, setCatBackground] = useState(null);
     const [currentBackgound, setCurrentBackgound] = useState('');
     const { id } = useParams();
     const [categoryCodeErorr, setCategoryCodeErorr] = useState('');
+    const [catParentError, setCatParentError] = useState('');
     const [catNameErorr, setCatNameErorr] = useState('');
     const [isLoading, setIsLoading] = useState(false);
     const [isLoadingCategory, setIsLoadingCategory] = useState(true);
     const [isLoadingButton, setIsLoadingButton] = useState(false);
+    const [listCategories, setListCategories] = useState([]);
 
     useEffect(() => {
         fetchCategory();
+        fetchListCategories();
     }, []);
+
+
+    const fetchListCategories = () => {
+        getAllCategories()
+            .then((res) => {
+                setListCategories(res.data);
+            })
+            .catch((error) => {
+                console.error('Error fetching list categories:', error);
+            });
+    };
 
     const fetchCategory = () => {
         getCategory(id)
@@ -33,6 +49,7 @@ export default function EditCategory() {
                 setCategory({
                     categoryCode: res.data.categoryCode,
                     catName: res.data.catName,
+                    catParent: res.data.catParent
                 });
                 setCurrentBackgound(res.data.catBackground);
             })
@@ -81,11 +98,15 @@ export default function EditCategory() {
                     toast.success('Sửa thành công thành công');
                 })
                 .catch((error) => {
+                    
                     if (error.response.status === 409) {
                         setCategoryCodeErorr('Mã danh mục đã tồn tại');
                         toast.error('Mã danh mục đã tồn tại');
+                    } else if (error.response.status === 400) {
+                        setCatParentError(error.response.data);
+                        toast.error(error.response.data);
+                    } else{console.error(error);
                     }
-                    return;
                 })
                 .finally(() => {
                     setIsLoadingButton(false);
@@ -160,6 +181,36 @@ export default function EditCategory() {
                                 />
                                 <span className="text-danger">
                                     {catNameErorr}
+                                </span>
+                            </div>
+
+                            <div className="mb-3 col-6">
+                                <label className="form-label">
+                                    Nằm trong danh mục
+                                </label>
+                                <select
+                                    className={
+                                        catParentError !== ''
+                                            ? 'border-danger form-control'
+                                            : 'form-control'
+                                    }
+                                    value={category.catParent}
+                                    name="catParent"
+                                    onChange={handleInputChange}
+                                >
+                                    <option value="">Không</option>
+                                    {listCategories.map((option) => (
+                                        <option
+                                            key={option.id}
+                                            value={option.id}
+                                        >
+                                            {option.categoryCode} -{' '}
+                                            {option.catName}
+                                        </option>
+                                    ))}
+                                </select>
+                                <span className="text-danger">
+                                    {catParentError}
                                 </span>
                             </div>
 

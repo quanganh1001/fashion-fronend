@@ -8,7 +8,9 @@ export const addProductDetail =  (data) => {
     return  apiPrivate.post('productsDetail', data);
 };
 
-export const updateProductDetail =  (id, data) => {
+export const updateProductDetail = (id, data) => {
+    console.log(data);
+    
     return  apiPrivate.put('productsDetail/' + id, data);
 };
 

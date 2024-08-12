@@ -14,12 +14,14 @@ import useModal from '../../../CustomHooks/useModal';
 import { getImagesSize } from '../../../Services/EnumService';
 import LoadingSpinner from '../../Fragments/LoadingSpinner';
 import Title from '../../Fragments/Title';
+import { getAllCategories } from '../../../Services/CategoryService';
 
 export default function EditProduct() {
     const { id } = useParams();
     const [product, setProduct] = useState({
         productCode: '',
         productName: '',
+        catId : '',
         price: '',
         discountPrice: '',
         brand: 'TORANO',
@@ -35,21 +37,35 @@ export default function EditProduct() {
     const [nameError, setNameError] = useState('');
     const [priceError, setPriceError] = useState('');
     const [brandError, setBrandError] = useState('');
+    const [categoryError, setCategoryError] = useState('');
     const [imgSizeError, setImgSizeError] = useState('');
     const [discountPriceError, setDiscountPriceError] = useState('');
     const [isLoading, setIsLoading] = useState(false);
     const [isLoadingDetail, setIsLoadingDetail] = useState(true);
     const [isLoadingProduct, setIsLoadingProduct] = useState(true);
+    const [listCategories, setListCategories] = useState([]);
 
     const [imgSizeOptions, setImgSizeOptions] = useState([]);
 
     const { openModal, closeModal } = useModal();
 
+
     useEffect(() => {
         fetchProduct();
         fetchProductDetail();
         fetchImgSize();
+        fetchListCategories();
     }, []);
+
+    const fetchListCategories = () => {
+        getAllCategories()
+            .then((res) => {
+                setListCategories(res.data);
+            })
+            .catch((error) => {
+                console.error('Error fetching list categories:', error);
+            });
+    };
 
     const fetchImgSize = async () => {
         await getImagesSize()
@@ -66,6 +82,7 @@ export default function EditProduct() {
                 setProduct({
                     productCode: res.data.productCode,
                     productName: res.data.productName,
+                    catId: res.data.catId,
                     price: res.data.price,
                     discountPrice: res.data.discountPrice,
                     brand: res.data.brand,
@@ -141,6 +158,13 @@ export default function EditProduct() {
             setBrandError('Thương hiệu không được để trống');
         } else {
             setBrandError('');
+        }
+
+        if (product.catId === '') {
+            isValid = false;
+            setCategoryError('Danh mục không được để trống');
+        } else {
+            setCategoryError('');
         }
 
         if (product.imageChooseSize === '') {
@@ -249,6 +273,40 @@ export default function EditProduct() {
                                     />
                                     <span className="text-danger">
                                         {nameError}
+                                    </span>
+                                </div>
+
+                                <div className="mb-3 col-12">
+                                    <label className="form-label">
+                                        Danh mục sản phẩm
+                                        <span style={{ color: 'red' }}>*</span>
+                                    </label>
+                                    <select
+                                        id="category"
+                                        className={
+                                            categoryError !== ''
+                                                ? 'border-danger form-control'
+                                                : 'form-control'
+                                        }
+                                        value={product.catId}
+                                        name="catId"
+                                        onChange={handleInputChange}
+                                    >
+                                        <option value="">
+                                            --Chọn danh mục--
+                                        </option>
+                                        {listCategories.map((option) => (
+                                            <option
+                                                key={option.id}
+                                                value={option.id}
+                                            >
+                                                {option.categoryCode} -{' '}
+                                                {option.catName}
+                                            </option>
+                                        ))}
+                                    </select>
+                                    <span className="text-danger">
+                                        {categoryError}
                                     </span>
                                 </div>
 

@@ -1,6 +1,10 @@
 import { useParams } from 'react-router-dom';
 import { useEffect, useState } from 'react';
-import { getAllHistory, getInvoice, updateInvoice } from '../../../Services/InvoiceService';
+import {
+    getAllHistory,
+    getInvoice,
+    updateInvoice,
+} from '../../../Services/InvoiceService';
 import { parseISO, format } from 'date-fns';
 import { getAllInvoiceStatus } from '../../../Services/EnumService';
 import { getAllEmployees } from '../../../Services/AccountService';
@@ -199,13 +203,12 @@ export default function EditInvoiceDetail() {
             .catch((err) => {
                 console.error(err);
             });
-    }
-    
-    
-    const showHistory = () =>{
+    };
+
+    const showHistory = () => {
         getHistory();
-        closeModal()
-    }
+        closeModal();
+    };
 
     return (
         <>
@@ -316,32 +319,13 @@ export default function EditInvoiceDetail() {
                                     Số điện thoại
                                     <span style={{ color: 'red' }}>*</span>
                                 </label>
-                                {!checkStatusInvoice(invoice.invoiceStatus) ? (
-                                    <>
-                                        <input
-                                            value={inputInvoice.phone}
-                                            name="phone"
-                                            onChange={handleInputChange}
-                                            type="text"
-                                            className={`form-control ${
-                                                phoneError
-                                                    ? 'border-danger'
-                                                    : ''
-                                            } `}
-                                        />
-                                    </>
-                                ) : (
-                                    <input
-                                        type="text"
-                                        className="form-control"
-                                        disabled
-                                        value={inputInvoice.phone}
-                                    />
-                                )}
 
-                                <span className="text-danger">
-                                    {phoneError}
-                                </span>
+                                <input
+                                    value={inputInvoice.phone}
+                                    type="text"
+                                    disabled
+                                    className="form-control"
+                                />
                             </div>
 
                             <div className="mb-3 col-12">
@@ -455,10 +439,13 @@ export default function EditInvoiceDetail() {
                                     Cập nhập đơn hàng
                                 </button>
                                 {isLoadingButton && <LoadingSpinner />}
-                                    <div
-                                        onClick={() => showHistory()}
-                                        className=' text-decoration-underline'
-                                        style={{cursor:'pointer'}}>Xem lịch sử đơn hàng</div>
+                                <div
+                                    onClick={() => showHistory()}
+                                    className=" text-decoration-underline"
+                                    style={{ cursor: 'pointer' }}
+                                >
+                                    Xem lịch sử đơn hàng
+                                </div>
                             </div>
                         </form>
                     )}

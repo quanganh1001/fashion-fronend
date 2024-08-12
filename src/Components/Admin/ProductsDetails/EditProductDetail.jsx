@@ -7,27 +7,53 @@ import {
 import { toast } from 'react-toastify';
 import LoadingSpinner from '../../Fragments/LoadingSpinner';
 import Title from '../../Fragments/Title';
+import { getSize } from '../../../Services/EnumService';
+import { getAllColors } from '../../../Services/ColorService';
 
 export default function EditProductDetail() {
     const { id, pdid } = useParams();
-
     const navigate = useNavigate();
-
     const [codeError, setCodeError] = useState('');
-
+    const [listSize, setListSize] = useState([]);
+    const [listColor, setListColor] = useState([]);
     const [quantityError, setQuantityError] = useState('');
-
+    const [sizeError, setSizeError] = useState('');
+    const [colorError, setColorError] = useState('');
     const [isActivatedError, setIsActivatedError] = useState('');
     const [isLoading] = useState(false);
     const [isLoadingDetail, setIsLoadingDetail] = useState(true);
     const [productDetail, setProductDetail] = useState({
         code: '',
         quantity: '',
+        colorId: '',
+        size: '',
         isActivated: '',
     });
 
-    const [color ,setColor] = useState("")
-    const [size, setSize] = useState("")
+    useEffect(() => {
+        fetchListSize();
+        fetchListColor();
+    }, []);
+
+    const fetchListSize = () => {
+        getSize()
+            .then((res) => {
+                setListSize(res.data);
+            })
+            .catch((err) => {
+                console.error(err);
+            });
+    };
+
+    const fetchListColor = () => {
+        getAllColors()
+            .then((res) => {
+                setListColor(res.data);
+            })
+            .catch((err) => {
+                console.error(err);
+            });
+    };
     
     useEffect(() => {
         fetchProductDetail();
@@ -38,10 +64,11 @@ export default function EditProductDetail() {
             setProductDetail({
                 code: res.data.code,
                 quantity: res.data.quantity,
+                colorId: res.data.colorId,
+                size: res.data.size,
                 isActivated: res.data.isActivated,
             });
-            setColor(res.data.color);
-            setSize(res.data.size);
+            
         }).catch ((err) => {
            console.error(err); 
         }).finally(() => {
@@ -86,6 +113,20 @@ export default function EditProductDetail() {
             setQuantityError('');
         }
 
+        if (productDetail.size === '') {
+            isValid = false;
+            setSizeError('Chưa chọn size');
+        } else {
+            setSizeError('');
+        }
+
+        if (productDetail.color === '') {
+            isValid = false;
+            setColorError('Chưa chọn màu');
+        } else {
+            setColorError('');
+        }
+
         if (isValid) {
             updateProductDetail(pdid, productDetail)
                 .then((res) => {
@@ -112,7 +153,7 @@ export default function EditProductDetail() {
 
     return (
         <>
-            <Title title="Sửa mã phân loại"/>
+            <Title title="Sửa mã phân loại" />
             <hr />
             <div className="mt-5 bg-white p-5 shadow border">
                 {isLoadingDetail ? (
@@ -160,11 +201,58 @@ export default function EditProductDetail() {
                                 </span>
                             </div>
 
-                            <div className="my-4 col-6 d-flex justify-content-between">
-                                <span>Màu sắc: {color}</span>
+                            <div className="mb-3 col-6">
+                                <label className="form-label">
+                                    Màu sắc
+                                    <span style={{ color: 'red' }}>*</span>
+                                </label>
+                                <select
+                                    className={
+                                        sizeError !== ''
+                                            ? 'border-danger form-control'
+                                            : 'form-control'
+                                    }
+                                    name="colorId"
+                                    value={productDetail.colorId}
+                                    onChange={handleInputChange}
+                                >
+                                    <option value="">--Chọn màu--</option>
+                                    {listColor.map((c) => (
+                                        <option key={c.id} value={c.id}>
+                                            {c.colorCode} - {c.name}
+                                        </option>
+                                    ))}
+                                </select>
+                                <span className="text-danger">
+                                    {colorError}
+                                </span>
                             </div>
-                            <div className="my-4 col-6 d-flex justify-content-between">
-                                <span>Kích cỡ: {size}</span>
+
+                            <div className="mb-3 col-6">
+                                <label className="form-label">
+                                    Size<span style={{ color: 'red' }}>*</span>
+                                </label>
+                                <select
+                                    className={
+                                        sizeError !== ''
+                                            ? 'border-danger form-control'
+                                            : 'form-control'
+                                    }
+                                    name="size"
+                                    value={productDetail.size}
+                                    onChange={handleInputChange}
+                                >
+                                    <option value="">--Chọn size--</option>
+                                    {listSize.map((option) => (
+                                        <option
+                                            key={option.key}
+                                            value={option.value}
+                                        >
+                                            {option.value}
+                                        </option>
+                                    ))}
+                                </select>
+                                <span className="text-danger">{sizeError}</span>
                             </div>
 
                             <div className="mb-3">
