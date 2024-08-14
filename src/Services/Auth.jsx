@@ -1,8 +1,13 @@
 import { apiPublic } from '../Ultils/AxiosCustomize';
 import jwtDecode from 'jwt-decode';
 
-export const login =  (data) => {
+export const loginClient =  (data) => {
     const response =  apiPublic.post('/auth/login', data);
+    return response;
+};
+
+export const loginAdmin = (data) => {
+    const response = apiPublic.post('/auth/admin/login', data);
     return response;
 };
 

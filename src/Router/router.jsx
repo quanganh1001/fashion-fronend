@@ -4,7 +4,7 @@ import App from '../App.jsx';
 import Product from '../Components/Customer/Product.jsx';
 import CategoryAdmin from '../Components/Admin/Categories/CategoryAdmin.jsx';
 import Category from '../Components/Customer/Category.jsx';
-import Login from '../Components/Auth/Login.jsx';
+import AdminLogin from '../Components/Auth/AdminLogin.jsx';
 import HomeAdmin from '../Components/Admin/HomeAdmin.jsx';
 import PaginationProvider from '../ContextProvider/PaginationProvider.jsx';
 import AddProduct from '../Components/Admin/Products/AddProduct';
@@ -37,6 +37,7 @@ import AccessDenied from '../Components/ErrorPage/AccessDenied.jsx';
 import ErrorPage from '../Components/ErrorPage/ErrorPage.jsx';
 import InternalServerError from '../Components/ErrorPage/InternalServerError.jsx';
 import InfoAccount from '../Components/Customer/InfoAccount.jsx';
+import ClientLogin from '../Components/Auth/ClientLogin.jsx';
 
 export const router = createBrowserRouter([
     {
@@ -68,8 +69,8 @@ export const router = createBrowserRouter([
             },
 
             {
-                path: 'login',
-                element: <Login />,
+                path: 'loginAdmin',
+                element: <AdminLogin />,
             },
 
             {
@@ -80,6 +81,10 @@ export const router = createBrowserRouter([
                     </PublicLayout>
                 ),
                 children: [
+                    {
+                        path: 'login',
+                        element: <ClientLogin />,
+                    },
                     {
                         index: true,
                         element: <Home />,

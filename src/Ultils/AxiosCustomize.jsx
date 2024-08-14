@@ -45,7 +45,7 @@ apiPrivate.interceptors.response.use(
             error.response &&
             (error.response.status === 500 || error.response.status === 500)
         ) {
-            // window.location.href = '/error/500';
+            window.location.href = '/error/500';
         }
 
         return Promise.reject(error);

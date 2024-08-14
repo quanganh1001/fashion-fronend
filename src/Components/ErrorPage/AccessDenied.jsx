@@ -14,7 +14,7 @@ export default function AccessDenied() {
               </Helmet>
               <h1>Đã xảy ra lỗi</h1>
               <p>Bạn không có quyền truy cập trang này!</p>
-              <Link to="/login" className="btn btn-warning">
+              <Link to="/loginAdmin" className="btn btn-warning">
                   Đăng nhập
               </Link>
           </div>

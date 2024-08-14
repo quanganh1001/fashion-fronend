@@ -16,7 +16,7 @@ export default function Header() {
     const [listCategoriesF3, setListCategoriesF3] = useState([]);
     const [searchValue, setSearchValue] = useState('');
     const [searchValid, setSearchValid] = useState(false);
-    const { auth, handleLogout, handleLogin } = useAuth();
+    const { auth, handleLogout, handleLoginClient } = useAuth();
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
     const [passBlank, setPassBlank] = useState('');
@@ -169,7 +169,7 @@ export default function Header() {
         if (valid) {
              setIsLoadingLogin(true);
             try {
-                await handleLogin({ username, password });
+                await handleLoginClient({ username, password });
             } catch (error) {
                 if (error.response.data === 'Invalid username or password') {
                     toast.error('Sai tên đăng nhập hoặc mật khẩu');

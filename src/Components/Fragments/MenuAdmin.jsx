@@ -17,6 +17,7 @@ const Menu = (props) => {
         {
             path: '/admin/home',
             label: 'TRANG CHỦ',
+            requiredRoles: ['ROLE_MANAGER'],
         },
         {
             path: '/admin/products',

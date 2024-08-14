@@ -50,7 +50,7 @@ export default function Footer() {
     }
     return (
         <>
-            <div className="bg-secondary-subtle shadow-lg border footer">
+            <div className="bg-secondary-subtle shadow-lg  border footer">
                 <div className="container d-flex">
                     <div className="col-3 d-flex flex-column pt-5 pb-5 ps-3 pe-3 border-end border-dark-subtle">
                         <b className="fs-5">Thời trang nam TORANO</b>
@@ -259,13 +259,18 @@ export default function Footer() {
                                     placeholder="Nhập email"
                                     style={{ fontSize: '0.8rem' }}
                                 />
-                                <label>Nhập email của bạn</label>
+                                <label
+                                    className="fw-lighter fst-italic"
+                                >
+                                    Nhập email của bạn
+                                </label>
                             </div>
 
                             <button
                                 onClick={handleRegisterEmail}
                                 disabled={isLoading}
-                                className="button"                            >
+                                className="button"
+                            >
                                 Đăng ký
                             </button>
                         </div>

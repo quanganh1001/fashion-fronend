@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { getAuth, login, logout, refreshToken } from '../Services/Auth';
+import { getAuth, loginAdmin, loginClient, logout, refreshToken } from '../Services/Auth';
 import { AuthContext } from './Context';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
@@ -38,8 +38,8 @@ export default function AuthProvider({ children }) {
         return () => clearInterval(interval);
     }, [auth]);
 
-    const handleLogin = async (data) => {
-        await login(data).then((res) => {
+    const handleLoginAdmin = async (data) => {
+        await loginAdmin(data).then((res) => {
             setAuth({
                 token: res.data.token,
                 refreshToken: res.data.refreshToken,
@@ -54,14 +54,34 @@ export default function AuthProvider({ children }) {
                 },
             });
             if (
-                res.data.account.role === 'ROLE_MANAGER' ||
-                res.data.account.role === 'ROLE_EMPLOYEE'
-            ) {
+                res.data.account.role === 'ROLE_MANAGER'
+            )  {
                 navigate(location.state?.redirectTo?.pathname || '/admin/home', { replace: true });
-            } else {
-                navigate('/')
-            }
-                
+            } else if(res.data.account.role === 'ROLE_EMPLOYEE'){
+                navigate(
+                    location.state?.redirectTo?.pathname || '/admin/invoices',
+                    { replace: true }
+                );
+            }           
+        });
+    };
+
+    const handleLoginClient = async (data) => {
+        await loginClient(data).then((res) => {
+            setAuth({
+                token: res.data.token,
+                refreshToken: res.data.refreshToken,
+                account: {
+                    id: res.data.account.id,
+                    name: res.data.account.name,
+                    phone: res.data.account.phone,
+                    email: res.data.account.email,
+                    address: res.data.account.address,
+                    isActivated: res.data.account.isActivated,
+                    role: res.data.account.role,
+                },
+            });
+            navigate(location.state?.redirectTo?.pathname || '/',{ replace: true });
         });
     };
 
@@ -78,7 +98,7 @@ export default function AuthProvider({ children }) {
     };
 
     return (
-        <AuthContext.Provider value={{ auth, handleLogin, handleLogout }}>
+        <AuthContext.Provider value={{ auth, handleLoginClient,handleLoginAdmin, handleLogout }}>
             {children}
         </AuthContext.Provider>
     );
