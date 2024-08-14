@@ -99,6 +99,7 @@ export default function ClientLogin() {
             try {
                 setIsLoading(true);
                 await handleLoginClient({ username, password });
+                
             } catch (error) {
                 setIsLoading(false);
                 if (error.response.data === 'Invalid username or password') {

@@ -69,7 +69,7 @@ export const router = createBrowserRouter([
             },
 
             {
-                path: 'loginAdmin',
+                path: 'login-admin',
                 element: <AdminLogin />,
             },
 
