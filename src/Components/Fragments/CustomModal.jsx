@@ -8,7 +8,7 @@ export default function CustomModal() {
             <Modal.Header closeButton>
                 <Modal.Title>{modal.title}</Modal.Title>
             </Modal.Header>
-            <Modal.Body>{modal.content}</Modal.Body>
+            <Modal.Body style={{maxHeight:"80vh",overflowY:"auto"}}>{modal.content}</Modal.Body>
             <Modal.Footer>
                 <Button variant="secondary" onClick={closeModal}>
                     Hủy

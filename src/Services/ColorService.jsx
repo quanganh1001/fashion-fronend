@@ -1,8 +1,17 @@
 import { apiPrivate } from '../Ultils/AxiosCustomize';
 
-const getAllColors =  () => {
-    const response =  apiPrivate.get('colors');
-    return response;
+export const getAllColors =  () => {
+    return apiPrivate.get('colors');
+   
 };
 
-export { getAllColors };
+export const createColor = (colorDto) => {
+    console.log(colorDto);
+    
+    return apiPrivate.post('colors', {colorCode: colorDto.newColorCode,name:colorDto.newColorName});
+};
+
+export const deleteColor = (id) => {
+    return apiPrivate.delete('colors/' + id);
+};
+
