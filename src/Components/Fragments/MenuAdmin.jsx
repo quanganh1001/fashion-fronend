@@ -1,6 +1,6 @@
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import React, { useEffect, useState } from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import useAuth from '../../CustomHooks/useAuth';
 import { toast } from 'react-toastify';
 import useFeedback from '../../CustomHooks/useFeedback';
@@ -12,7 +12,7 @@ const Menu = (props) => {
     const { auth, handleLogout } = useAuth();
     const { totalFeedbackUnread } = useFeedback();
     const [isLoading, setIsLoading] = useState(false);
-
+    const navigate = useNavigate();
     const navItems = [
         {
             path: '/admin/home',
@@ -66,6 +66,7 @@ const Menu = (props) => {
         setIsLoading(true);
         try {
             await handleLogout();
+            navigate('/login-admin');
             toast.success('Đã đăng xuất!');
         } catch (error) {
             toast.error('Có lỗi xảy ra!');

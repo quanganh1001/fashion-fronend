@@ -143,9 +143,15 @@ export default function Header() {
 
     const logoutForm = async() => {
         setIsLoadingLogout(true);
-        await handleLogout();
-        setIsLoadingLogout(false);
-        toast.success('Đã đăng xuất!');
+        try {
+            await handleLogout();
+            navigate("/")
+            setIsLoadingLogout(false);
+            toast.success('Đã đăng xuất!');
+        } catch {
+            
+        }
+        
     };
 
     const formLogin = async (event) => {

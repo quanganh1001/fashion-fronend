@@ -35,7 +35,6 @@ export default function EditInvoiceDetail() {
     const [invoice, setInvoice] = useState('');
 
     const [nameError, setNameError] = useState('');
-    const [phoneError, setPhoneError] = useState('');
     const [addressError, setAddressError] = useState('');
     const [accountError, setAccountError] = useState('');
     const [isLoadingInvoice, setIsLoadingInvoice] = useState(true);
@@ -117,18 +116,6 @@ export default function EditInvoiceDetail() {
             setNameError('');
         }
 
-        if (inputInvoice.phone === '') {
-            isValid = false;
-            setPhoneError('Số điện thoại không được để trống');
-        } else if (isNaN(inputInvoice.phone)) {
-            isValid = false;
-            setPhoneError('Số điện thoại không đúng');
-        } else if (inputInvoice.phone.length !== 10) {
-            isValid = false;
-            setPhoneError('Số điện thoại phải có 10 ký tự');
-        } else {
-            setPhoneError('');
-        }
 
         if (inputInvoice.address === '') {
             isValid = false;

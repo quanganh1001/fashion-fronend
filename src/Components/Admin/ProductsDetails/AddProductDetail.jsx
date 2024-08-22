@@ -3,9 +3,12 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { getSize } from '../../../Services/EnumService';
 import { addProductDetail } from '../../../Services/ProductDetailService';
 import { toast } from 'react-toastify';
-import { getAllColors } from '../../../Services/ColorService';
+import { createColor, deleteColor, getAllColors } from '../../../Services/ColorService';
 import LoadingSpinner from '../../Fragments/LoadingSpinner';
 import Title from '../../Fragments/Title';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import useModal from '../../../CustomHooks/useModal';
+
 
 export default function AddProductDetail() {
     const { id } = useParams();
@@ -16,7 +19,13 @@ export default function AddProductDetail() {
     const [codeError, setCodeError] = useState('');
     const [colorError, setColorError] = useState('');
     const [quantityError, setQuantityError] = useState('');
+    const [colorCodeError, setColorCodeError] = useState('');
+    const [colorNameError, setColorNameError] = useState('');
     const [isLoading, setIsLoading] = useState(false);
+    const { openModal, closeModal } = useModal();
+    const [ isOpenModal, setIsOpenModal ] = useState(false);
+    const [newColorCode, setNewColorCode] = useState("");
+    const [newColorName, setNewColorName] = useState("");
     const [productDetail, setProductDetail] = useState({
         code: '',
         quantity: '',
@@ -30,24 +39,151 @@ export default function AddProductDetail() {
         fetchListColor();
     }, []);
 
-    const fetchListSize =  () => {
-         getSize()
-             .then((res) => {
-                 setListSize(res.data);
-             })
-             .catch((err) => {
-                 console.error(err);
-             });
+    useEffect(() => {
+        if (isOpenModal || newColorName !== '' || newColorCode !== '' || colorNameError !== '' || colorCodeError !== '') {
+            openModal(
+                'Danh sách mã màu',
+                <>
+                    <div>
+                        <form onSubmit={addColor}>
+                            <div className="row d-flex justify-content-center">
+                                <div className="mb-3 col-6">
+                                    <label>
+                                        Mã màu
+                                        <span style={{ color: 'red' }}>*</span>
+                                    </label>
+                                    <input
+                                        value={newColorCode}
+                                        onChange={handleSetNewColorCode}
+                                        type="text"
+                                        className={
+                                            colorCodeError !== ''
+                                                ? 'border-danger form-control'
+                                                : 'form-control'
+                                        }
+                                    />
+                                    <span className="text-danger">
+                                        {colorCodeError}
+                                    </span>
+                                </div>
+
+                                <div className="mb-3 col-6">
+                                    <label>
+                                        Tên màu
+                                        <span style={{ color: 'red' }}>*</span>
+                                    </label>
+                                    <input
+                                        value={newColorName}
+                                        onChange={handleSetNewColorName}
+                                        type="text"
+                                        className={
+                                            colorNameError !== ''
+                                                ? 'border-danger form-control'
+                                                : 'form-control'
+                                        }
+                                    />
+                                    <span className="text-danger">
+                                        {colorNameError}
+                                    </span>
+                                </div>
+
+                                <button className="col-4 button" type="submit">
+                                    Thêm mã màu
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                    <hr />
+                    <div className="d-flex flex-wrap">
+                        {listColor.map((color) => (
+                            <div key={color.id} className="mb-3 col-6">
+                                <FontAwesomeIcon
+                                    onClick={() => handleDeleteColor(color.id)}
+                                    icon="fa-solid fa-square-minus"
+                                    style={{
+                                        color: '#b30000',
+                                        cursor: 'pointer',
+                                    }}
+                                    className="me-3"
+                                />
+                                {color.name} / {color.colorCode}
+                            </div>
+                        ))}
+                    </div>
+                </>,
+                () => {},
+                true
+            );
+        }        
+       
+    }, [newColorCode, newColorName, isOpenModal, listColor,colorCodeError,colorNameError]);
+
+    const fetchListSize = () => {
+        getSize()
+            .then((res) => {
+                setListSize(res.data);
+            })
+            .catch((err) => {
+                console.error(err);
+            });
     };
 
-    const fetchListColor =  () => {
-         getAllColors()
-             .then((res) => {
-                 setListColor(res.data);
-             })
-             .catch((err) => {
-                 console.error(err);
-             });
+    const fetchListColor = () => {
+        getAllColors()
+            .then((res) => {
+                setListColor(res.data);
+            })
+            .catch((err) => {
+                console.error(err);
+            });
+    };
+
+    const handleDeleteColor = (id) => {
+         deleteColor(id)
+             .then(() => {         
+                toast.success('Xóa thành công!');
+                fetchListColor();
+            })
+            .catch((error) => {
+                console.error(error);
+                toast.error('Có lỗi xảy ra!');
+            });
+    };
+
+    const addColor = (e) => {
+        e.preventDefault();
+        let isValid = true;
+
+        if (newColorCode === '') {
+            isValid = false;
+            setColorCodeError('Chưa điền mã màu');
+        } else if (newColorCode.length > 3) {
+            isValid = false;
+            setColorCodeError('Độ dài lớn hơn 3 ký tự');
+        } else {
+            setColorCodeError('');
+        }
+        if (newColorName === '') {
+            isValid = false;
+            setColorNameError('Chưa điền tên màu');
+        } else {
+            setColorNameError('');
+        }
+
+        if (isValid) {
+            createColor({ newColorCode, newColorName })
+                .then((res) => {
+                    toast.success('Thêm thành công');
+                    fetchListColor();
+                })
+                .catch((error) => {
+                    if (error.response.status === 409) {
+                        setColorCodeError('Mã màu đã tồn tại');                        
+                        setIsOpenModal(true);
+                    }
+                    console.error(error);
+                })
+        }
     };
 
     const handleInputChange = (e) => {
@@ -55,7 +191,17 @@ export default function AddProductDetail() {
         setProductDetail({ ...productDetail, [name]: value });
     };
 
-    const addProductDetailForm =  (e) => {
+    const handleSetNewColorCode = (e) => {
+        setIsOpenModal(true);
+        setNewColorCode(e.target.value);
+    };
+    
+    const handleSetNewColorName = (e) => {
+        setIsOpenModal(true);
+        setNewColorName(e.target.value);
+    };
+
+    const addProductDetailForm = (e) => {
         e.preventDefault();
         let isValid = true;
 
@@ -68,13 +214,11 @@ export default function AddProductDetail() {
 
         if (productDetail.quantity === '') {
             isValid = false;
-            console.log('Số lượng không được để trống');
             setQuantityError('Số lượng không được để trống');
         } else if (
             productDetail.quantity !== '' &&
             isNaN(productDetail.quantity)
         ) {
-            console.log('Số lượng không đúng định dạng');
             isValid = false;
             setQuantityError('Số lượng không đúng định dạng');
         } else if (
@@ -94,7 +238,7 @@ export default function AddProductDetail() {
             setSizeError('');
         }
 
-        if (productDetail.color === '') {
+        if (productDetail.colorId === '') {
             isValid = false;
             setColorError('Chưa chọn màu');
         } else {
@@ -103,7 +247,7 @@ export default function AddProductDetail() {
 
         if (isValid) {
             setIsLoading(true);
-             addProductDetail(productDetail)
+            addProductDetail(productDetail)
                 .then((res) => {
                     toast.success('Thêm thành công');
                     navigate(`/admin/products/${id}/edit`);
@@ -116,9 +260,16 @@ export default function AddProductDetail() {
                 });
         }
     };
+
+    
+
+    const openColor = async () => {
+        await setIsOpenModal(false);
+        await setIsOpenModal(true);
+    };
     return (
         <>
-            <Title title="Thêm chi tiết sản phẩm"/>
+            <Title title="Thêm chi tiết sản phẩm" />
             <hr />
             <div className="mt-5 bg-white p-5 shadow border">
                 <form onSubmit={addProductDetailForm}>
@@ -161,6 +312,12 @@ export default function AddProductDetail() {
                         <div className="mb-3 col-6">
                             <label className="form-label">
                                 Màu sắc<span style={{ color: 'red' }}>*</span>
+                                <FontAwesomeIcon
+                                    onClick={openColor}
+                                    className="ms-2"
+                                    icon="fa-regular fa-square-plus"
+                                    style={{ cursor: 'pointer' }}
+                                />
                             </label>
                             <select
                                 className={
@@ -207,7 +364,11 @@ export default function AddProductDetail() {
                             <span className="text-danger">{sizeError}</span>
                         </div>
 
-                        <button disabled={isLoading} type="submit" className="col-2 button">
+                        <button
+                            disabled={isLoading}
+                            type="submit"
+                            className="col-2 button"
+                        >
                             Thêm mới
                         </button>
                         {isLoading && <LoadingSpinner />}

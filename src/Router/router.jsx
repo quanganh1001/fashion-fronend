@@ -70,6 +70,7 @@ export const router = createBrowserRouter([
 
             {
                 path: 'login-Admin',
+
                 element: <AdminLogin />,
             },
 
