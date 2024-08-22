@@ -44,7 +44,7 @@ const Menu = (props) => {
             label: 'QUẢN LÝ ĐƠN ONLINE',
         },
         {
-            path: '/admin/invoice/store',
+            path: '/admin/invoices/store',
             label: 'QUẢN LÝ ĐƠN TẠI QUẦY',
         },
         {

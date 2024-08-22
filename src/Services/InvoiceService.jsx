@@ -1,7 +1,7 @@
 import { apiPrivate, apiPublic } from '../Ultils/AxiosCustomize';
 
-export const getAllInvoice =  (searchParams, accountId, invoiceStatus) => {
-    return  apiPrivate.get('invoices', {
+export const getAllInvoiceOnline =  (searchParams, accountId, invoiceStatus) => {
+    return  apiPrivate.get('invoices/online', {
         params: {
             invoiceStatus: invoiceStatus,
             keyword: searchParams.get('keyword'),
@@ -12,9 +12,24 @@ export const getAllInvoice =  (searchParams, accountId, invoiceStatus) => {
     });
 };
 
-export const getInvoice =  (id) => {
-    return  apiPrivate.get('invoices/'+id)
+export const getAllInvoiceAtStore = (searchParams, store) => {
+    return apiPrivate.get('invoices/store', {
+        params: {
+            keyword: searchParams.get('keyword'),
+            page: searchParams.get('page'),
+            limit: searchParams.get('limit'),
+            orderSource: store,
+        },
+    });
+};
+
+export const getInvoiceOnline =  (id) => {
+    return  apiPrivate.get('invoices/online'+id)
 }
+
+export const getInvoiceAtStore = (id) => {
+    return apiPrivate.get('invoices/store' + id);
+};
 
 export const updateInvoice =  (id, invoice) => {
     return  apiPrivate.put('invoices/' + id, invoice);

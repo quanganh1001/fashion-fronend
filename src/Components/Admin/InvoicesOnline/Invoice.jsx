@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import {
-    getAllInvoice,
+    getAllInvoiceOnline,
     updateStatusInvoice,
 } from '../../../Services/InvoiceService';
 import usePagination from '../../../CustomHooks/usePagination';
@@ -100,7 +100,7 @@ export default function Invoice() {
     };
 
     const fetchGetAllInvoices = () => {
-        getAllInvoice(searchParams, accountId, invoiceStatus)
+        getAllInvoiceOnline(searchParams, accountId, invoiceStatus)
             .then((res) => {
                 setListInvoice(res.data.invoices);
                 setTotalPages(res.data.totalPages);

@@ -71,7 +71,7 @@ export const router = createBrowserRouter([
             },
 
             {
-                path: 'login-Admin',
+                path: 'login-admin',
 
                 element: <AdminLogin />,
             },
@@ -267,10 +267,7 @@ export const router = createBrowserRouter([
                                     </PaginationProvider>
                                 ),
                             },
-                            {
-                                path: ':id/invoicesDetail',
-                                element: <EditInvoiceDetailStore />,
-                            },
+                            
                         ],
                     },
 

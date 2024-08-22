@@ -10,7 +10,7 @@ import {
     addInvoiceDetail,
     editShippingFee,
     getAllInvoicesDetail,
-    getInvoice,
+    getInvoiceOnline,
 } from '../../../Services/InvoiceService';
 import { findAllProductsDetailByKey } from '../../../Services/ProductDetailService';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -185,15 +185,18 @@ export default function InvoicesDetails({
 
     const fetchInvoice = () => {
         setIsLoadingPrice(true);
-         getInvoice(id).then((res) => {
-            setInvoice(res.data);
-            setShippingFee(res.data.shippingFee);
-         }).catch((error) => {
-            console.error(error);
-         }).finally(() => {
-             setIsLoadingPrice(false)
-             setIsLoadingDetail(false)
-        });
+         getInvoiceOnline(id)
+             .then((res) => {
+                 setInvoice(res.data);
+                 setShippingFee(res.data.shippingFee);
+             })
+             .catch((error) => {
+                 console.error(error);
+             })
+             .finally(() => {
+                 setIsLoadingPrice(false);
+                 setIsLoadingDetail(false);
+             });
     };
 
     const fetchProductsDetail =  (key, abortController) => {

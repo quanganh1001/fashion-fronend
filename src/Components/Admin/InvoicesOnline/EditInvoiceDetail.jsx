@@ -2,7 +2,7 @@ import { useParams } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import {
     getAllHistory,
-    getInvoice,
+    getInvoiceOnline,
     updateInvoice,
 } from '../../../Services/InvoiceService';
 import { parseISO, format } from 'date-fns';
@@ -57,7 +57,7 @@ export default function EditInvoiceDetail() {
 
     const fetchInvoice = () => {
         setIsLoadingDetail(true);
-        getInvoice(id)
+        getInvoiceOnline(id)
             .then((res) => {
                 setInputInvoice({
                     name: res.data.name,
