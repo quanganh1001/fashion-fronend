@@ -40,8 +40,12 @@ const Menu = (props) => {
             requiredRoles: ['ROLE_EMPLOYEE'],
         },
         {
-            path: '/admin/invoices',
-            label: 'QUẢN LÝ HÓA ĐƠN',
+            path: '/admin/invoices/online',
+            label: 'QUẢN LÝ ĐƠN ONLINE',
+        },
+        {
+            path: '/admin/invoice/store',
+            label: 'QUẢN LÝ ĐƠN TẠI QUẦY',
         },
         {
             path: '/admin/customerEmails',

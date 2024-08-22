@@ -17,8 +17,8 @@ import EditCategory from '../Components/Admin/Categories/EditCategory.jsx';
 import Account from '../Components/Admin/Accounts/Account.jsx';
 import EditAccount from '../Components/Admin/Accounts/EditAccount.jsx';
 import AddAccount from '../Components/Admin/Accounts/AddAccount.jsx';
-import Invoice from '../Components/Admin/Invoices/Invoice.jsx';
-import EditInvoiceDetail from '../Components/Admin/Invoices/EditInvoiceDetail.jsx';
+import Invoice from '../Components/Admin/InvoicesOnline/Invoice.jsx';
+import EditInvoiceDetail from '../Components/Admin/InvoicesOnline/EditInvoiceDetail.jsx';
 import Home from '../Components/Customer/Home.jsx';
 import PublicLayout from '../Components/Layout/PublicLayout.jsx';
 import ProductAdmin from '../Components/Admin/Products/ProductAdmin.jsx';
@@ -38,6 +38,8 @@ import ErrorPage from '../Components/ErrorPage/ErrorPage.jsx';
 import InternalServerError from '../Components/ErrorPage/InternalServerError.jsx';
 import InfoAccount from '../Components/Customer/InfoAccount.jsx';
 import ClientLogin from '../Components/Auth/ClientLogin.jsx';
+import InvoiceStore from '../Components/Admin/InvoicesStore/InvoiceStore.jsx';
+import EditInvoiceDetailStore from '../Components/Admin/InvoicesStore/EditInvoiceDetail.jsx';
 
 export const router = createBrowserRouter([
     {
@@ -236,7 +238,7 @@ export const router = createBrowserRouter([
                     },
 
                     {
-                        path: 'invoices',
+                        path: 'invoices/online',
                         element: <Outlet />,
                         children: [
                             {
@@ -250,6 +252,24 @@ export const router = createBrowserRouter([
                             {
                                 path: ':id/invoicesDetail',
                                 element: <EditInvoiceDetail />,
+                            },
+                        ],
+                    },
+                    {
+                        path: 'invoices/store',
+                        element: <Outlet />,
+                        children: [
+                            {
+                                index: true,
+                                element: (
+                                    <PaginationProvider>
+                                        <InvoiceStore />
+                                    </PaginationProvider>
+                                ),
+                            },
+                            {
+                                path: ':id/invoicesDetail',
+                                element: <EditInvoiceDetailStore />,
                             },
                         ],
                     },

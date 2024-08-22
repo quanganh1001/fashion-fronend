@@ -257,7 +257,7 @@ export default function Invoice() {
                                                     <Dropdown.Menu>
                                                         <Dropdown.Item
                                                             as={Link}
-                                                            to={`/admin/invoices/${invoice.id}/invoicesDetail`}
+                                                            to={`/admin/invoices/online/${invoice.id}/invoicesDetail`}
                                                         >
                                                             Xem/Sửa
                                                         </Dropdown.Item>
