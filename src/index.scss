@@ -28,9 +28,7 @@ li {
 }
 
 .button-non-active:hover {
-    @extend .btn;
     @extend .btn-dark;
-    @extend .bg-gradient;
 }
 
 .button {

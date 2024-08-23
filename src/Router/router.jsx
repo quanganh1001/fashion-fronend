@@ -39,7 +39,7 @@ import InternalServerError from '../Components/ErrorPage/InternalServerError.jsx
 import InfoAccount from '../Components/Customer/InfoAccount.jsx';
 import ClientLogin from '../Components/Auth/ClientLogin.jsx';
 import InvoiceStore from '../Components/Admin/InvoicesStore/InvoiceStore.jsx';
-import EditInvoiceDetailStore from '../Components/Admin/InvoicesStore/EditInvoiceDetail.jsx';
+import CreateInvoice from '../Components/Admin/InvoicesStore/CreateInvoice.jsx';
 
 export const router = createBrowserRouter([
     {
@@ -267,7 +267,10 @@ export const router = createBrowserRouter([
                                     </PaginationProvider>
                                 ),
                             },
-                            
+                            {
+                                path: 'create',
+                                element: <CreateInvoice />,
+                            },
                         ],
                     },
 
