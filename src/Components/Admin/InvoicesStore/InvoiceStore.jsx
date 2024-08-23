@@ -10,6 +10,7 @@ import LoadingSpinner from '../../Fragments/LoadingSpinner';
 import Title from '../../Fragments/Title';
 import { getAllStores } from '../../../Services/StoreService';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { Link } from 'react-router-dom';
 
 export default function InvoiceStore() {
     const [listInvoice, setListInvoice] = useState([]);
@@ -65,10 +66,13 @@ export default function InvoiceStore() {
 
     
     return (
-        <>  
+        <>
             <Title title="Danh sách đơn hàng bán tại cửa hàng" />
             <div className="mt-5 bg-white p-5 shadow border">
-                <button className='button'>Tạo đơn hàng</button>
+                <Link to="/admin/invoices/store/create">
+                    <button className="button">Tạo đơn hàng</button>
+                </Link>
+
                 <div className=" mt-5 d-flex flex-wrap justify-content-between align-items-center">
                     <div className="col-2">
                         <span>Chọn cửa hàng</span>

@@ -24,7 +24,7 @@ export const getAllInvoiceAtStore = (searchParams, store) => {
 };
 
 export const getInvoiceOnline =  (id) => {
-    return  apiPrivate.get('invoices/online'+id)
+    return  apiPrivate.get('invoices/online/'+id)
 }
 
 export const getInvoiceAtStore = (id) => {
@@ -79,6 +79,11 @@ export const checkoutCash = (checkoutDto) => {
 
 export const checkoutCashWithAuth = (checkoutDto) => {
     return apiPrivate.post('/invoices/checkoutByCash', checkoutDto);
+};
+
+export const createInvoiceAtStore = (createDto) => {
+    console.log(createDto);
+    return apiPrivate.post('/invoices/createInvoice', createDto);
 };
 
 export const getAllHistory = (id) => {

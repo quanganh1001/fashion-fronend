@@ -378,9 +378,41 @@ export default function InvoicesDetails({
                                                                         <div className="d-flex justify-content-between">
                                                                             <span>
                                                                                 {pd.discountPrice !=
-                                                                                null
-                                                                                    ? pd.discountPrice
-                                                                                    : pd.price}
+                                                                                null ? (
+                                                                                    <>
+                                                                                        <span className="text-decoration-line-through">
+                                                                                            {pd.price.toLocaleString(
+                                                                                                'vi-VN',
+                                                                                                {
+                                                                                                    style: 'currency',
+                                                                                                    currency:
+                                                                                                        'VND',
+                                                                                                }
+                                                                                            )}
+                                                                                        </span>
+
+                                                                                        -
+                                                                                        <span>
+                                                                                            {pd.discountPrice.toLocaleString(
+                                                                                                'vi-VN',
+                                                                                                {
+                                                                                                    style: 'currency',
+                                                                                                    currency:
+                                                                                                        'VND',
+                                                                                                }
+                                                                                            )}
+                                                                                        </span>
+                                                                                    </>
+                                                                                ) : (
+                                                                                    pd.price.toLocaleString(
+                                                                                        'vi-VN',
+                                                                                        {
+                                                                                            style: 'currency',
+                                                                                            currency:
+                                                                                                'VND',
+                                                                                        }
+                                                                                    )
+                                                                                )}
                                                                             </span>
 
                                                                             <span className="fw-lighter">
@@ -572,7 +604,7 @@ export default function InvoicesDetails({
                                         </td>
                                         <td colSpan={7} className="">
                                             {invoice ? (
-                                                <div className="d-flex flex-wrap text-danger fw-semibold fs-3">
+                                                <div className=" text-danger fw-semibold fs-3">
                                                     {isLoadingPrice ? (
                                                         <LoadingSpinner />
                                                     ) : (
@@ -587,11 +619,11 @@ export default function InvoicesDetails({
                                                             )}{' '}
                                                         </>
                                                     )}
-                                                    <span className="text-danger">
+                                                    <div className="text-danger">
                                                         {invoice.isPaid === true
-                                                            ? 'Đã thanh toán'
+                                                            ? '(Đã thanh toán)'
                                                             : ''}
-                                                    </span>
+                                                    </div>
                                                 </div>
                                             ) : null}
                                         </td>

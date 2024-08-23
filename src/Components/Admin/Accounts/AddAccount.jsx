@@ -7,15 +7,10 @@ import Title from '../../Fragments/Title';
 
 export default function AddAccount() {
     const [phoneError, setPhoneError] = useState('');
-
     const [emailError, setEmailError] = useState('');
-
     const [nameError, setNameError] = useState('');
-
     const [roleError, setRoleError] = useState('');
-
     const navigate = useNavigate();
-
     const [account, setAccount] = useState({
         phone: '',
         name: '',

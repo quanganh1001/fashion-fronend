@@ -1,17 +1,31 @@
 import { useEffect, useRef, useState } from 'react';
 import useModal from '../../../CustomHooks/useModal';
 import { toast } from 'react-toastify';
-import { findAllProductsDetailByKey } from '../../../Services/ProductDetailService';
-import LoadingSpinner from '../../Fragments/LoadingSpinner';
+import {
+    findAllProductsDetailByKey,
+    getProductDetail,
+} from '../../../Services/ProductDetailService';
 import { Dropdown } from 'react-bootstrap';
+import { createInvoiceAtStore } from '../../../Services/InvoiceService';
+import { useNavigate } from 'react-router-dom';
+import Title from '../../Fragments/Title';
+import LoadingSpinner from '../../Fragments/LoadingSpinner';
+import { getAllStores } from '../../../Services/StoreService';
+import { error } from 'jquery';
 
 export default function CreateInvoice() {
-    const [invoice, setInvoice] = useState({
+    const navigate = useNavigate();
+
+    const [phoneError, setPhoneError] = useState('');
+    const [nameError, setNameError] = useState('');
+    const [isLoadingButton, setIsLoadingButton] = useState(false);
+
+    const [inputInvoice, setInputInvoice] = useState({
         name: '',
         phone: '',
-        address: '',
-        customerNote: '',
-        shippingFee: 0,
+        store: '',
+        note: '',
+        invoicesDetails: [],
     });
 
     const { openModal, closeModal } = useModal();
@@ -20,13 +34,28 @@ export default function CreateInvoice() {
         id: '',
         quantity: '',
     });
+
     const [isShowAddDetail, setIsShowAddDetail] = useState(false);
     const [invoicesDetails, setInvoicesDetails] = useState([]);
     const [listProductsDetail, setListProductsDetail] = useState([]);
     const [key, setKey] = useState('');
-    const [isLoading, setIsLoading] = useState(false);
-    const [isLoadingDetail, setIsLoadingDetail] = useState(true);
     const abortControllerRef = useRef(null);
+    const [listStores, setListStores] = useState([]);
+    const [totalBill, setTotalBill] = useState('');
+
+    useEffect(() => {
+        fetchListStores();
+    }, []);
+
+    useEffect(() => {
+        calculateTotalAmount();
+    }, [invoicesDetails]);
+
+    const calculateTotalAmount = () => {
+        setTotalBill(invoicesDetails.reduce((total, detail) => {
+            return total + detail.price * detail.quantity;
+        }, 0));
+    };
 
     useEffect(() => {
         if (newIdQuantity.quantity !== '') {
@@ -70,7 +99,24 @@ export default function CreateInvoice() {
                     }
 
                     if (isValid) {
-                        setIsLoadingDetail(true);
+                        if (Number(newIdQuantity.quantity) === 0) {
+                            setInvoicesDetails((prevList) =>
+                                prevList.filter(
+                                    (detail) => detail.id !== newIdQuantity.id
+                                )
+                            );
+                        } else {
+                            setInvoicesDetails((list) =>
+                                list.map((detail) =>
+                                    detail.id === newIdQuantity.id
+                                        ? {
+                                              ...detail,
+                                              quantity: newIdQuantity.quantity,
+                                          }
+                                        : detail
+                                )
+                            );
+                        }
 
                         closeModal();
                     }
@@ -99,19 +145,74 @@ export default function CreateInvoice() {
         }
     }, [key]);
 
+    const fetchListStores = () => {
+        getAllStores()
+            .then((res) => {
+                setListStores(res.data);
+            })
+            .catch((error) => {
+                console.error(error);
+            });
+    };
+
+    const submitForm = (e) => {
+        e.preventDefault();
+        let isValid = true;
+
+        if (inputInvoice.name === '') {
+            isValid = false;
+            setNameError('Tên không được để trống');
+        } else {
+            setNameError('');
+        }
+
+        if (inputInvoice.phone === '') {
+            isValid = false;
+            setPhoneError('Số điện thoại không được để trống');
+        } else if (isNaN(inputInvoice.phone)) {
+            isValid = false;
+            setPhoneError('Số điện thoại không hợp lệ');
+        } else if (inputInvoice.phone.length !== 10) {
+            isValid = false;
+            setPhoneError('Số điện thoại phải có 10 ký tự');
+        } else {
+            setPhoneError('');
+        }
+
+        if (isValid) {
+            setIsLoadingButton(true);
+            setInputInvoice((prevState) => ({
+                ...prevState,
+                invoicesDetails: invoicesDetails.map((detail) => ({
+                    productDetailId: detail.id,
+                    quantity: detail.quantity,
+                })),
+            }));
+            createInvoiceAtStore(inputInvoice)
+                .then(() => {
+                    navigate('/admin/invoices/store');
+                    toast.success('tạo đơn mới thành công');
+                })
+                .catch((err) => {
+                    toast.error(err.response.data);
+                })
+                .finally(() => {
+                    setIsLoadingButton(false);
+                });
+        }
+    };
+
     const handleShowModalQuantity = (id, quantity) => {
         setNewIdQuantity({ id, quantity });
     };
 
     const fetchProductsDetail = (key, abortController) => {
-        setIsLoading(true);
         if (key !== '') {
             findAllProductsDetailByKey(key, {
                 signal: abortController.signal,
             })
                 .then((res) => {
                     setListProductsDetail(res.data);
-                    setIsLoading(false);
                 })
                 .catch((err) => {
                     if (err.name === 'AbortError') {
@@ -125,15 +226,57 @@ export default function CreateInvoice() {
         }
     };
 
-    const handleDelete = (detailId) => {};
+    const handleDelete = (detailId) => {
+        setInvoicesDetails((prevList) =>
+            prevList.filter((detail) => detail.id !== detailId)
+        );
+    };
 
     const handleInputChange = (e) => {
         setKey(e.target.value);
     };
 
+    const handleInputFormChange = (e) => {
+        const { name, value } = e.target;
+        setInputInvoice({ ...inputInvoice, [name]: value });
+    };
+
     const handleAdd = (productDetailId, quantity) => {
         if (quantity > 0) {
-            setIsLoadingDetail(true);
+            getProductDetail(productDetailId).then((res) => {
+                const invoiceDetail = {
+                    id: res.data.id,
+                    imageBackground: res.data.imageBackground,
+                    code: res.data.code,
+                    productName: res.data.productName,
+                    color: res.data.color,
+                    size: res.data.size,
+                    price:
+                        res.data.discountPrice === null
+                            ? res.data.price
+                            : res.data.discountPrice,
+                    quantity: 1,
+                };
+
+                setInvoicesDetails((prevList) => {
+                    // Kiểm tra xem id đã tồn tại trong invoicesDetails hay chưa
+                    const existingInvoice = prevList.find(
+                        (detail) => detail.id === invoiceDetail.id
+                    );
+
+                    if (existingInvoice) {
+                        // Nếu id đã tồn tại, cập nhật quantity
+                        return prevList.map((detail) =>
+                            detail.id === invoiceDetail.id
+                                ? { ...detail, quantity: detail.quantity + 1 }
+                                : detail
+                        );
+                    } else {
+                        // Nếu id chưa tồn tại, thêm mới vào danh sách
+                        return [...prevList, invoiceDetail];
+                    }
+                });
+            });
         } else {
             toast.error('Sản phẩm đã hết hàng');
         }
@@ -141,6 +284,94 @@ export default function CreateInvoice() {
 
     return (
         <>
+            <Title title="Tạo đơn hàng" />
+            <div className="mt-5 bg-white p-5 shadow border">
+                <div className="col-12 mb-3">
+                    <form
+                        onSubmit={submitForm}
+                        className="d-flex flex-wrap justify-content-between align-items-center row"
+                    >
+                        <div className="mb-3 col-6">
+                            <label className="form-label">
+                                Tên khách hàng
+                                <span style={{ color: 'red' }}>*</span>
+                            </label>
+
+                            <input
+                                value={inputInvoice.name}
+                                name="name"
+                                onChange={handleInputFormChange}
+                                className={`form-control ${
+                                    nameError ? 'border-danger' : ''
+                                } `}
+                            />
+                            <span className="text-danger">{nameError}</span>
+                        </div>
+
+                        <div className="mb-3 col-6">
+                            <label className="form-label">
+                                Số điện thoại
+                                <span style={{ color: 'red' }}>*</span>
+                            </label>
+                            <input
+                                onChange={handleInputFormChange}
+                                value={inputInvoice.phone}
+                                type="text"
+                                name="phone"
+                                className={`form-control ${
+                                    phoneError ? 'border-danger' : ''
+                                } `}
+                            />
+                            <span className="text-danger">{phoneError}</span>
+                        </div>
+
+                        <div className="mb-3 col-6">
+                            <label className="form-label">
+                                Chọn cửa hàng
+                                <span style={{ color: 'red' }}>*</span>
+                            </label>
+                            <select
+                                onChange={handleInputFormChange}
+                                name="store"
+                                className="form-control"
+                            >
+                                {listStores.map((store) => (
+                                    <>
+                                        <option key={store.id} value={store.id}>
+                                            {store.name}
+                                        </option>
+                                    </>
+                                ))}
+                            </select>
+                        </div>
+
+                        <div className="mb-3 col-6">
+                            <label className="form-label">Ghi chú</label>
+                            <textarea
+                                name="note"
+                                value={inputInvoice.note}
+                                onChange={handleInputFormChange}
+                                className="form-control"
+                                rows="4"
+                                cols="50"
+                            ></textarea>
+                        </div>
+
+                        <div className="d-flex justify-content-between">
+                            <button
+                                disabled={isLoadingButton}
+                                style={{ textAlign: 'center' }}
+                                type="submit"
+                                className="mt-3 button col-4"
+                            >
+                                Tạo đơn hàng
+                            </button>
+                            {isLoadingButton && <LoadingSpinner />}
+                        </div>
+                    </form>
+                </div>
+            </div>
+
             <div className="mt-2 bg-white p-5 shadow border">
                 <div className="d-flex flex-wrap">
                     {!isShowAddDetail ? (
@@ -177,90 +408,101 @@ export default function CreateInvoice() {
                                                 maxHeight: '70vh',
                                             }}
                                         >
-                                            {isLoading ? (
-                                                <LoadingSpinner />
-                                            ) : (
-                                                <>
-                                                    {listProductsDetail.map(
-                                                        (pd) => (
-                                                            <li
-                                                                onClick={() =>
-                                                                    handleAdd(
-                                                                        pd.id,
-                                                                        pd.quantity
-                                                                    )
-                                                                }
-                                                                style={{
-                                                                    cursor: 'pointer',
-                                                                }}
-                                                                className={
-                                                                    pd.quantity >
-                                                                    0
-                                                                        ? ' d-flex align-items-center list-group-item'
-                                                                        : ' text-decoration-line-through d-flex align-items-center list-group-item'
-                                                                }
-                                                                key={pd.id}
-                                                            >
-                                                                {pd.imageBackground.endsWith(
-                                                                    '.mp4'
-                                                                ) ? (
-                                                                    <video
-                                                                        width="150px"
-                                                                        controls
-                                                                    >
-                                                                        <source
-                                                                            src={
-                                                                                pd.imageBackground
-                                                                            }
-                                                                            type="video/mp4"
-                                                                        />
-                                                                    </video>
-                                                                ) : (
-                                                                    <img
-                                                                        src={
-                                                                            pd.imageBackground
-                                                                        }
-                                                                        width="50px"
-                                                                        alt=""
-                                                                    />
-                                                                )}
-                                                                <div>
-                                                                    <span>
-                                                                        {
-                                                                            pd.productName
-                                                                        }{' '}
-                                                                        |{' '}
-                                                                        {
-                                                                            pd.size
-                                                                        }{' '}
-                                                                        |{' '}
-                                                                        {
-                                                                            pd.color
-                                                                        }
-                                                                    </span>
-
-                                                                    <div className="d-flex justify-content-between">
-                                                                        <span>
-                                                                            {pd.discountPrice !=
-                                                                            null
-                                                                                ? pd.discountPrice
-                                                                                : pd.price}
-                                                                        </span>
-
-                                                                        <span className="fw-lighter">
-                                                                            Số
-                                                                            lượng:{' '}
-                                                                            {
-                                                                                pd.quantity
-                                                                            }
-                                                                        </span>
-                                                                    </div>
-                                                                </div>
-                                                            </li>
+                                            {listProductsDetail.map((pd) => (
+                                                <li
+                                                    onClick={() =>
+                                                        handleAdd(
+                                                            pd.id,
+                                                            pd.quantity
                                                         )
+                                                    }
+                                                    style={{
+                                                        cursor: 'pointer',
+                                                    }}
+                                                    className={
+                                                        pd.quantity > 0
+                                                            ? ' d-flex align-items-center list-group-item'
+                                                            : ' text-decoration-line-through d-flex align-items-center list-group-item'
+                                                    }
+                                                    key={pd.id}
+                                                >
+                                                    {pd.imageBackground.endsWith(
+                                                        '.mp4'
+                                                    ) ? (
+                                                        <video
+                                                            width="150px"
+                                                            controls
+                                                        >
+                                                            <source
+                                                                src={
+                                                                    pd.imageBackground
+                                                                }
+                                                                type="video/mp4"
+                                                            />
+                                                        </video>
+                                                    ) : (
+                                                        <img
+                                                            src={
+                                                                pd.imageBackground
+                                                            }
+                                                            width="50px"
+                                                            alt=""
+                                                        />
                                                     )}
-                                                </>
-                                            )}
+                                                    <div>
+                                                        <span>
+                                                            {pd.productName} |{' '}
+                                                            {pd.size} |{' '}
+                                                            {pd.color}
+                                                        </span>
+
+                                                        <div className="d-flex justify-content-between">
+                                                            <span>
+                                                                {pd.discountPrice !=
+                                                                null ? (
+                                                                    <>
+                                                                        <span className="text-decoration-line-through">
+                                                                            {pd.price.toLocaleString(
+                                                                                'vi-VN',
+                                                                                {
+                                                                                    style: 'currency',
+                                                                                    currency:
+                                                                                        'VND',
+                                                                                }
+                                                                            )}
+                                                                        </span>
+                                                                        -
+                                                                        <span>
+                                                                            {pd.discountPrice.toLocaleString(
+                                                                                'vi-VN',
+                                                                                {
+                                                                                    style: 'currency',
+                                                                                    currency:
+                                                                                        'VND',
+                                                                                }
+                                                                            )}
+                                                                        </span>
+                                                                    </>
+                                                                ) : (
+                                                                    pd.price.toLocaleString(
+                                                                        'vi-VN',
+                                                                        {
+                                                                            style: 'currency',
+                                                                            currency:
+                                                                                'VND',
+                                                                        }
+                                                                    )
+                                                                )}
+                                                            </span>
+
+                                                            <span className="fw-lighter">
+                                                                Số lượng:{' '}
+                                                                {pd.quantity}
+                                                            </span>
+                                                        </div>
+                                                    </div>
+                                                </li>
+                                            ))}
                                         </ul>
                                     </>
                                 ) : (
@@ -284,130 +526,104 @@ export default function CreateInvoice() {
                         </tr>
                     </thead>
                     <tbody>
-                        {isLoadingDetail ? (
-                            <LoadingSpinner />
-                        ) : (
-                            <>
-                                {invoicesDetails.length > 0 ? (
-                                    invoicesDetails.map((detail) => (
-                                        <tr key={detail.id}>
-                                            <td>
-                                                {detail.imgUrl.endsWith(
-                                                    '.mp4'
-                                                ) ? (
-                                                    <video
-                                                        width="250px"
-                                                        controls
-                                                    >
-                                                        <source
-                                                            src={detail.imgUrl}
-                                                            type="video/mp4"
-                                                        />
-                                                    </video>
-                                                ) : (
-                                                    <img
-                                                        src={detail.imgUrl}
-                                                        width="100px"
-                                                        alt=""
-                                                    />
-                                                )}
-                                            </td>
-                                            <td>{detail.code}</td>
-                                            <td>{detail.productName}</td>
-                                            <td>{detail.color}</td>
-                                            <td>{detail.size}</td>
-                                            <td>
-                                                {detail.price.toLocaleString(
-                                                    'vi-VN',
-                                                    {
-                                                        style: 'currency',
-                                                        currency: 'VND',
+                        {invoicesDetails.length > 0 ? (
+                            invoicesDetails.map((detail) => (
+                                <tr key={detail.id}>
+                                    <td>
+                                        {detail.imageBackground.endsWith(
+                                            '.mp4'
+                                        ) ? (
+                                            <video width="250px" controls>
+                                                <source
+                                                    src={detail.imageBackground}
+                                                    type="video/mp4"
+                                                />
+                                            </video>
+                                        ) : (
+                                            <img
+                                                src={detail.imageBackground}
+                                                width="100px"
+                                                alt=""
+                                            />
+                                        )}
+                                    </td>
+                                    <td>{detail.code}</td>
+                                    <td>{detail.productName}</td>
+                                    <td>{detail.color}</td>
+                                    <td>{detail.size}</td>
+                                    <td>
+                                        {detail.price.toLocaleString('vi-VN', {
+                                            style: 'currency',
+                                            currency: 'VND',
+                                        })}
+                                    </td>
+                                    <td>{detail.quantity}</td>
+                                    <td>
+                                        {(
+                                            detail.price * detail.quantity
+                                        ).toLocaleString('vi-VN', {
+                                            style: 'currency',
+                                            currency: 'VND',
+                                        })}
+                                    </td>
+                                    <td>
+                                        <Dropdown
+                                            data-bs-theme="dark"
+                                            className="me-3"
+                                        >
+                                            <Dropdown.Toggle variant="dark bg-gradient btn-sm">
+                                                Hành động
+                                            </Dropdown.Toggle>
+                                            <Dropdown.Menu>
+                                                <Dropdown.Item
+                                                    onClick={() =>
+                                                        handleShowModalQuantity(
+                                                            detail.id,
+                                                            detail.quantity
+                                                        )
                                                     }
-                                                )}
-                                            </td>
-                                            <td>{detail.quantity}</td>
-                                            <td>
-                                                {detail.totalPrice.toLocaleString(
-                                                    'vi-VN',
-                                                    {
-                                                        style: 'currency',
-                                                        currency: 'VND',
-                                                    }
-                                                )}
-                                            </td>
-                                            <td>
-                                                <Dropdown
-                                                    data-bs-theme="dark"
-                                                    className="me-3"
                                                 >
-                                                    <Dropdown.Toggle variant="dark bg-gradient btn-sm">
-                                                        Hành động
-                                                    </Dropdown.Toggle>
-                                                    <Dropdown.Menu>
-                                                        <Dropdown.Item
-                                                            onClick={() =>
-                                                                handleShowModalQuantity(
-                                                                    detail.id,
-                                                                    detail.quantity
-                                                                )
-                                                            }
-                                                        >
-                                                            Sửa số lượng
-                                                        </Dropdown.Item>
-                                                        <Dropdown.Item
-                                                            onClick={() => {
-                                                                handleDelete(
-                                                                    detail.id
-                                                                );
-                                                            }}
-                                                        >
-                                                            Xóa
-                                                        </Dropdown.Item>
-                                                    </Dropdown.Menu>
-                                                </Dropdown>
-                                            </td>
-                                        </tr>
-                                    ))
-                                ) : (
-                                    <tr>
-                                        <td colSpan={9}>Chưa có sản phẩm</td>
-                                    </tr>
-                                )}
-                                {invoicesDetails.length > 0 ? (
-                                    <>
-                                        <tr>
-                                            <td
-                                                colSpan={7}
-                                                className="fw-bolder"
-                                            >
-                                                Thành tiền
-                                            </td>
-                                            <td colSpan={7} className="">
-                                                <div className="d-flex flex-wrap text-danger fw-semibold fs-3">
-                                                    {invoice.totalBill.toLocaleString(
-                                                        'vi-VN',
-                                                        {
-                                                            style: 'currency',
-                                                            currency: 'VND',
-                                                        }
-                                                    )}
-                                                </div>
-                                            </td>
-                                        </tr>
-                                    </>
-                                ) : null}
-                            </>
+                                                    Sửa số lượng
+                                                </Dropdown.Item>
+                                                <Dropdown.Item
+                                                    onClick={() => {
+                                                        handleDelete(detail.id);
+                                                    }}
+                                                >
+                                                    Xóa
+                                                </Dropdown.Item>
+                                            </Dropdown.Menu>
+                                        </Dropdown>
+                                    </td>
+                                </tr>
+                            ))
+                        ) : (
+                            <tr>
+                                <td colSpan={9}>Chưa có sản phẩm</td>
+                            </tr>
                         )}
+                        {invoicesDetails.length > 0 ? (
+                            <>
+                                <tr>
+                                    <td colSpan={7} className="fw-bolder">
+                                        Thành tiền
+                                    </td>
+                                    <td colSpan={7} className="">
+                                        <div className="d-flex flex-wrap text-danger fw-semibold fs-3">
+                                            {totalBill.toLocaleString('vi-VN', {
+                                                style: 'currency',
+                                                currency: 'VND',
+                                            })}
+                                        </div>
+                                    </td>
+                                </tr>
+                            </>
+                        ) : null}
                     </tbody>
                 </table>
 
                 <div>
-                    {/* <span>
-                        Ghi chú:
-                        <br />- Đơn đã thanh toán thì không thể chỉnh sửa sản
-                        phẩm mua, phí ship
-                        <br />- Đơn đã chốt thì không thể sửa thông tin đơn hàng
-                    </span> */}
+              
                 </div>
             </div>
         </>
