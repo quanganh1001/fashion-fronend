@@ -40,6 +40,7 @@ import InfoAccount from '../Components/Customer/InfoAccount.jsx';
 import ClientLogin from '../Components/Auth/ClientLogin.jsx';
 import InvoiceStore from '../Components/Admin/InvoicesStore/InvoiceStore.jsx';
 import CreateInvoice from '../Components/Admin/InvoicesStore/CreateInvoice.jsx';
+import InvoiceDetailAtStore from '../Components/Admin/InvoicesStore/InvoiceDetailAtStore.jsx';
 
 export const router = createBrowserRouter([
     {
@@ -270,6 +271,10 @@ export const router = createBrowserRouter([
                             {
                                 path: 'create',
                                 element: <CreateInvoice />,
+                            },
+                            {
+                                path: 'detail/:id',
+                                element: <InvoiceDetailAtStore />,
                             },
                         ],
                     },
