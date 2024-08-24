@@ -77,7 +77,7 @@ export default function InvoiceStore() {
                     <div className="col-2">
                         <span>Chọn cửa hàng</span>
                         <select
-                            className="form-control mt-1"
+                            className="form-select mt-1"
                             onChange={handleStoreIdChange}
                         >
                             <option value="0">Tất cả</option>

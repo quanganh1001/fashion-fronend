@@ -4,7 +4,12 @@ import { DateRangePicker } from 'react-bootstrap-daterangepicker';
 import Title from '../Fragments/Title';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap-daterangepicker/daterangepicker.css';
-import { getSalesSent, getSalesSuccess, getTopProduct } from '../../Services/StoredService';
+import {
+    getSalesSent,
+    getSalesSuccess,
+    getTopProduct,
+} from '../../Services/StoredService';
+import { getAllStores } from '../../Services/StoreService';
 
 const HomeAdmin = () => {
     const [startDateTopProduct, setStartDateTopProduct] = useState(
@@ -23,7 +28,7 @@ const HomeAdmin = () => {
     );
     const [salesSent, setSalesSent] = useState({
         totalSales: 0,
-        totalInvoices: 0
+        totalInvoices: 0,
     });
 
     const [startDateSalesSuccess, setStartDateSalesSuccess] = useState(
@@ -36,10 +41,18 @@ const HomeAdmin = () => {
         totalSales: 0,
         totalInvoices: 0,
     });
+    const [selectTopProductAtStore, setSelectTopProductAtStore] = useState(0);
+    const [selectSalesSuccessAtStore, setSelectSalesSuccessAtStore] =
+        useState(0);
+    const [listStore, setListStore] = useState([]);
+
+    useEffect(() => {
+        fetchListStore();
+    }, []);
 
     useEffect(() => {
         fetchProductTop();
-    }, [startDateTopProduct, endDateTopProduct]);
+    }, [startDateTopProduct, endDateTopProduct, selectTopProductAtStore]);
 
     useEffect(() => {
         fetchSalesSent();
@@ -47,7 +60,17 @@ const HomeAdmin = () => {
 
     useEffect(() => {
         fetchSalesSuccess();
-    }, [startDateSalesSuccess, endDateSalesSuccess]);
+    }, [startDateSalesSuccess, endDateSalesSuccess, selectSalesSuccessAtStore]);
+
+    const fetchListStore = () => {
+        getAllStores()
+            .then((res) => {
+                setListStore(res.data);
+            })
+            .catch((error) => {
+                console.error(error);
+            });
+    };
 
     const fetchSalesSent = () => {
         getSalesSent(startDateSalesSent, endDateSalesSent)
@@ -60,10 +83,14 @@ const HomeAdmin = () => {
             .catch((error) => {
                 console.error(error);
             });
-    }
+    };
 
     const fetchSalesSuccess = () => {
-        getSalesSuccess(startDateSalesSuccess, endDateSalesSuccess)
+        getSalesSuccess(
+            startDateSalesSuccess,
+            endDateSalesSuccess,
+            selectSalesSuccessAtStore
+        )
             .then((res) => {
                 setSalesSuccess({
                     totalSales: res.data.totalSales ?? 0,
@@ -75,9 +102,12 @@ const HomeAdmin = () => {
             });
     };
 
-
     const fetchProductTop = () => {
-        getTopProduct(startDateTopProduct, endDateTopProduct)
+        getTopProduct(
+            startDateTopProduct,
+            endDateTopProduct,
+            selectTopProductAtStore
+        )
             .then((res) => {
                 setListTopProducts(res.data);
             })
@@ -112,7 +142,6 @@ const HomeAdmin = () => {
     const handleApplySalesSuccess = (event, picker) => {
         handleCallbackSalesSuccess(picker.startDate, picker.endDate);
     };
-    
 
     return (
         <>
@@ -122,7 +151,9 @@ const HomeAdmin = () => {
                     <div className="card">
                         <div className="card-header border-0 bg-warning-subtle bg-gradient">
                             <div className="d-flex justify-content-between">
-                                <h4 className="card-title ">Doanh số đã gửi</h4>
+                                <h4 className="card-title ">
+                                    Doanh số bán online đã gửi
+                                </h4>
                             </div>
                         </div>
                         <div className="card-body bg-light">
@@ -168,7 +199,7 @@ const HomeAdmin = () => {
                                                                       'VND',
                                                               }
                                                           )
-                                                        : 'N/A'}
+                                                        : 0}
                                                 </td>
                                             </tr>
                                         </tbody>
@@ -181,28 +212,53 @@ const HomeAdmin = () => {
                     <div className="card mt-5">
                         <div className="card-header border-0 bg-success-subtle bg-gradient">
                             <div className="d-flex justify-content-between">
-                                <h4 className="card-title ">Doanh số thành công</h4>
+                                <h4 className="card-title ">
+                                    Doanh số đã bán thành công
+                                </h4>
                             </div>
                         </div>
                         <div className="card-body bg-light">
-                            <div className="col-6 mb-5">
-                                <DateRangePicker
-                                    initialSettings={{
-                                        startDate: startDateSalesSuccess,
-                                        endDate: endDateSalesSuccess,
-                                        locale: {
-                                            format: 'DD/M/YYYY',
-                                        },
-                                    }}
-                                    onApply={handleApplySalesSuccess}
-                                >
-                                    <input
-                                        type="text"
-                                        className="form-control"
-                                    />
-                                </DateRangePicker>
-                            </div>
+                            <div className="mb-5 d-flex flex-wrap justify-content-between">
+                                <div className="col-5">
+                                    <DateRangePicker
+                                        initialSettings={{
+                                            startDate: startDateSalesSuccess,
+                                            endDate: endDateSalesSuccess,
+                                            locale: {
+                                                format: 'DD/M/YYYY',
+                                            },
+                                        }}
+                                        onApply={handleApplySalesSuccess}
+                                    >
+                                        <input
+                                            type="text"
+                                            className="form-control"
+                                        />
+                                    </DateRangePicker>
+                                </div>
 
+                                <div className="col-5">
+                                    <select
+                                        className="form-control "
+                                        onChange={(e) =>
+                                            setSelectSalesSuccessAtStore(
+                                                e.target.value
+                                            )
+                                        }
+                                    >
+                                        <option value="0">Tất cả</option>
+                                        <option value="">Bán online</option>
+                                        {listStore.map((store) => (
+                                            <option
+                                                key={store.id}
+                                                value={store.id}
+                                            >
+                                                {store.name}
+                                            </option>
+                                        ))}
+                                    </select>
+                                </div>
+                            </div>
                             <div className="card">
                                 <div className="card-body table-responsive p-0">
                                     <table className="table table-hover table-bordered border">
@@ -227,7 +283,7 @@ const HomeAdmin = () => {
                                                                       'VND',
                                                               }
                                                           )
-                                                        : 'N/A'}
+                                                        : 0}
                                                 </td>
                                             </tr>
                                         </tbody>
@@ -239,7 +295,7 @@ const HomeAdmin = () => {
                 </div>
 
                 <div className="col-6">
-                    <div className="card">
+                    <div className="card bg-light">
                         <div className="card-header border-0">
                             <div className="d-flex justify-content-between">
                                 <h3 className="card-title">
@@ -248,22 +304,47 @@ const HomeAdmin = () => {
                             </div>
                         </div>
                         <div className="card-body">
-                            <div className="col-6 mb-5">
-                                <DateRangePicker
-                                    initialSettings={{
-                                        startDate: startDateTopProduct,
-                                        endDate: endDateTopProduct,
-                                        locale: {
-                                            format: 'DD/M/YYYY',
-                                        },
-                                    }}
-                                    onApply={handleApplyTopProduct}
-                                >
-                                    <input
-                                        type="text"
-                                        className="form-control"
-                                    />
-                                </DateRangePicker>
+                            <div className="mb-5 d-flex flex-wrap justify-content-between">
+                                <div className="col-5">
+                                    <DateRangePicker
+                                        initialSettings={{
+                                            startDate: startDateTopProduct,
+                                            endDate: endDateTopProduct,
+                                            locale: {
+                                                format: 'DD/M/YYYY',
+                                            },
+                                            
+                                        }}
+                                        onApply={handleApplyTopProduct}
+                                    >
+                                        <input
+                                            type="text"
+                                            className="form-control"
+                                        />
+                                    </DateRangePicker>
+                                </div>
+
+                                <div className="col-5">
+                                    <select
+                                        className="form-control "
+                                        onChange={(e) =>
+                                            setSelectTopProductAtStore(
+                                                e.target.value
+                                            )
+                                        }
+                                    >
+                                        <option value="0">Tất cả</option>
+                                        <option value="">Bán online</option>
+                                        {listStore.map((store) => (
+                                            <option
+                                                key={store.id}
+                                                value={store.id}
+                                            >
+                                                {store.name}
+                                            </option>
+                                        ))}
+                                    </select>
+                                </div>
                             </div>
 
                             <div className="card">

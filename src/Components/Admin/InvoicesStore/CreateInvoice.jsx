@@ -350,7 +350,7 @@ export default function CreateInvoice() {
                             <select
                                 onChange={handleInputFormChange}
                                 name="store"
-                                className="form-control"
+                                className="form-select"
                             >
                                 {listStores.map((store) => (
                                     <>
