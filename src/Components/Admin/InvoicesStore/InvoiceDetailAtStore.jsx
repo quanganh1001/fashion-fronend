@@ -5,10 +5,7 @@ import {
 } from '../../../Services/InvoiceService';
 import { parseISO, format } from 'date-fns';
 
-import { toast } from 'react-toastify';
-
 import Title from '../../Fragments/Title';
-import useModal from '../../../CustomHooks/useModal';
 
 export default function InvoiceDetailAtStore() {
     const { id } = useParams();
@@ -21,6 +18,8 @@ export default function InvoiceDetailAtStore() {
     const fetchInvoice = () => {
         getInvoiceAtStore(id)
             .then((res) => {
+                console.log(res.data);
+                
                 setInvoice(res.data);
             })
             .catch((err) => {
@@ -29,42 +28,34 @@ export default function InvoiceDetailAtStore() {
             
     };
 
-
-    
-
     return (
         <>
             <Title title="Chi tiết đơn hàng" />
             <div className="mt-5 bg-white p-5 shadow border">
-                <div>
-                    <span>
-                        Tên khách hàng: <span>{invoice.name}</span>
-                    </span>
+                <div className="mt-3">
+                    <span className="fw-bold">Tên khách hàng:</span>{' '}
+                    <span>{invoice.name}</span>
                 </div>
-                <div>
-                    <span>
-                        Số điện thoại: <span>{invoice.phone}</span>
-                    </span>
+                <div className="mt-3">
+                    <span className="fw-bold">Số điện thoại:</span>{' '}
+                    <span>{invoice.phone}</span>
                 </div>
-                <div>
-                    <span>
-                        Mua tại cửa hàng: <span>{invoice.store}</span>
-                    </span>
+                <div className="mt-3">
+                    <span className="fw-bold">Mua tại cửa hàng: </span>{' '}
+                    <span>{invoice.store}</span>
                 </div>
-                <div>
-                    <span>
-                        Nhân viên bán hàng: <span>{invoice.accountName}</span>
-                    </span>
+                <div className="mt-3">
+                    <span className="fw-bold">Nhân viên bán hàng:</span>{' '}
+                    <span>{invoice.accountName}</span>
                 </div>
-                <div>
+                <div className="mt-3">
+                    <span className="fw-bold">Ngày mua hàng: </span>
                     <span>
-                        Ngày mua hàng:{' '}
-                        <span>
-                            {format(
+                        {invoice &&
+                            format(
                                 parseISO(invoice.createdAt),
                                 'HH:mm:ss - d/M/yyyy'
                             )}
-                        </span>
                     </span>
                 </div>
             </div>
@@ -83,20 +74,22 @@ export default function InvoiceDetailAtStore() {
                     </tr>
                 </thead>
                 <tbody>
-                    {invoice.invoicesDetails.length > 0 ? (
+                    {invoice &&
+                    invoice.invoicesDetails &&
+                    invoice.invoicesDetails.length > 0 ? (
                         invoice.invoicesDetails.map((detail) => (
                             <tr key={detail.id}>
                                 <td>
-                                    {detail.imageBackground.endsWith('.mp4') ? (
+                                    {detail.imgUrl.endsWith('.mp4') ? (
                                         <video width="250px" controls>
                                             <source
-                                                src={detail.imageBackground}
+                                                src={detail.imgUrl}
                                                 type="video/mp4"
                                             />
                                         </video>
                                     ) : (
                                         <img
-                                            src={detail.imageBackground}
+                                            src={detail.imgUrl}
                                             width="100px"
                                             alt=""
                                         />
@@ -128,21 +121,24 @@ export default function InvoiceDetailAtStore() {
                             <td colSpan={9}>Chưa có sản phẩm</td>
                         </tr>
                     )}
-                    {invoice.invoicesDetails.length > 0 ? (
+                    {invoice && invoice.invoicesDetails.length > 0 ? (
                         <>
                             <tr>
-                                <td colSpan={7} className="fw-bolder">
-                                    Thành tiền
+                                <td colSpan={7} className="fw-bolder d-fle">
+                                    <span>Thành tiền</span>
                                 </td>
                                 <td colSpan={7} className="">
-                                    <div className="d-flex flex-wrap text-danger fw-semibold fs-3">
-                                        {invoice.totalBill.toLocaleString(
-                                            'vi-VN',
-                                            {
-                                                style: 'currency',
-                                                currency: 'VND',
-                                            }
-                                        )}
+                                    <div className="text-danger fw-semibold fs-3">
+                                        <div>
+                                            {invoice.totalBill.toLocaleString(
+                                                'vi-VN',
+                                                {
+                                                    style: 'currency',
+                                                    currency: 'VND',
+                                                }
+                                            )}
+                                        </div>
+                                        <div>(Đã thanh toán)</div>
                                     </div>
                                 </td>
                             </tr>

@@ -52,9 +52,11 @@ export default function CreateInvoice() {
     }, [invoicesDetails]);
 
     const calculateTotalAmount = () => {
-        setTotalBill(invoicesDetails.reduce((total, detail) => {
-            return total + detail.price * detail.quantity;
-        }, 0));
+        setTotalBill(
+            invoicesDetails.reduce((total, detail) => {
+                return total + detail.price * detail.quantity;
+            }, 0)
+        );
     };
 
     useEffect(() => {
@@ -145,6 +147,20 @@ export default function CreateInvoice() {
         }
     }, [key]);
 
+    useEffect(() => {
+        updateInvoicesDetails();
+    }, [invoicesDetails]);
+
+    const updateInvoicesDetails = () => {
+        setInputInvoice((prevState) => ({
+            ...prevState,
+            invoicesDetails: invoicesDetails.map((detail) => ({
+                productDetailId: detail.id,
+                quantity: detail.quantity,
+            })),
+        }));
+    };
+
     const fetchListStores = () => {
         getAllStores()
             .then((res) => {
@@ -181,13 +197,7 @@ export default function CreateInvoice() {
 
         if (isValid) {
             setIsLoadingButton(true);
-            setInputInvoice((prevState) => ({
-                ...prevState,
-                invoicesDetails: invoicesDetails.map((detail) => ({
-                    productDetailId: detail.id,
-                    quantity: detail.quantity,
-                })),
-            }));
+
             createInvoiceAtStore(inputInvoice)
                 .then(() => {
                     navigate('/admin/invoices/store');
@@ -243,40 +253,47 @@ export default function CreateInvoice() {
 
     const handleAdd = (productDetailId, quantity) => {
         if (quantity > 0) {
-            getProductDetail(productDetailId).then((res) => {
-                const invoiceDetail = {
-                    id: res.data.id,
-                    imageBackground: res.data.imageBackground,
-                    code: res.data.code,
-                    productName: res.data.productName,
-                    color: res.data.color,
-                    size: res.data.size,
-                    price:
-                        res.data.discountPrice === null
-                            ? res.data.price
-                            : res.data.discountPrice,
-                    quantity: 1,
-                };
+            getProductDetail(productDetailId)
+                .then((res) => {
+                    const invoiceDetail = {
+                        id: res.data.id,
+                        imageBackground: res.data.imageBackground,
+                        code: res.data.code,
+                        productName: res.data.productName,
+                        color: res.data.color,
+                        size: res.data.size,
+                        price:
+                            res.data.discountPrice === null
+                                ? res.data.price
+                                : res.data.discountPrice,
+                        quantity: 1,
+                    };
 
-                setInvoicesDetails((prevList) => {
-                    // Kiểm tra xem id đã tồn tại trong invoicesDetails hay chưa
-                    const existingInvoice = prevList.find(
-                        (detail) => detail.id === invoiceDetail.id
-                    );
-
-                    if (existingInvoice) {
-                        // Nếu id đã tồn tại, cập nhật quantity
-                        return prevList.map((detail) =>
-                            detail.id === invoiceDetail.id
-                                ? { ...detail, quantity: detail.quantity + 1 }
-                                : detail
+                    setInvoicesDetails((prevList) => {
+                        // Kiểm tra xem id đã tồn tại trong invoicesDetails hay chưa
+                        const existingInvoice = prevList.find(
+                            (detail) => detail.id === invoiceDetail.id
                         );
-                    } else {
-                        // Nếu id chưa tồn tại, thêm mới vào danh sách
-                        return [...prevList, invoiceDetail];
-                    }
+
+                        if (existingInvoice) {
+                            // Nếu id đã tồn tại, cập nhật quantity
+                            return prevList.map((detail) =>
+                                detail.id === invoiceDetail.id
+                                    ? {
+                                          ...detail,
+                                          quantity: detail.quantity + 1,
+                                      }
+                                    : detail
+                            );
+                        } else {
+                            // Nếu id chưa tồn tại, thêm mới vào danh sách
+                            return [...prevList, invoiceDetail];
+                        }
+                    });
+                })
+                .catch((error) => {
+                    console.error(error);
                 });
-            });
         } else {
             toast.error('Sản phẩm đã hết hàng');
         }
@@ -622,9 +639,7 @@ export default function CreateInvoice() {
                     </tbody>
                 </table>
 
-                <div>
-              
-                </div>
+                <div></div>
             </div>
         </>
     );

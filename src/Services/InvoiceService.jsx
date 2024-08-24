@@ -28,7 +28,7 @@ export const getInvoiceOnline =  (id) => {
 }
 
 export const getInvoiceAtStore = (id) => {
-    return apiPrivate.get('invoices/store' + id);
+    return apiPrivate.get('invoices/store/' + id);
 };
 
 export const updateInvoice =  (id, invoice) => {
@@ -82,7 +82,6 @@ export const checkoutCashWithAuth = (checkoutDto) => {
 };
 
 export const createInvoiceAtStore = (createDto) => {
-    console.log(createDto);
     return apiPrivate.post('/invoices/createInvoice', createDto);
 };
 

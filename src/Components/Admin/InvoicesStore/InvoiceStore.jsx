@@ -123,7 +123,11 @@ export default function InvoiceStore() {
                                                 )}
                                             </td>
                                             <td className=" ">
-                                                <Link to={"/admin/invoices/store/detail/:id" }>
+                                                <Link
+                                                    to={
+                                                        `/admin/invoices/store/detail/${invoice.id}`
+                                                    }
+                                                >
                                                     <FontAwesomeIcon
                                                         className="button-non-active"
                                                         icon="fa-regular fa-eye"
