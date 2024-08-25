@@ -66,7 +66,7 @@ export default function AuthProvider({ children }) {
                 );
             } else if (res.data.account.role === 'ROLE_EMPLOYEE') {
                 navigate(
-                    location.state?.redirectTo?.pathname || '/admin/invoices',
+                    location.state?.redirectTo?.pathname || '/admin/invoices/online',
                     { replace: true }
                 );
             }
