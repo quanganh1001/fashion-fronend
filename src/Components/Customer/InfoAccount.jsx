@@ -13,7 +13,7 @@ import { Helmet } from 'react-helmet-async';
 import usePagination from '../../CustomHooks/usePagination';
 import CustomPagination from '../Fragments/CustomPagination';
 import { getAllPurchasedOrders } from '../../Services/InvoiceService';
-import { Card, Col, ListGroup, ListGroupItem, Row } from 'react-bootstrap';
+import { Card, ListGroup, Row } from 'react-bootstrap';
 
 export default function InfoAccount() {
     const { auth } = useAuth();
@@ -130,7 +130,6 @@ export default function InfoAccount() {
     const fetchOrders = () => {
         getAllPurchasedOrders(searchParams)
             .then((res) => {
-                console.log(res.data);
 
                 setListOrders(res.data.invoices);
                 setCurrentPage(res.data.currentPage);
@@ -419,7 +418,7 @@ export default function InfoAccount() {
                                                 </Card.Header>
                                                 <Card.Body className="bg-body-tertiary">
                                                     <div className="d-flex flex-wrap justify-content-between">
-                                                        <div className="col-5 ">
+                                                        <div className="col-6">
                                                             <Row className="mb-2">
                                                                 <div className="col-4">
                                                                     <strong>
@@ -466,45 +465,61 @@ export default function InfoAccount() {
                                                                             index
                                                                         }
                                                                     >
-                                                                        <Row className="mb-4">
-                                                                            <div className="col-11">
-                                                                                <strong>
-                                                                                    {
-                                                                                        detail.productName
+                                                                        <div className="d-flex">
+                                                                            <div className="col-2 ">
+                                                                                <img
+                                                                                    className="image-gallery-thumbnail"
+                                                                                    style={{
+                                                                                        width: '100%',
+                                                                                    }}
+                                                                                    src={
+                                                                                        detail.imgUrl
                                                                                     }
-                                                                                </strong>
-                                                                                <br />
-                                                                                <small>
-                                                                                    Phân
-                                                                                    loại:{' '}
-                                                                                    {
-                                                                                        detail.color
-                                                                                    }{' '}
-                                                                                    -{' '}
-                                                                                    {
-                                                                                        detail.size
-                                                                                    }
-                                                                                </small>
-                                                                                <br />
-                                                                                <small>
-                                                                                    Giá:{' '}
-                                                                                    {detail.price.toLocaleString(
-                                                                                        'vi-VN',
+                                                                                    alt=""
+                                                                                />
+                                                                            </div>
+                                                                            <div className='col'>
+                                                                                <Row className="mb-4">
+                                                                                    <div className="col-11">
+                                                                                        <strong>
+                                                                                            {
+                                                                                                detail.productName
+                                                                                            }
+                                                                                        </strong>
+                                                                                        <br />
+                                                                                        <small>
+                                                                                            Phân
+                                                                                            loại:{' '}
+                                                                                            {
+                                                                                                detail.color
+                                                                                            }{' '}
+                                                                                            -{' '}
+                                                                                            {
+                                                                                                detail.size
+                                                                                            }
+                                                                                        </small>
+                                                                                        <br />
+                                                                                        <small>
+                                                                                            Giá:{' '}
+                                                                                            {detail.price.toLocaleString(
+                                                                                                'vi-VN',
+                                                                                                {
+                                                                                                    style: 'currency',
+                                                                                                    currency:
+                                                                                                        'VND',
+                                                                                                }
+                                                                                            )}
+                                                                                        </small>
+                                                                                    </div>
+                                                                                    <div className="col-1 d-flex align-items-center text-right">
+                                                                                        x
                                                                                         {
-                                                                                            style: 'currency',
-                                                                                            currency:
-                                                                                                'VND',
+                                                                                            detail.quantity
                                                                                         }
-                                                                                    )}
-                                                                                </small>
+                                                                                    </div>
+                                                                                </Row>
                                                                             </div>
-                                                                            <div className="col-1 d-flex align-items-center text-right">
-                                                                                x
-                                                                                {
-                                                                                    detail.quantity
-                                                                                }
-                                                                            </div>
-                                                                        </Row>
+                                                                        </div>
                                                                     </ListGroup.Item>
                                                                 )
                                                             )}

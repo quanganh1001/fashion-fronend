@@ -32,3 +32,11 @@ export const findAllProductsDetailByKey =  (key,options) => {
         ...options,
     });
 }
+
+export const updateBackgroundProductDetail = (id, formData) => {
+    return apiPrivate.post('productsDetail/upBackgroundImg/' + id, formData, {
+        headers: {
+            'Content-Type': 'multipart/form-data',
+        },
+    });
+};

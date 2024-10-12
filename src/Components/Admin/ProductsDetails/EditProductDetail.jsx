@@ -3,6 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import {
     updateProductDetail,
     getProductDetail,
+    updateBackgroundProductDetail,
 } from '../../../Services/ProductDetailService';
 import { toast } from 'react-toastify';
 import LoadingSpinner from '../../Fragments/LoadingSpinner';
@@ -12,7 +13,6 @@ import { getAllColors } from '../../../Services/ColorService';
 
 export default function EditProductDetail() {
     const { id, pdid } = useParams();
-    const navigate = useNavigate();
     const [codeError, setCodeError] = useState('');
     const [listSize, setListSize] = useState([]);
     const [listColor, setListColor] = useState([]);
@@ -20,7 +20,9 @@ export default function EditProductDetail() {
     const [sizeError, setSizeError] = useState('');
     const [colorError, setColorError] = useState('');
     const [isActivatedError, setIsActivatedError] = useState('');
-    const [isLoading] = useState(false);
+    const [isLoading, setIsLoading] = useState(false);
+    const [imgBackground, setImgBackground] = useState(null);
+    const [currentBackgound, setCurrentBackgound] = useState('');
     const [isLoadingDetail, setIsLoadingDetail] = useState(true);
     const [productDetail, setProductDetail] = useState({
         code: '',
@@ -54,26 +56,29 @@ export default function EditProductDetail() {
                 console.error(err);
             });
     };
-    
+
     useEffect(() => {
         fetchProductDetail();
     }, []);
 
-    const fetchProductDetail =  () => {
-         getProductDetail(pdid).then((res) => {
-            setProductDetail({
-                code: res.data.code,
-                quantity: res.data.quantity,
-                colorId: res.data.colorId,
-                size: res.data.size,
-                isActivated: res.data.isActivated,
+    const fetchProductDetail = () => {
+        getProductDetail(pdid)
+            .then((res) => {
+                setProductDetail({
+                    code: res.data.code,
+                    quantity: res.data.quantity,
+                    colorId: res.data.colorId,
+                    size: res.data.size,
+                    isActivated: res.data.isActivated,
+                });
+                setCurrentBackgound(res.data.imageBackground);
+            })
+            .catch((err) => {
+                console.error(err);
+            })
+            .finally(() => {
+                setIsLoadingDetail(false);
             });
-            
-        }).catch ((err) => {
-           console.error(err); 
-        }).finally(() => {
-            setIsLoadingDetail(false)
-        });
     };
 
     const handleInputChange = (e) => {
@@ -81,7 +86,11 @@ export default function EditProductDetail() {
         setProductDetail({ ...productDetail, [name]: value });
     };
 
-    const updateProductDetailForm =  (e) => {
+    const handleFileChange = (event) => {
+        setImgBackground(event.target.files[0]);
+    };
+
+    const updateProductDetailForm = (e) => {
         e.preventDefault();
         let isValid = true;
 
@@ -131,7 +140,6 @@ export default function EditProductDetail() {
             updateProductDetail(pdid, productDetail)
                 .then((res) => {
                     toast.success('Sửa thành công');
-                    navigate(`/admin/products/${id}/edit`);
                 })
                 .catch((error) => {
                     if (error.response.status === 409) {
@@ -148,6 +156,26 @@ export default function EditProductDetail() {
                         );
                     } else setIsActivatedError('');
                 });
+            
+            if (imgBackground != null) {
+                console.log("a");
+                
+                setIsLoading(true);
+                const formData = new FormData();
+                formData.append('file', imgBackground);
+                updateBackgroundProductDetail(pdid, formData)
+                    .then(() => {
+                        fetchProductDetail();
+                    })
+                    .catch((err) => {
+                        console.error(err);
+                    })
+                    .finally(() => {
+                        setIsLoading(false);
+                    });
+            } else {
+                setIsLoading(false);
+            }
         }
     };
 
@@ -255,6 +283,33 @@ export default function EditProductDetail() {
                                 <span className="text-danger">{sizeError}</span>
                             </div>
 
+                            <div className="d-flex mb-5">
+                                <div className=" col-6">
+                                    <label className="form-label">
+                                        Tải ảnh nền
+                                        <span className="text-danger">*</span>
+                                    </label>
+                                    <input
+                                        className="form-control"
+                                        type="file"
+                                        name="imgBackground"
+                                        accept="image/*"
+                                        onChange={handleFileChange}
+                                    />
+                                </div>
+
+                                {isLoading ? (
+                                    <LoadingSpinner />
+                                ) : (
+                                    <div className="ms-3 mb-3 col-6 mt-3">
+                                        <img className=' img-thumbnail'
+                                            src={currentBackgound}
+                                            width="150px"
+                                            alt=""
+                                        />
+                                    </div>
+                                )}
+                            </div>
                             <div className="mb-3">
                                 <label className="form-label">
                                     Trạng thái

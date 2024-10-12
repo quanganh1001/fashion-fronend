@@ -231,8 +231,9 @@ export default function EditCategory() {
                             {isLoading ? (
                                 <LoadingSpinner />
                             ) : (
-                                <div className="mb-3 col-6 mt-3">
+                                <div className="ms-3 mb-3 col-6 mt-3">
                                     <img
+                                        className=" img-thumbnail"
                                         src={currentBackgound}
                                         width="150px"
                                         alt=""
