@@ -54,7 +54,7 @@ export default function ProductAdmin() {
                     fetchProducts();
                 })
                 .catch((err) => {
-                    toast.error('Xảy ra lỗi!');
+                    toast.error('"Không thể xóa sản phẩm này"');
                 })
                 .finally(() => {
                     setIsLoading(false);

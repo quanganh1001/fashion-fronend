@@ -206,7 +206,7 @@ export default function EditProduct() {
                         fetchProductDetail();
                     })
                     .catch((err) => {
-                        toast.error('Xảy ra lỗi!');
+                        toast.error('"Không thể xóa sản phẩm này"');
                     })
                     .finally(() => {
                         setIsLoadingDetail(false);

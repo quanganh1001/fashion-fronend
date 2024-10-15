@@ -41,12 +41,12 @@ apiPrivate.interceptors.response.use(
             }
 
         }
-        if (
-            error.response &&
-            (error.response.status === 500 || error.response.status === 500)
-        ) {
-            window.location.href = '/error/500';
-        }
+        // if (
+        //     error.response &&
+        //     (error.response.status === 500 || error.response.status === 500)
+        // ) {
+        //     window.location.href = '/error/500';
+        // }
 
         return Promise.reject(error);
     }
