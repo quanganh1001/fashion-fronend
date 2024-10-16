@@ -31,7 +31,7 @@ export const getAuth = () => {
 export const refreshToken = (refreshToken) => {
     return apiPublic
         .put(
-            '/auth/refreshToken',
+            '/identity/refreshToken',
             {},
             {
                 headers: {
