@@ -22,7 +22,7 @@ export default function AddProductDetail() {
     const [colorCodeError, setColorCodeError] = useState('');
     const [colorNameError, setColorNameError] = useState('');
     const [isLoading, setIsLoading] = useState(false);
-    const { openModal, closeModal } = useModal();
+    const { openModal } = useModal();
     const [ isOpenModal, setIsOpenModal ] = useState(false);
     const [newColorCode, setNewColorCode] = useState("");
     const [newColorName, setNewColorName] = useState("");
@@ -146,7 +146,7 @@ export default function AddProductDetail() {
             })
             .catch((error) => {
                 console.error(error);
-                toast.error('Có lỗi xảy ra!');
+                toast.error('"Không thể xóa màu này"');
             });
     };
 

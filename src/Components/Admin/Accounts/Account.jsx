@@ -169,7 +169,7 @@ export default function Account() {
                     })
                     .catch((error) => {
                         console.error(error);
-                        toast.error('Có lỗi xảy ra!');
+                        toast.error("Không thể xóa tài khoản này");
                     });
                 closeModal();
             }

@@ -1,27 +1,37 @@
 import { useEffect, useState } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 import {
     updateProductDetail,
     getProductDetail,
+    updateBackgroundProductDetail,
 } from '../../../Services/ProductDetailService';
 import { toast } from 'react-toastify';
 import LoadingSpinner from '../../Fragments/LoadingSpinner';
 import Title from '../../Fragments/Title';
 import { getSize } from '../../../Services/EnumService';
-import { getAllColors } from '../../../Services/ColorService';
+import { createColor, deleteColor, getAllColors } from '../../../Services/ColorService';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import useModal from '../../../CustomHooks/useModal';
 
 export default function EditProductDetail() {
-    const { id, pdid } = useParams();
-    const navigate = useNavigate();
+    const { pdid } = useParams();
     const [codeError, setCodeError] = useState('');
     const [listSize, setListSize] = useState([]);
     const [listColor, setListColor] = useState([]);
     const [quantityError, setQuantityError] = useState('');
     const [sizeError, setSizeError] = useState('');
     const [colorError, setColorError] = useState('');
+    const { openModal } = useModal();
+    const [colorCodeError, setColorCodeError] = useState('');
+    const [colorNameError, setColorNameError] = useState('');
     const [isActivatedError, setIsActivatedError] = useState('');
-    const [isLoading] = useState(false);
+    const [isLoading, setIsLoading] = useState(false);
+    const [imgBackground, setImgBackground] = useState(null);
+    const [currentBackgound, setCurrentBackgound] = useState('');
     const [isLoadingDetail, setIsLoadingDetail] = useState(true);
+    const [isOpenModal, setIsOpenModal] = useState(false);
+    const [newColorCode, setNewColorCode] = useState('');
+    const [newColorName, setNewColorName] = useState('');
     const [productDetail, setProductDetail] = useState({
         code: '',
         quantity: '',
@@ -29,11 +39,104 @@ export default function EditProductDetail() {
         size: '',
         isActivated: '',
     });
+    
+
 
     useEffect(() => {
         fetchListSize();
         fetchListColor();
     }, []);
+
+    useEffect(() => {
+        if (
+            isOpenModal ||
+            newColorName !== '' ||
+            newColorCode !== '' ||
+            colorNameError !== '' ||
+            colorCodeError !== ''
+        ) {
+            openModal(
+                'Danh sách mã màu',
+                <>
+                    <div>
+                        <form onSubmit={addColor}>
+                            <div className="row d-flex justify-content-center">
+                                <div className="mb-3 col-6">
+                                    <label>
+                                        Mã màu
+                                        <span style={{ color: 'red' }}>*</span>
+                                    </label>
+                                    <input
+                                        value={newColorCode}
+                                        onChange={handleSetNewColorCode}
+                                        type="text"
+                                        className={
+                                            colorCodeError !== ''
+                                                ? 'border-danger form-control'
+                                                : 'form-control'
+                                        }
+                                    />
+                                    <span className="text-danger">
+                                        {colorCodeError}
+                                    </span>
+                                </div>
+
+                                <div className="mb-3 col-6">
+                                    <label>
+                                        Tên màu
+                                        <span style={{ color: 'red' }}>*</span>
+                                    </label>
+                                    <input
+                                        value={newColorName}
+                                        onChange={handleSetNewColorName}
+                                        type="text"
+                                        className={
+                                            colorNameError !== ''
+                                                ? 'border-danger form-control'
+                                                : 'form-control'
+                                        }
+                                    />
+                                    <span className="text-danger">
+                                        {colorNameError}
+                                    </span>
+                                </div>
+
+                                <button className="col-4 button" type="submit">
+                                    Thêm mã màu
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                    <hr />
+                    <div className="d-flex flex-wrap">
+                        {listColor.map((color) => (
+                            <div key={color.id} className="mb-3 col-6">
+                                <FontAwesomeIcon
+                                    onClick={() => handleDeleteColor(color.id)}
+                                    icon="fa-solid fa-square-minus"
+                                    style={{
+                                        color: '#b30000',
+                                        cursor: 'pointer',
+                                    }}
+                                    className="me-3"
+                                />
+                                {color.name} / {color.colorCode}
+                            </div>
+                        ))}
+                    </div>
+                </>,
+                () => {},
+                true
+            );
+        }
+    }, [
+        newColorCode,
+        newColorName,
+        isOpenModal,
+        listColor,
+        colorCodeError,
+        colorNameError,
+    ]);
 
     const fetchListSize = () => {
         getSize()
@@ -54,34 +157,103 @@ export default function EditProductDetail() {
                 console.error(err);
             });
     };
-    
+
     useEffect(() => {
         fetchProductDetail();
     }, []);
 
-    const fetchProductDetail =  () => {
-         getProductDetail(pdid).then((res) => {
-            setProductDetail({
-                code: res.data.code,
-                quantity: res.data.quantity,
-                colorId: res.data.colorId,
-                size: res.data.size,
-                isActivated: res.data.isActivated,
+    const fetchProductDetail = () => {
+        getProductDetail(pdid)
+            .then((res) => {
+                setProductDetail({
+                    code: res.data.code,
+                    quantity: res.data.quantity,
+                    colorId: res.data.colorId,
+                    size: res.data.size,
+                    isActivated: res.data.isActivated,
+                });
+                setCurrentBackgound(res.data.imageBackground);
+            })
+            .catch((err) => {
+                console.error(err);
+            })
+            .finally(() => {
+                setIsLoadingDetail(false);
             });
-            
-        }).catch ((err) => {
-           console.error(err); 
-        }).finally(() => {
-            setIsLoadingDetail(false)
-        });
     };
 
+    const addColor = (e) => {
+        e.preventDefault();
+        let isValid = true;
+
+        if (newColorCode === '') {
+            isValid = false;
+            setColorCodeError('Chưa điền mã màu');
+        } else if (newColorCode.length > 3) {
+            isValid = false;
+            setColorCodeError('Độ dài lớn hơn 3 ký tự');
+        } else {
+            setColorCodeError('');
+        }
+        if (newColorName === '') {
+            isValid = false;
+            setColorNameError('Chưa điền tên màu');
+        } else {
+            setColorNameError('');
+        }
+
+        if (isValid) {
+            createColor({ newColorCode, newColorName })
+                .then((res) => {
+                    toast.success('Thêm thành công');
+                    fetchListColor();
+                })
+                .catch((error) => {
+                    if (error.response.status === 409) {
+                        setColorCodeError('Mã màu đã tồn tại');
+                        setIsOpenModal(true);
+                    }
+                    console.error(error);
+                });
+        }
+    };
+
+    const handleDeleteColor = (id) => {
+        deleteColor(id)
+            .then(() => {
+                toast.success('Xóa thành công!');
+                fetchListColor();
+            })
+            .catch((error) => {
+                console.error(error);
+                toast.error('"Không thể xóa màu này"');
+            });
+    };
+
+    const handleSetNewColorCode = (e) => {
+        setIsOpenModal(true);
+        setNewColorCode(e.target.value);
+    };
+
+    const handleSetNewColorName = (e) => {
+        setIsOpenModal(true);
+        setNewColorName(e.target.value);
+    };
+    
+    const openColor = async () => {
+        await setIsOpenModal(false);
+        await setIsOpenModal(true);
+    };
     const handleInputChange = (e) => {
         const { name, value } = e.target;
         setProductDetail({ ...productDetail, [name]: value });
     };
 
-    const updateProductDetailForm =  (e) => {
+    const handleFileChange = (event) => {
+        setImgBackground(event.target.files[0]);
+    };
+
+    const updateProductDetailForm = (e) => {
         e.preventDefault();
         let isValid = true;
 
@@ -131,7 +303,6 @@ export default function EditProductDetail() {
             updateProductDetail(pdid, productDetail)
                 .then((res) => {
                     toast.success('Sửa thành công');
-                    navigate(`/admin/products/${id}/edit`);
                 })
                 .catch((error) => {
                     if (error.response.status === 409) {
@@ -148,6 +319,26 @@ export default function EditProductDetail() {
                         );
                     } else setIsActivatedError('');
                 });
+            
+            if (imgBackground != null) {
+                console.log("a");
+                
+                setIsLoading(true);
+                const formData = new FormData();
+                formData.append('file', imgBackground);
+                updateBackgroundProductDetail(pdid, formData)
+                    .then(() => {
+                        fetchProductDetail();
+                    })
+                    .catch((err) => {
+                        console.error(err);
+                    })
+                    .finally(() => {
+                        setIsLoading(false);
+                    });
+            } else {
+                setIsLoading(false);
+            }
         }
     };
 
@@ -206,6 +397,13 @@ export default function EditProductDetail() {
                                     Màu sắc
                                     <span style={{ color: 'red' }}>*</span>
                                 </label>
+                                <FontAwesomeIcon
+                                    onClick={openColor}
+                                    className="ms-2"
+                                    icon="fa-regular fa-square-plus"
+                                    style={{ cursor: 'pointer' }}
+                                />
+
                                 <select
                                     className={
                                         sizeError !== ''
@@ -255,6 +453,34 @@ export default function EditProductDetail() {
                                 <span className="text-danger">{sizeError}</span>
                             </div>
 
+                            <div className="d-flex mb-5">
+                                <div className=" col-6">
+                                    <label className="form-label">
+                                        Tải ảnh nền
+                                        <span className="text-danger">*</span>
+                                    </label>
+                                    <input
+                                        className="form-control"
+                                        type="file"
+                                        name="imgBackground"
+                                        accept="image/*"
+                                        onChange={handleFileChange}
+                                    />
+                                </div>
+
+                                {isLoading ? (
+                                    <LoadingSpinner />
+                                ) : (
+                                    <div className="ms-3 mb-3 col-6 mt-3">
+                                        <img
+                                            className=" img-thumbnail"
+                                            src={currentBackgound}
+                                            width="150px"
+                                            alt=""
+                                        />
+                                    </div>
+                                )}
+                            </div>
                             <div className="mb-3">
                                 <label className="form-label">
                                     Trạng thái

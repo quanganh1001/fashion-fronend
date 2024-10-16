@@ -43,7 +43,9 @@ export default function Home() {
     };
 
     const fetchProductSale =  () => {
-         getAllProductByCategory(0).then((res) => {
+        getAllProductByCategory(0).then((res) => {
+            console.log(res.data);
+            
             setListProductSale(res.data);
          }).catch((error) => {
             console.error(error);
@@ -276,7 +278,9 @@ export default function Home() {
                                     </div>
 
                                     {product.imageBackground &&
-                                    product.imageBackground.endsWith('.mp4') ? (
+                                    product.imageBackground.endsWith(
+                                        '.mp4'
+                                    ) ? (
                                         <video
                                             style={{
                                                 height: '350px',
@@ -285,11 +289,15 @@ export default function Home() {
                                             controls
                                             autoplay
                                             muted
-                                            src={product.imageBackground}
+                                            src={
+                                                product.imageBackground
+                                            }
                                         ></video>
                                     ) : (
                                         <img
-                                            src={product.imageBackground}
+                                            src={
+                                                product.imageBackground
+                                            }
                                             alt="..."
                                             style={{
                                                 height: '350px',
