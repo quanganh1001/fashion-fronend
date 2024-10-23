@@ -1,23 +1,16 @@
-# Sử dụng một base image
-FROM node:14-alpine
-
-# Thiết lập thư mục làm việc
+FROM node:20-alpine AS builder
 WORKDIR /app
-
-# Sao chép file package.json và package-lock.json
-COPY package*.json ./
-
-# Cài đặt các dependency
-RUN npm install
-
-# Sao chép mã nguồn của ứng dụng
 COPY . .
+RUN yarn install && yarn build
 
-# Build ứng dụng
-RUN npm run build
+FROM node:20-alpine AS runner
+WORKDIR /app
+COPY . .
+COPY --from=builder /app/node_modules ./node_modules
+COPY --from=builder /app/package.json ./package.json
 
-# Mở cổng 8080
-EXPOSE 8080
+EXPOSE 3000
+CMD ["yarn","start"]
 
-# Chạy ứng dụng
-CMD ["npx", "serve", "-s", "build", "-l", "8080"]
+# docker build -t fashion-frontend:1.0.0 .
+# docker run --name fashion-frontend -d -p 80:3000 --rm fashion-frontend:1.0.0

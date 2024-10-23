@@ -360,7 +360,7 @@ export default function InvoicesDetails({
                                                                             alt=""
                                                                         />
                                                                     )}
-                                                                    <div>
+                                                                    <div className='ms-2'>
                                                                         <span>
                                                                             {
                                                                                 pd.productName
@@ -392,7 +392,7 @@ export default function InvoicesDetails({
                                                                                         </span>
 
                                                                                         -
-                                                                                        <span>
+                                                                                        <span className=' text-danger'>
                                                                                             {pd.discountPrice.toLocaleString(
                                                                                                 'vi-VN',
                                                                                                 {
@@ -403,7 +403,7 @@ export default function InvoicesDetails({
                                                                                             )}
                                                                                         </span>
                                                                                     </>
-                                                                                ) : (
+                                                                                ) : <span className='text-danger'>{(
                                                                                     pd.price.toLocaleString(
                                                                                         'vi-VN',
                                                                                         {
@@ -412,7 +412,7 @@ export default function InvoicesDetails({
                                                                                                 'VND',
                                                                                         }
                                                                                     )
-                                                                                )}
+                                                                                )}</span> }
                                                                             </span>
 
                                                                             <span className="fw-lighter">
