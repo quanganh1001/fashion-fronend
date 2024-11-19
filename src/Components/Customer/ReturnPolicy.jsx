@@ -13,7 +13,7 @@ export default function ReturnPolicy() {
                 <p>Áp dụng từ ngày 01/09/2018.</p>
                 <p>
                     Trong vòng 30&nbsp;ngày kể từ ngày mua sản phẩm với các sản
-                    phẩm TORANO.
+                    phẩm AKIRA.
                 </p>
                 <p>
                     Áp dụng đối với sản phẩm nguyên giá và sản phẩm giảm giá ít
@@ -53,11 +53,11 @@ export default function ReturnPolicy() {
                 </p>
                 <p>
                     Quý khách&nbsp;có thể đổi hàng Online tại hệ thống cửa hàng
-                    và đại lý TORANO&nbsp;trên toàn quốc . Lưu ý: vui lòng mang
+                    và đại lý AKIRA&nbsp;trên toàn quốc . Lưu ý: vui lòng mang
                     theo sản phẩm và phiếu giao hàng.
                 </p>
                 <p>
-                    Nếu tại khu vực bạn không có cửa hàng TORANO&nbsp;hoặc sản
+                    Nếu tại khu vực bạn không có cửa hàng AKIRA&nbsp;hoặc sản
                     phẩm bạn muốn đổi thì vui lòng làm theo các bước sau:
                 </p>
                 <p>
@@ -65,12 +65,12 @@ export default function ReturnPolicy() {
                     (trừ ngày lễ), cung cấp mã đơn hàng và mã sản phẩm cần đổi.
                 </p>
                 <p>
-                    Bước 2: Vui lòng gửi hàng đổi về địa chỉ : Kho Online TORANO
+                    Bước 2: Vui lòng gửi hàng đổi về địa chỉ : Kho Online AKIRA
                     - 1165 Giải Phóng, Thịnh Liệt, Q. Hoàng Mai, Hà Nội.
                 </p>
                 <p>
-                    Bước 3: TORANO&nbsp;gửi đổi sản phẩm mới khi nhận được hàng.
-                    Trong trường hợp hết hàng, TORANO&nbsp;sẽ liên hệ xác nhận.
+                    Bước 3: AKIRA&nbsp;gửi đổi sản phẩm mới khi nhận được hàng.
+                    Trong trường hợp hết hàng, AKIRA&nbsp;sẽ liên hệ xác nhận.
                 </p>
             </div>
             ;

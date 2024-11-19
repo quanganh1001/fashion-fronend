@@ -81,10 +81,9 @@ export default function Home() {
     };
 
     const listBanner = [
-        'https://res.cloudinary.com/dmmvhjl0m/image/upload/v1711885305/ysmew6aqlneqdojqdgdq.webp',
-        'https://res.cloudinary.com/dmmvhjl0m/image/upload/v1711885303/bfbpbb0zfrhe5k1wn8hx.webp',
-        'https://res.cloudinary.com/dmmvhjl0m/image/upload/v1711885307/tzbdiicr7ds9ncao7jxj.webp',
-        'https://res.cloudinary.com/dmmvhjl0m/image/upload/v1711885309/k6eyr9bcnhwppvvmshq2.webp',
+        'https://res.cloudinary.com/dmmvhjl0m/image/upload/v1732023052/slide_4_img_x8glcg.webp',
+        'https://res.cloudinary.com/dmmvhjl0m/image/upload/v1732023052/slide_3_img_cjxz7y.webp',
+        'https://res.cloudinary.com/dmmvhjl0m/image/upload/v1732023052/slide_1_img_ukqx2g.webp',
     ];
 
 
@@ -266,7 +265,7 @@ export default function Home() {
                         />
 
                         <h2 className=" ms-3 fw-bold text-danger">
-                            TẾT NHẤT SALE TẤT
+                            SẢN PHẨM GIÁ TỐT
                         </h2>
                     </div>
 
@@ -410,7 +409,7 @@ export default function Home() {
                                 className="fw-bold"
                                 style={{ marginLeft: '3px' }}
                             >
-                                TẾT NHẤT SALE TẤT
+                                SẢN PHẨM GIÁ TỐT
                             </span>{' '}
                         </Link>
                     </div>

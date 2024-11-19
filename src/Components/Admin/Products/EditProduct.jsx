@@ -24,7 +24,7 @@ export default function EditProduct() {
         catId : '',
         price: '',
         discountPrice: '',
-        brand: 'TORANO',
+        brand: 'AKIRA',
         description: '',
         imageChooseSize: '',
         isActivated: true,

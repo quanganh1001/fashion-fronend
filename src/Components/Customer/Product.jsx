@@ -505,12 +505,12 @@ export default function Product() {
                                     className=" ls-is-cached lazyloaded"
                                     data-src="//theme.hstatic.net/200000690725/1001078549/14/product_info2_desc3_img.png?v=282"
                                     src="//theme.hstatic.net/200000690725/1001078549/14/product_info2_desc3_img.png?v=282"
-                                    alt="Hỗ trợ bảo hành,đổi sản phẩm tại tất cả store TORANO"
+                                    alt="Hỗ trợ bảo hành,đổi sản phẩm tại tất cả store AKIRA"
                                 />
                             </div>
                             <div className="ms-2">
                                 Hỗ trợ bảo hành, đổi sản phẩm tại tất cả store
-                                TORANO
+                                AKIRA
                             </div>
                         </div>
                     </div>

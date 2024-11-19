@@ -53,7 +53,7 @@ export default function Footer() {
             <div className="bg-secondary-subtle shadow-lg  border footer">
                 <div className="container d-flex">
                     <div className="col-3 d-flex flex-column pt-5 pb-5 ps-3 pe-3 border-end border-dark-subtle">
-                        <b className="fs-5">Thời trang nam TORANO</b>
+                        <b className="fs-5">Thời trang nam AKARI</b>
                         <span className="text-dark-emphasis fs-6 mt-3 mb-3">
                             Hệ thống thời trang cho phái mạnh hàng đầu Việt Nam,
                             hướng tới phong cách nam tính, lịch lãm và trẻ
@@ -146,7 +146,7 @@ export default function Footer() {
                             Email:
                             <span className="fw-lighter fs-6">
                                 {' '}
-                                cskh@torano.vn
+                                cskh@akari.vn
                             </span>
                         </span>
                         <div className="fw-semibold mt-3 mb-3">
@@ -260,6 +260,7 @@ export default function Footer() {
                                     style={{ fontSize: '0.8rem' }}
                                 />
                                 <label
+                                    style={{ fontSize: '0.8rem' }}
                                     className="fw-lighter fst-italic"
                                 >
                                     Nhập email của bạn
@@ -279,9 +280,9 @@ export default function Footer() {
                 </div>
                 <p className="fs-6 fw-light border-top border-dark-subtle p-2 d-flex justify-content-center">
                     Copyright © 2024{' '}
-                    <Link className="ms-1 text-dark" href="https://torano.vn">
+                    <Link className="ms-1 text-dark" href="https://akira.vn">
                         {' '}
-                        Torano
+                        AKARI
                     </Link>
                     .
                     <Link className="text-dark">

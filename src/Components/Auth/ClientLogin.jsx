@@ -57,7 +57,9 @@ export default function ClientLogin() {
                                 );
                             })
                             .catch((error) => {
-                                toast.error('Có lỗi xảy ra!');
+                                if (error.response.status === 404) {
+                                    toast.error('Email không tồn tại');
+                                }
                             });
                         closeModal();
                     }
