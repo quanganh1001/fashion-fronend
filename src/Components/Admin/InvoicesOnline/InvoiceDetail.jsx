@@ -155,7 +155,6 @@ export default function InvoicesDetails({
     }, [listInvoicesDetail]);
 
     useEffect(() => {
-        setIsShowAddDetail(false);
         fetchInvoice();
     }, [details]);
 
@@ -235,7 +234,8 @@ export default function InvoicesDetails({
             });
     };
 
-    const handleDelete =  (detailId) => {
+    const handleDelete = (detailId) => {
+        setIsLoadingDetail(true);
          deleteInvoiceDetail(detailId)
             .then((res) => {
                 toast.success('Xóa thành công!');
@@ -254,6 +254,7 @@ export default function InvoicesDetails({
 
     const handleAdd =  (productDetailId, quantity) => {
         if (quantity > 0) {
+            setIsShowAddDetail(false);
             setIsLoadingDetail(true)
              addInvoiceDetail(id, productDetailId)
                 .then(() => {
@@ -263,7 +264,7 @@ export default function InvoicesDetails({
                 .catch((err) => {
                     toast.error(err);
                     console.log(err);
-                }).finally(()=>{setIsLoadingDetail(false)});
+                });
         } else {
             toast.error('Sản phẩm đã hết hàng');
         }

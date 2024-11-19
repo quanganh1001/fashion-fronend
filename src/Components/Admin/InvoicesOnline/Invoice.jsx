@@ -71,12 +71,18 @@ export default function Invoice() {
                             fetchGetAllInvoices();
                         })
                         .catch((err) => {
-                            console.error(err);
-                            toast.error(err.response.data);
-                        })
-                        .finally(() => {
                             setIsLoading(false);
-                        });
+                            console.error(err);
+                            if (
+                                err.response.data ===
+                                'Please divide the order to the staff first.'
+                            ) {
+                                toast.error("Hãy chọn nhân viên phụ trách trước khi chuyển trạng thái")
+                            } else {
+                                toast.error(err.response.data);
+                            }
+                                
+                        })
 
                     closeModal();
                 }

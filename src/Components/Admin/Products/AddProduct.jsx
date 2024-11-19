@@ -310,7 +310,7 @@ export default function AddProduct() {
                             disabled={isLoading}
                             type="submit"
                             id="submit"
-                            className="col-2 button text-align-center"
+                            className="col-2 me-1 button text-align-center"
                         >
                             Thêm sản phẩm
                         </button>

@@ -39,7 +39,7 @@ export default function InfoAccount() {
     const [totalItems, setTotalItems] = useState();
     const [currentPage, setCurrentPage] = useState();
     const [listOrders, setListOrders] = useState([]);
-
+    
     useEffect(() => {
         if (
             newPass !== '' ||
@@ -128,6 +128,7 @@ export default function InfoAccount() {
     }, [searchParams]);
 
     const fetchOrders = () => {
+        setIsLoadingAccount(true);
         getAllPurchasedOrders(searchParams)
             .then((res) => {
 
@@ -135,15 +136,19 @@ export default function InfoAccount() {
                 setCurrentPage(res.data.currentPage);
                 setTotalPages(res.data.totalPages);
                 setTotalItems(res.data.totalItems);
+                setIsLoadingAccount(false);
             })
             .catch((error) => {
                 console.error(error);
-            });
+            })
+            ;
     };
 
     const fetchAccount = () => {
+        setIsLoadingAccount(true);
         getCurrentAccount()
             .then((res) => {
+                setIsLoadingAccount(false);
                 setAccountUpdateDto({
                     name: res.data.name,
                     email: res.data.email,
@@ -153,9 +158,6 @@ export default function InfoAccount() {
             })
             .catch((error) => {
                 console.error(error);
-            })
-            .finally(() => {
-                setIsLoadingAccount(false);
             });
     };
 
@@ -369,7 +371,7 @@ export default function InfoAccount() {
                                         </div>
                                     </div>
 
-                                    <div className=" col-6 d-flex justify-content-start">
+                                    <div className=" col-6 mb-1 d-flex justify-content-start">
                                         <button
                                             disabled={isLoading}
                                             style={{ textAlign: 'center' }}
@@ -378,7 +380,7 @@ export default function InfoAccount() {
                                         >
                                             Lưu
                                         </button>
-                                        {isLoading && <LoadingSpinner />}
+
                                         <button
                                             type="button"
                                             disabled={isLoading}
@@ -388,191 +390,211 @@ export default function InfoAccount() {
                                             Đổi mật khẩu
                                         </button>
                                     </div>
+                                    {isLoading && <LoadingSpinner />}
                                 </form>
                             )}
                         </div>
                     ) : (
-                        <div className="col-12 container-xxl my-5">
-                            {listOrders.length > 0 ? (
-                                <>
-                                    {listOrders.map((order, index) => (
-                                        <>
-                                            <Card
-                                                key={index}
-                                                className="mb-5 shadow"
-                                            >
-                                                <Card.Header className="bg-dark-subtle">
-                                                    <div className="d-flex justify-content-between">
-                                                        <small>
-                                                            {new Date(
-                                                                order.createdAt
-                                                            ).toLocaleString()}
-                                                        </small>
+                        
+                           
+                            <div className="col-12 container-xxl my-5">
+                                {isLoadingAccount ? (
+                                    <LoadingSpinner />
+                                ) : (
+                                    <>
+                                        {listOrders.length > 0 ? (
+                                            <>
+                                                {listOrders.map(
+                                                    (order, index) => (
+                                                        <>
+                                                            <Card
+                                                                key={index}
+                                                                className="mb-5 shadow"
+                                                            >
+                                                                <Card.Header className="bg-dark-subtle">
+                                                                    <div className="d-flex justify-content-between">
+                                                                        <small>
+                                                                            {new Date(
+                                                                                order.createdAt
+                                                                            ).toLocaleString()}
+                                                                        </small>
 
-                                                        <b>
-                                                            {
-                                                                order.invoiceStatus
-                                                            }
-                                                        </b>
-                                                    </div>
-                                                </Card.Header>
-                                                <Card.Body className="bg-body-tertiary">
-                                                    <div className="d-flex flex-wrap justify-content-between">
-                                                        <div className="col-6">
-                                                            <Row className="mb-2">
-                                                                <div className="col-4">
-                                                                    <strong>
-                                                                        Tên:
-                                                                    </strong>{' '}
-                                                                </div>
-                                                                <div className="col-8">
-                                                                    {order.name}
-                                                                </div>
-                                                            </Row>
-                                                            <Row className="mb-2">
-                                                                <div className="col-4">
-                                                                    <strong>
-                                                                        Sđt:
-                                                                    </strong>{' '}
-                                                                </div>
-                                                                <div className="col-8">
-                                                                    {
-                                                                        order.phone
-                                                                    }
-                                                                </div>
-                                                            </Row>
-                                                            <Row className="mb-2">
-                                                                <div className="col-4">
-                                                                    <strong>
-                                                                        Địa chỉ:
-                                                                    </strong>{' '}
-                                                                </div>
-                                                                <div className="col-8">
-                                                                    {
-                                                                        order.address
-                                                                    }
-                                                                </div>
-                                                            </Row>
-                                                        </div>
-                                                        <div className="col-6 ">
-                                                            {order.invoicesDetails.map(
-                                                                (
-                                                                    detail,
-                                                                    index
-                                                                ) => (
-                                                                    <ListGroup.Item
-                                                                        key={
-                                                                            index
-                                                                        }
-                                                                    >
-                                                                        <div className="d-flex">
-                                                                            <div className="col-2 ">
-                                                                                <img
-                                                                                    className="image-gallery-thumbnail"
-                                                                                    style={{
-                                                                                        width: '100%',
-                                                                                    }}
-                                                                                    src={
-                                                                                        detail.imgUrl
+                                                                        <b>
+                                                                            {
+                                                                                order.invoiceStatus
+                                                                            }
+                                                                        </b>
+                                                                    </div>
+                                                                </Card.Header>
+                                                                <Card.Body className="bg-body-tertiary">
+                                                                    <div className="d-flex flex-wrap justify-content-between">
+                                                                        <div className="col-6">
+                                                                            <Row className="mb-2">
+                                                                                <div className="col-4">
+                                                                                    <strong>
+                                                                                        Tên:
+                                                                                    </strong>{' '}
+                                                                                </div>
+                                                                                <div className="col-8">
+                                                                                    {
+                                                                                        order.name
                                                                                     }
-                                                                                    alt=""
-                                                                                />
-                                                                            </div>
-                                                                            <div className='col'>
-                                                                                <Row className="mb-4">
-                                                                                    <div className="col-11">
-                                                                                        <strong>
-                                                                                            {
-                                                                                                detail.productName
-                                                                                            }
-                                                                                        </strong>
-                                                                                        <br />
-                                                                                        <small>
-                                                                                            Phân
-                                                                                            loại:{' '}
-                                                                                            {
-                                                                                                detail.color
-                                                                                            }{' '}
-                                                                                            -{' '}
-                                                                                            {
-                                                                                                detail.size
-                                                                                            }
-                                                                                        </small>
-                                                                                        <br />
-                                                                                        <small>
-                                                                                            Giá:{' '}
-                                                                                            {detail.price.toLocaleString(
-                                                                                                'vi-VN',
-                                                                                                {
-                                                                                                    style: 'currency',
-                                                                                                    currency:
-                                                                                                        'VND',
-                                                                                                }
-                                                                                            )}
-                                                                                        </small>
-                                                                                    </div>
-                                                                                    <div className="col-1 d-flex align-items-center text-right">
-                                                                                        x
-                                                                                        {
-                                                                                            detail.quantity
-                                                                                        }
-                                                                                    </div>
-                                                                                </Row>
-                                                                            </div>
+                                                                                </div>
+                                                                            </Row>
+                                                                            <Row className="mb-2">
+                                                                                <div className="col-4">
+                                                                                    <strong>
+                                                                                        Sđt:
+                                                                                    </strong>{' '}
+                                                                                </div>
+                                                                                <div className="col-8">
+                                                                                    {
+                                                                                        order.phone
+                                                                                    }
+                                                                                </div>
+                                                                            </Row>
+                                                                            <Row className="mb-2">
+                                                                                <div className="col-4">
+                                                                                    <strong>
+                                                                                        Địa
+                                                                                        chỉ:
+                                                                                    </strong>{' '}
+                                                                                </div>
+                                                                                <div className="col-8">
+                                                                                    {
+                                                                                        order.address
+                                                                                    }
+                                                                                </div>
+                                                                            </Row>
                                                                         </div>
-                                                                    </ListGroup.Item>
-                                                                )
-                                                            )}
-                                                        </div>
-                                                    </div>
+                                                                        <div className="col-6 ">
+                                                                            {order.invoicesDetails.map(
+                                                                                (
+                                                                                    detail,
+                                                                                    index
+                                                                                ) => (
+                                                                                    <ListGroup.Item
+                                                                                        key={
+                                                                                            index
+                                                                                        }
+                                                                                    >
+                                                                                        <div className="d-flex">
+                                                                                            <div className="col-2 ">
+                                                                                                <img
+                                                                                                    className="image-gallery-thumbnail"
+                                                                                                    style={{
+                                                                                                        width: '100%',
+                                                                                                    }}
+                                                                                                    src={
+                                                                                                        detail.imgUrl
+                                                                                                    }
+                                                                                                    alt=""
+                                                                                                />
+                                                                                            </div>
+                                                                                            <div className="col">
+                                                                                                <Row className="mb-4">
+                                                                                                    <div className="col-11">
+                                                                                                        <strong>
+                                                                                                            {
+                                                                                                                detail.productName
+                                                                                                            }
+                                                                                                        </strong>
+                                                                                                        <br />
+                                                                                                        <small>
+                                                                                                            Phân
+                                                                                                            loại:{' '}
+                                                                                                            {
+                                                                                                                detail.color
+                                                                                                            }{' '}
+                                                                                                            -{' '}
+                                                                                                            {
+                                                                                                                detail.size
+                                                                                                            }
+                                                                                                        </small>
+                                                                                                        <br />
+                                                                                                        <small>
+                                                                                                            Giá:{' '}
+                                                                                                            {detail.price.toLocaleString(
+                                                                                                                'vi-VN',
+                                                                                                                {
+                                                                                                                    style: 'currency',
+                                                                                                                    currency:
+                                                                                                                        'VND',
+                                                                                                                }
+                                                                                                            )}
+                                                                                                        </small>
+                                                                                                    </div>
+                                                                                                    <div className="col-1 d-flex align-items-center text-right">
+                                                                                                        x
+                                                                                                        {
+                                                                                                            detail.quantity
+                                                                                                        }
+                                                                                                    </div>
+                                                                                                </Row>
+                                                                                            </div>
+                                                                                        </div>
+                                                                                    </ListGroup.Item>
+                                                                                )
+                                                                            )}
+                                                                        </div>
+                                                                    </div>
 
-                                                    <hr />
+                                                                    <hr />
 
-                                                    <div className=" d-flex flex-column align-items-end">
-                                                        <small>
-                                                            Phí Ship:{' '}
-                                                            {order.shippingFee.toLocaleString(
-                                                                'vi-VN',
-                                                                {
-                                                                    style: 'currency',
-                                                                    currency:
-                                                                        'VND',
-                                                                }
-                                                            )}
-                                                        </small>
-                                                        <div>
-                                                            <strong>
-                                                                Thành tiền:
-                                                            </strong>{' '}
-                                                            {order.totalBill.toLocaleString(
-                                                                'vi-VN',
-                                                                {
-                                                                    style: 'currency',
-                                                                    currency:
-                                                                        'VND',
-                                                                }
-                                                            )}
-                                                        </div>
-                                                        {order.isPaid && (
-                                                            <div className="text-danger">
-                                                                (Đã thanh toán)
-                                                            </div>
-                                                        )}
-                                                    </div>
-                                                </Card.Body>
-                                            </Card>
-                                        </>
-                                    ))}
-                                </>
-                            ) : (
-                                <>Bạn chưa có đơn hàng nào</>
-                            )}
-                            <CustomPagination
-                                totalPages={totalPages}
-                                currentPage={parseInt(currentPage)}
-                                totalItems={totalItems}
-                            />
-                        </div>
+                                                                    <div className=" d-flex flex-column align-items-end">
+                                                                        <small>
+                                                                            Phí
+                                                                            Ship:{' '}
+                                                                            {order.shippingFee.toLocaleString(
+                                                                                'vi-VN',
+                                                                                {
+                                                                                    style: 'currency',
+                                                                                    currency:
+                                                                                        'VND',
+                                                                                }
+                                                                            )}
+                                                                        </small>
+                                                                        <div>
+                                                                            <strong>
+                                                                                Thành
+                                                                                tiền:
+                                                                            </strong>{' '}
+                                                                            {order.totalBill.toLocaleString(
+                                                                                'vi-VN',
+                                                                                {
+                                                                                    style: 'currency',
+                                                                                    currency:
+                                                                                        'VND',
+                                                                                }
+                                                                            )}
+                                                                        </div>
+                                                                        {order.isPaid && (
+                                                                            <div className="text-danger">
+                                                                                (Đã
+                                                                                thanh
+                                                                                toán)
+                                                                            </div>
+                                                                        )}
+                                                                    </div>
+                                                                </Card.Body>
+                                                            </Card>
+                                                        </>
+                                                    )
+                                                )}
+                                            </>
+                                        ) : (
+                                            <>Bạn chưa có đơn hàng nào</>
+                                        )}
+                                        <CustomPagination
+                                            totalPages={totalPages}
+                                            currentPage={parseInt(currentPage)}
+                                            totalItems={totalItems}
+                                        />
+                                    </>
+                                )}
+                                    </div>
+                          
+                        
                     )}
                 </div>
             </div>

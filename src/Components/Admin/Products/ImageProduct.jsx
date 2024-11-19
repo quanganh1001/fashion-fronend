@@ -24,6 +24,7 @@ export default function ImageProduct() {
     const [imageFileError, setImageFileError] = useState('');
 
     const [isLoading, setIsLoading] = useState(false);
+    const [isLoadingList, setIsLoadingList] = useState(false);
 
     useEffect(() => {
         fetchImagesProduct();
@@ -31,19 +32,22 @@ export default function ImageProduct() {
     }, []);
 
     const fetchImagesProduct = () => {
+        setIsLoadingList(true)
         getAllImageProducts(id)
             .then((res) => {
                 setListImages(res.data);
             })
             .catch((err) => {
                 console.log(err);
+            })
+            .finally(() => {
+                setIsLoadingList(false);
             });
     };
 
     const fetchImageBackground = () => {
         getProductForAdminPage(id)
             .then((res) => {
-                console.log(res);
                 setImageBackground(res.data.imageBackground);
             })
             .catch((err) => {
@@ -92,13 +96,15 @@ export default function ImageProduct() {
     };
     const handleDelete = (id) => {
         openModal('Xóa sản phẩm', `Bạn có chắc muốn xóa ảnh này?`, () => {
+            setIsLoadingList(true);
             deleteImage(id)
                 .then(() => {
                     toast.success('Xóa thành công');
-                    fetchImageBackground();
+                    fetchImagesProduct();
                 })
                 .catch(() => {
                     toast.error('Lỗi! Không thể xóa.');
+                    setIsLoadingList(false);
                 });
 
             closeModal();
@@ -110,6 +116,7 @@ export default function ImageProduct() {
             'Đổi ảnh nền sản phẩm',
             `Bạn có chắc muốn đổi ảnh này?`,
             () => {
+                setIsLoadingList(true)
                 updateImageBackground(id, imageUrl)
                     .then(() => {
                         toast.success('Thay đổi thành công');
@@ -117,6 +124,9 @@ export default function ImageProduct() {
                     })
                     .catch(() => {
                         toast.error('Lỗi! Không thể thay đổi.');
+                    })
+                    .finally(() => {
+                        setIsLoadingList(false);
                     });
 
                 closeModal();
@@ -156,7 +166,7 @@ export default function ImageProduct() {
                             </span>
                         </div>
 
-                        <button type="submit" className=" button">
+                        <button type="submit" className=" button ms-1">
                             Tải lên
                         </button>
                         {isLoading && <LoadingSprinner />}
@@ -192,42 +202,60 @@ export default function ImageProduct() {
                         className="d-flex flex-wrap overflow-auto"
                         style={{ maxHeight: '100vh' }}
                     >
-                        {listImages.map((i) => (
-                            <li key={i.fileImg} className=" m-4">
-                                {i.fileImg.endsWith('.mp4') ? (
-                                    <video width="250px" controls>
-                                        <source
-                                            src={i.fileImg}
-                                            type="video/mp4"
-                                        />
-                                    </video>
-                                ) : (
-                                    <img src={i.fileImg} width="250px" alt="" />
-                                )}
+                        {isLoadingList ? (
+                            <LoadingSprinner />
+                        ) : (
+                            <>
+                                {listImages.map((i) => (
+                                    <li key={i.fileImg} className=" m-4">
+                                        {i.fileImg.endsWith('.mp4') ? (
+                                            <video width="250px" controls>
+                                                <source
+                                                    src={i.fileImg}
+                                                    type="video/mp4"
+                                                />
+                                            </video>
+                                        ) : (
+                                            <img
+                                                src={i.fileImg}
+                                                width="250px"
+                                                alt=""
+                                            />
+                                        )}
 
-                                <div className="mt-3 d-flex flex-wrap justify-content-between">
-                                    <button
-                                        className={
-                                            i.fileImg === imageBackground
-                                                ? 'btn btn-secondary'
-                                                : 'btn btn-warning'
-                                        }
-                                        disabled={i.fileImg === imageBackground}
-                                        onClick={() =>
-                                            handleUpdateBackground(i.fileImg)
-                                        }
-                                    >
-                                        Đặt làm ảnh nền
-                                    </button>
-                                    <button
-                                        className="btn btn-danger"
-                                        onClick={() => handleDelete(i.id)}
-                                    >
-                                        Xóa
-                                    </button>
-                                </div>
-                            </li>
-                        ))}
+                                        <div className="mt-3 d-flex flex-wrap justify-content-between">
+                                            <button
+                                                className={
+                                                    i.fileImg ===
+                                                    imageBackground
+                                                        ? 'btn btn-secondary'
+                                                        : 'btn btn-warning'
+                                                }
+                                                disabled={
+                                                    i.fileImg ===
+                                                    imageBackground
+                                                }
+                                                onClick={() =>
+                                                    handleUpdateBackground(
+                                                        i.fileImg
+                                                    )
+                                                }
+                                            >
+                                                Đặt làm ảnh nền
+                                            </button>
+                                            <button
+                                                className="btn btn-danger"
+                                                onClick={() =>
+                                                    handleDelete(i.id)
+                                                }
+                                            >
+                                                Xóa
+                                            </button>
+                                        </div>
+                                    </li>
+                                ))}
+                            </>
+                        )}
                     </ul>
                 </div>
             </div>

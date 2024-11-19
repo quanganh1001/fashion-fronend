@@ -64,10 +64,9 @@ export default function Category() {
                 })
                 .catch((error) => {
                     toast.error('Không thể xóa!');
-                })
-                .finally(() => {
                     setIsLoading(false);
-                });
+                })
+                
             closeModal();
         });
     };

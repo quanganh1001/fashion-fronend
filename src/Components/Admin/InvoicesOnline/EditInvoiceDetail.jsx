@@ -417,15 +417,17 @@ export default function EditInvoiceDetail() {
                             </div>
 
                             <div className="d-flex justify-content-between">
-                                <button
-                                    disabled={isLoadingButton}
-                                    style={{ textAlign: 'center' }}
-                                    type="submit"
-                                    className="mt-3 button col-4"
-                                >
-                                    Cập nhập đơn hàng
-                                </button>
-                                {isLoadingButton && <LoadingSpinner />}
+                                <div className='col-4'>
+                                    <button
+                                        disabled={isLoadingButton}
+                                        style={{ textAlign: 'center' }}
+                                        type="submit"
+                                        className="mt-3 button"
+                                    >
+                                        Cập nhập đơn hàng
+                                    </button>
+                                    {isLoadingButton && <LoadingSpinner />}
+                                </div>
                                 <div
                                     onClick={() => showHistory()}
                                     className=" text-decoration-underline"

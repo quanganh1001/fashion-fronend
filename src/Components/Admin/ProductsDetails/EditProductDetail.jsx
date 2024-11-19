@@ -26,6 +26,7 @@ export default function EditProductDetail() {
     const [colorNameError, setColorNameError] = useState('');
     const [isActivatedError, setIsActivatedError] = useState('');
     const [isLoading, setIsLoading] = useState(false);
+    const [isLoadingImg, setIsLoadingImg] = useState(false);
     const [imgBackground, setImgBackground] = useState(null);
     const [currentBackgound, setCurrentBackgound] = useState('');
     const [isLoadingDetail, setIsLoadingDetail] = useState(true);
@@ -300,6 +301,7 @@ export default function EditProductDetail() {
         }
 
         if (isValid) {
+            setIsLoading(true);
             updateProductDetail(pdid, productDetail)
                 .then((res) => {
                     toast.success('Sửa thành công');
@@ -318,12 +320,14 @@ export default function EditProductDetail() {
                             'Sản phẩm đang ẩn nên không thể kích hoạt mã phân loại'
                         );
                     } else setIsActivatedError('');
+                })
+                .finally(() => {
+                    setIsLoading(false);
                 });
             
             if (imgBackground != null) {
-                console.log("a");
                 
-                setIsLoading(true);
+                setIsLoadingImg(true);
                 const formData = new FormData();
                 formData.append('file', imgBackground);
                 updateBackgroundProductDetail(pdid, formData)
@@ -334,18 +338,15 @@ export default function EditProductDetail() {
                         console.error(err);
                     })
                     .finally(() => {
-                        setIsLoading(false);
+                        setIsLoadingImg(false);
                     });
-            } else {
-                setIsLoading(false);
-            }
+            } 
         }
     };
 
     return (
         <>
             <Title title="Sửa mã phân loại" />
-            <hr />
             <div className="mt-5 bg-white p-5 shadow border">
                 {isLoadingDetail ? (
                     <LoadingSpinner />
@@ -468,17 +469,23 @@ export default function EditProductDetail() {
                                     />
                                 </div>
 
-                                {isLoading ? (
-                                    <LoadingSpinner />
-                                ) : (
+                                {isLoadingImg ? (
                                     <div className="ms-3 mb-3 col-6 mt-3">
-                                        <img
-                                            className=" img-thumbnail"
-                                            src={currentBackgound}
-                                            width="150px"
-                                            alt=""
-                                        />
+                                        <LoadingSpinner />
                                     </div>
+                                ) : (
+                                    <>
+                                        {currentBackgound && (
+                                            <div className="ms-3 mb-3 col-6 mt-3">
+                                                <img
+                                                    className=" img-thumbnail"
+                                                    src={currentBackgound}
+                                                    width="150px"
+                                                    alt=""
+                                                />
+                                            </div>
+                                        )}
+                                    </>
                                 )}
                             </div>
                             <div className="mb-3">
@@ -498,7 +505,7 @@ export default function EditProductDetail() {
                                         })
                                     }
                                 />
-                                {productDetail.isActivated ? 'Kích hoạt' : 'Ẩn'}
+                                <span>Kích hoạt/Ẩn</span>
                             </div>
                             <span className="text-danger">
                                 {isActivatedError}
@@ -506,7 +513,7 @@ export default function EditProductDetail() {
                             <button
                                 disabled={isLoading}
                                 type="submit"
-                                className="col-2 button"
+                                className="col-2 me-1 button"
                             >
                                 Lưu
                             </button>

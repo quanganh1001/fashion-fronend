@@ -185,7 +185,7 @@ export default function AdminLogin() {
                     <button
                         disabled={isLoading}
                         type="submit"
-                        className="btn btn-dark bg-gradient col-4"
+                        className="btn btn-dark ms-1 bg-gradient col-4"
                     >
                         Đăng nhập
                     </button>

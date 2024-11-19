@@ -4,12 +4,14 @@ import { useNavigate } from 'react-router-dom';
 import { createAccount } from '../../../Services/AccountService';
 import { getAllRoles } from '../../../Services/EnumService';
 import Title from '../../Fragments/Title';
+import LoadingSpinner from '../../Fragments/LoadingSpinner';
 
 export default function AddAccount() {
     const [phoneError, setPhoneError] = useState('');
     const [emailError, setEmailError] = useState('');
     const [nameError, setNameError] = useState('');
     const [roleError, setRoleError] = useState('');
+    const [isLoading, setIsLoading] = useState(false);
     const navigate = useNavigate();
     const [account, setAccount] = useState({
         phone: '',
@@ -86,7 +88,7 @@ export default function AddAccount() {
         }
 
         if (isValid) {
-            console.log(account);
+            setIsLoading(true);
             createAccount(account)
                 .then(() => {
                     toast.success('Thêm mới thành công');
@@ -105,7 +107,8 @@ export default function AddAccount() {
                             console.error(error);
                         }
                     }
-                });
+                })
+                .finally(()=>{setIsLoading(false);});
         }
     };
     return (
@@ -196,9 +199,10 @@ export default function AddAccount() {
                         </div>
                     </div>
                     <div className="mb-3">
-                        <button type="submit" className="button">
+                        <button type="submit" className="button me-1">
                             Thêm mới
                         </button>
+                        {isLoading && <LoadingSpinner />}
                     </div>
                 </form>
             </div>

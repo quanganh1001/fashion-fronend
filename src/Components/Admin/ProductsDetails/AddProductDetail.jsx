@@ -22,6 +22,7 @@ export default function AddProductDetail() {
     const [colorCodeError, setColorCodeError] = useState('');
     const [colorNameError, setColorNameError] = useState('');
     const [isLoading, setIsLoading] = useState(false);
+    const [isColorLoading, setIsColorLoading] = useState(false);
     const { openModal } = useModal();
     const [ isOpenModal, setIsOpenModal ] = useState(false);
     const [newColorCode, setNewColorCode] = useState("");
@@ -90,6 +91,7 @@ export default function AddProductDetail() {
                                 <button className="col-4 button" type="submit">
                                     Thêm mã màu
                                 </button>
+                                
                             </div>
                         </form>
                     </div>
@@ -139,6 +141,7 @@ export default function AddProductDetail() {
     };
 
     const handleDeleteColor = (id) => {
+        setIsColorLoading(true)
          deleteColor(id)
              .then(() => {         
                 toast.success('Xóa thành công!');
@@ -147,10 +150,14 @@ export default function AddProductDetail() {
             .catch((error) => {
                 console.error(error);
                 toast.error('"Không thể xóa màu này"');
+            })
+            .finally(() => {
+                setIsColorLoading(false);
             });
     };
 
     const addColor = (e) => {
+        
         e.preventDefault();
         let isValid = true;
 
@@ -171,6 +178,7 @@ export default function AddProductDetail() {
         }
 
         if (isValid) {
+            setIsColorLoading(true);
             createColor({ newColorCode, newColorName })
                 .then((res) => {
                     toast.success('Thêm thành công');
@@ -183,6 +191,9 @@ export default function AddProductDetail() {
                     }
                     console.error(error);
                 })
+                .finally(() => {
+                    setIsColorLoading(false);
+            })
         }
     };
 
@@ -253,6 +264,7 @@ export default function AddProductDetail() {
                     navigate(`/admin/products/${id}/edit`);
                 })
                 .catch((error) => {
+                    if(error)
                     toast.error('Có lỗi xảy ra, không thể thêm');
                 })
                 .finally(() => {
@@ -270,7 +282,11 @@ export default function AddProductDetail() {
     return (
         <>
             <Title title="Thêm chi tiết sản phẩm" />
-            <hr />
+            {isColorLoading && (
+                <div className="col-1 position-fixed top-0 end-0 m-3">
+                    <LoadingSpinner />
+                </div>
+            )}
             <div className="mt-5 bg-white p-5 shadow border">
                 <form onSubmit={addProductDetailForm}>
                     <div className="row">

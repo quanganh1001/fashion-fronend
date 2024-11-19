@@ -162,15 +162,18 @@ export default function Account() {
             'Xóa tài khoản',
             `Bạn có chắc muốn xóa tài khoản này?`,
             () => {
+                setIsLoading(true)
                 deleteAccount(id)
                     .then((res) => {
                         toast.success('Xóa tài khoản thành công!');
                         fetchGetAllAccount();
                     })
                     .catch((error) => {
+                        setIsLoading(false);
                         console.error(error);
                         toast.error("Không thể xóa tài khoản này");
                     });
+
                 closeModal();
             }
         );
