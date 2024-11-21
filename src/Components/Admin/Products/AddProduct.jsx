@@ -121,8 +121,8 @@ export default function AddProduct() {
         if (isValid) {
             setIsLoading(true);
             createProduct(product)
-                .then(() => {
-                    navigator('/admin/products');
+                .then((res) => {
+                    navigator('/admin/products/'+ res.id+'/edit');
                     toast.success('Thêm mới thành công');
                 })
                 .catch((error) => {

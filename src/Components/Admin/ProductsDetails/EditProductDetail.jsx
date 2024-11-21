@@ -174,13 +174,11 @@ export default function EditProductDetail() {
                     isActivated: res.data.isActivated,
                 });
                 setCurrentBackgound(res.data.imageBackground);
+                setIsLoadingDetail(false);
             })
             .catch((err) => {
                 console.error(err);
             })
-            .finally(() => {
-                setIsLoadingDetail(false);
-            });
     };
 
     const addColor = (e) => {
