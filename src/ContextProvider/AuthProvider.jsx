@@ -9,12 +9,14 @@ import {
 import { AuthContext } from './Context';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
+import useModal from '../CustomHooks/useModal';
+import { updateCartFromLocalToRedis } from '../Services/CartService';
 
 export default function AuthProvider({ children }) {
     const location = useLocation();
 
     const navigate = useNavigate();
-
+    const { openModal,closeModal } = useModal();
     const [auth, setAuth] = useState(getAuth());
 
     useEffect(() => {
@@ -73,7 +75,41 @@ export default function AuthProvider({ children }) {
         });
     };
 
+    const updateCurrentCart = (res) => {
+        const cartItems = JSON.parse(localStorage.getItem('cart')) || {};
+        const listCart = Object.values(cartItems).map((item) => ({
+            id: item.productDetail.id,
+            quantity: item.quantity,
+        }));
+
+        const listCartJson = JSON.stringify(listCart);
+        console.log(listCartJson);
+        updateCartFromLocalToRedis(listCartJson)
+            .then(() => {
+                navigate('/cart');
+                setAuth({
+                    token: res.data.token,
+                    refreshToken: res.data.refreshToken,
+                    account: {
+                        id: res.data.account.id,
+                        name: res.data.account.name,
+                        phone: res.data.account.phone,
+                        email: res.data.account.email,
+                        address: res.data.account.address,
+                        isActivated: res.data.account.isActivated,
+                        role: res.data.account.role,
+                    },
+                }); // Gọi setAuth để trigger lại CartProvider's fetchGetCart
+                toast.success('Giỏ hàng đã được cập nhật');
+            })
+            .catch((error) => {
+                console.error(error);
+                toast.error('Có lỗi xảy ra');
+            }).finally(()=>{closeModal();});
+    };
+
     const handleLoginClient = async (data) => {
+
         await loginClient(data).then((res) => {
             setAuth({
                 token: res.data.token,
@@ -92,7 +128,34 @@ export default function AuthProvider({ children }) {
             navigate(location.state?.redirectTo?.pathname || '/', {
                 replace: true,
             });
-        });
+const cartData = JSON.parse(localStorage.getItem('cart'));
+
+if (Object.keys(cartData).length !== 0) {
+    openModal(
+        'Cập nhập giỏ hàng',
+        <>
+            <div className="mb-3 container">
+                Đang có sản phẩm trong giỏ hàng! Bạn muốn tiếp tục mua sắm với
+                giỏ hàng này hay giỏ hàng đã lưu ở tài khoản trước đó?
+            </div>
+            <div className="d-flex justify-content-around">
+                <button
+                    className="button"
+                    onClick={() => updateCurrentCart(res)}
+                >
+                    Giỏ hàng hiện tại
+                </button>
+                <button className="button" onClick={() => closeModal()}>
+                    Giỏ hàng đã lưu ở tài khoản
+                </button>
+            </div>
+        </>,
+        () => {},
+        true
+    );
+}  
+                         
+            });
     };
 
     const handleLogout = async () => {

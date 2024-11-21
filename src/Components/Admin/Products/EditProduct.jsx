@@ -24,7 +24,7 @@ export default function EditProduct() {
         catId : '',
         price: '',
         discountPrice: '',
-        brand: 'TORANO',
+        brand: 'AKIRA',
         description: '',
         imageChooseSize: '',
         isActivated: true,
@@ -178,7 +178,6 @@ export default function EditProduct() {
             setIsLoading(true);
             updateProduct(id, product)
                 .then(() => {
-                    navigator('/admin/products');
                     toast.success('Lưu thành công!');
                 })
                 .catch((err) => {
@@ -207,10 +206,9 @@ export default function EditProduct() {
                     })
                     .catch((err) => {
                         toast.error('"Không thể xóa sản phẩm này"');
-                    })
-                    .finally(() => {
                         setIsLoadingDetail(false);
-                    });
+                    })
+                    
                 closeModal();
             }
         );
@@ -442,7 +440,7 @@ export default function EditProduct() {
                                     disabled={isLoading}
                                     type="submit"
                                     id="submit"
-                                    className="col-4 button text-align-center"
+                                    className="col-4 me-1 button text-align-center"
                                 >
                                     Lưu lại
                                 </button>
@@ -468,7 +466,7 @@ export default function EditProduct() {
                             ) : null}
                             <div
                                 className="overflow-auto border ps-3 pb-3 mt-3"
-                                style={{ maxHeight: '700px' }}
+                                style={{ height: '700px'}}
                             >
                                 {listProductsDetails.map((pd) => (
                                     <div

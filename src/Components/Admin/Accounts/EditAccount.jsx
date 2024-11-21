@@ -229,7 +229,7 @@ export default function EditAccount() {
                                     Số điện thoại
                                     <span style={{ color: 'red' }}>*</span>
                                 </label>
-                                    <input
+                                <input
                                     disabled
                                     name="phone"
                                     type="text"
@@ -278,7 +278,7 @@ export default function EditAccount() {
                             >
                                 Lưu
                             </button>
-                            {isLoading && <LoadingSpinner />}
+
                             <button
                                 type="button"
                                 disabled={isLoading}
@@ -288,6 +288,7 @@ export default function EditAccount() {
                                 Đổi mật khẩu
                             </button>
                         </div>
+                        {isLoading && <LoadingSpinner />}
                     </form>
                 )}
             </div>

@@ -5,7 +5,7 @@ export default function Store() {
     const [listStore, setListStore] = useState([
         {
             id: 1,
-            name: 'TORANO TRƯƠNG ĐỊNH',
+            name: 'AKIRA TRƯƠNG ĐỊNH',
             address: 'Số 179 Trương Định, Quận Hoàng Mai, Hà Nội',
             time: '8h30 - 20h00 (kể cả CN và ngày lễ)',
             phone: '098989999',
@@ -14,7 +14,7 @@ export default function Store() {
         },
         {
             id: 2,
-            name: 'TORANO 425A SƯ VẠN HẠNH NỐI DÀI',
+            name: 'AKIRA 425A SƯ VẠN HẠNH NỐI DÀI',
             address: '425A SƯ VẠN HẠNH NỐI DÀI, P.12, Q.10',
             time: '8h30 - 20h00 (kể cả CN và ngày lễ)',
             phone: '096968696',
@@ -23,7 +23,7 @@ export default function Store() {
         },
         {
             id: 3,
-            name: 'TORANO ĐÀ NẴNG',
+            name: 'AKIRA ĐÀ NẴNG',
             address: '281 Điện Biên Phủ, Q. Thanh Khê',
             time: '8h30 - 20h00 (kể cả CN và ngày lễ)',
             phone: '0998999999',
@@ -32,7 +32,7 @@ export default function Store() {
         },
         {
             id: 4,
-            name: 'TORANO 35 NGUYỄN PHONG SẮC',
+            name: 'AKIRA 35 NGUYỄN PHONG SẮC',
             address: 'Số 35 Nguyễn Phong Sắc, Cầu Giấy, Hà Nội',
             time: '8h30 - 22h00 (kể cả CN và ngày lễ)',
             phone: '0978361786',
@@ -41,7 +41,7 @@ export default function Store() {
         },
         {
             id: 5,
-            name: 'TORANO VẠN PHÚC',
+            name: 'AKIRA VẠN PHÚC',
             address: 'Số 178 Vạn Phúc, Q. Hà Đông, Hà Nội',
             time: '8h30 - 20h00 (kể cả CN và ngày lễ)',
             phone: '0989786959',

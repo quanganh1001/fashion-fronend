@@ -55,7 +55,9 @@ export default function AdminLogin() {
                                 );
                             })
                             .catch((error) => {
-                                toast.error('Có lỗi xảy ra!');
+                                if (error.response.status === 404) {
+                                    toast.error('Email không tồn tại');
+                                }
                             });
                         closeModal();
                     }
@@ -185,7 +187,7 @@ export default function AdminLogin() {
                     <button
                         disabled={isLoading}
                         type="submit"
-                        className="btn btn-dark bg-gradient col-4"
+                        className="btn btn-dark ms-1 bg-gradient col-4"
                     >
                         Đăng nhập
                     </button>

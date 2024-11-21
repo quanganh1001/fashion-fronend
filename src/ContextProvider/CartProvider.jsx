@@ -33,10 +33,11 @@ export default function CartProvider({ children }) {
             getCart()
                 .then((res) => {
                     setCart(res.data);
+                    setIsLoadingCart(false);
                 })
                 .catch((error) => {
                     console.error(error);
-                }).finally(()=>{setIsLoadingCart(false)});
+                });
         } else {
             const cartItems = JSON.parse(localStorage.getItem('cart')) || {};
             const cartArray = Object.values(cartItems).map((item) => ({
@@ -73,11 +74,10 @@ export default function CartProvider({ children }) {
             getTotalItems()
                 .then((res) => {
                     setTotalItems(res.data);
+                     setIsLoadingCart(false);
                 })
                 .catch((error) => {
                     console.error(error);
-                }).finally(() => {
-                     setIsLoadingCart(false);
                 });
         } else {
             let totalQuantity = 0;
@@ -97,13 +97,12 @@ export default function CartProvider({ children }) {
             removeCart(productDetailId)
                 .then((res) => {
                     setCart(res.data);
+                    setIsLoadingCart(false);
                 })
                 .catch((error) => {
                     console.error(error);
                 })
-                .finally(() => {
-                    setIsLoadingCart(false);
-                });
+                
         } else {
             let cartItems = JSON.parse(localStorage.getItem('cart')) || {};
             delete cartItems[productDetailId];
@@ -118,14 +117,13 @@ export default function CartProvider({ children }) {
             updateCart(productDetailId, quantity)
                 .then((res) => {
                     setCart(res.data);
+                    setIsLoadingCart(false);
                 })
                 .catch((error) => {
                     console.error(error);
                     toast.error(error);
                 })
-                .finally(() => {
-                    setIsLoadingCart(false);
-                });
+                
         }
     };
 
@@ -207,6 +205,7 @@ export default function CartProvider({ children }) {
             clearCart()
                 .then((res) => {
                     setCart(res.data);
+                    localStorage.removeItem('cart');
                 })
                 .catch((error) => {
                     console.error(error);
@@ -214,6 +213,7 @@ export default function CartProvider({ children }) {
                 })
                 .finally(() => {
                     setIsLoadingCart(false);
+                    
                 });;
         } else {
             localStorage.removeItem('cart');

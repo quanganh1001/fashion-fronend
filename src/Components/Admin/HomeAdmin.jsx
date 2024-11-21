@@ -10,8 +10,12 @@ import {
     getTopProduct,
 } from '../../Services/StoredService';
 import { getAllStores } from '../../Services/StoreService';
+import LoadingSpinner from '../Fragments/LoadingSpinner';
 
 const HomeAdmin = () => {
+    const [isLoadingTopProduct, setIsLoadingTopProduct] = useState(false);
+    const [isLoadingSalesSend, setIsLoadingSalesSend] = useState(false);
+    const [isLoadingSalesSuccess, setIsLoadingSalesSuccess] = useState(false);
     const [startDateTopProduct, setStartDateTopProduct] = useState(
         moment().subtract(365, 'days').startOf('day')
     );
@@ -73,6 +77,7 @@ const HomeAdmin = () => {
     };
 
     const fetchSalesSent = () => {
+        setIsLoadingSalesSend(true);
         getSalesSent(startDateSalesSent, endDateSalesSent)
             .then((res) => {
                 setSalesSent({
@@ -82,10 +87,14 @@ const HomeAdmin = () => {
             })
             .catch((error) => {
                 console.error(error);
+            })
+            .finally(() => {
+                setIsLoadingSalesSend(false);
             });
     };
 
     const fetchSalesSuccess = () => {
+        setIsLoadingSalesSuccess(true);
         getSalesSuccess(
             startDateSalesSuccess,
             endDateSalesSuccess,
@@ -99,10 +108,14 @@ const HomeAdmin = () => {
             })
             .catch((error) => {
                 console.error(error);
+            })
+            .finally(() => {
+                setIsLoadingSalesSuccess(false);
             });
     };
 
     const fetchProductTop = () => {
+        setIsLoadingTopProduct(true)
         getTopProduct(
             startDateTopProduct,
             endDateTopProduct,
@@ -113,6 +126,9 @@ const HomeAdmin = () => {
             })
             .catch((error) => {
                 console.error(error);
+            })
+            .finally(() => {
+                setIsLoadingTopProduct(false);
             });
     };
 
@@ -176,33 +192,41 @@ const HomeAdmin = () => {
                             </div>
 
                             <div className="card">
-                                <div className="card-body table-responsive p-0">
+                                <div className="card-body table-responsive">
                                     <table className="table table-hover table-bordered border">
-                                        <thead>
-                                            <tr>
-                                                <th>Số đơn</th>
-                                                <th>Doanh số</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            <tr>
-                                                <td>
-                                                    {salesSent.totalInvoices}
-                                                </td>
-                                                <td>
-                                                    {salesSent.totalSales
-                                                        ? salesSent.totalSales.toLocaleString(
-                                                              'vi-VN',
-                                                              {
-                                                                  style: 'currency',
-                                                                  currency:
-                                                                      'VND',
-                                                              }
-                                                          )
-                                                        : 0}
-                                                </td>
-                                            </tr>
-                                        </tbody>
+                                        {isLoadingSalesSend ? (
+                                            <LoadingSpinner />
+                                        ) : (
+                                            <>
+                                                <thead>
+                                                    <tr>
+                                                        <th>Số đơn</th>
+                                                        <th>Doanh số</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    <tr>
+                                                        <td>
+                                                            {
+                                                                salesSent.totalInvoices
+                                                            }
+                                                        </td>
+                                                        <td>
+                                                            {salesSent.totalSales
+                                                                ? salesSent.totalSales.toLocaleString(
+                                                                      'vi-VN',
+                                                                      {
+                                                                          style: 'currency',
+                                                                          currency:
+                                                                              'VND',
+                                                                      }
+                                                                  )
+                                                                : 0}
+                                                        </td>
+                                                    </tr>
+                                                </tbody>
+                                            </>
+                                        )}
                                     </table>
                                 </div>
                             </div>
@@ -260,33 +284,41 @@ const HomeAdmin = () => {
                                 </div>
                             </div>
                             <div className="card">
-                                <div className="card-body table-responsive p-0">
+                                <div className="card-body table-responsive">
                                     <table className="table table-hover table-bordered border">
-                                        <thead>
-                                            <tr>
-                                                <th>Số đơn</th>
-                                                <th>Doanh số</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            <tr>
-                                                <td>
-                                                    {salesSuccess.totalInvoices}
-                                                </td>
-                                                <td>
-                                                    {salesSuccess.totalSales
-                                                        ? salesSuccess.totalSales.toLocaleString(
-                                                              'vi-VN',
-                                                              {
-                                                                  style: 'currency',
-                                                                  currency:
-                                                                      'VND',
-                                                              }
-                                                          )
-                                                        : 0}
-                                                </td>
-                                            </tr>
-                                        </tbody>
+                                        {isLoadingSalesSuccess ? (
+                                            <LoadingSpinner />
+                                        ) : (
+                                            <>
+                                                <thead>
+                                                    <tr>
+                                                        <th>Số đơn</th>
+                                                        <th>Doanh số</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    <tr>
+                                                        <td>
+                                                            {
+                                                                salesSuccess.totalInvoices
+                                                            }
+                                                        </td>
+                                                        <td>
+                                                            {salesSuccess.totalSales
+                                                                ? salesSuccess.totalSales.toLocaleString(
+                                                                      'vi-VN',
+                                                                      {
+                                                                          style: 'currency',
+                                                                          currency:
+                                                                              'VND',
+                                                                      }
+                                                                  )
+                                                                : 0}
+                                                        </td>
+                                                    </tr>
+                                                </tbody>
+                                            </>
+                                        )}
                                     </table>
                                 </div>
                             </div>
@@ -313,7 +345,6 @@ const HomeAdmin = () => {
                                             locale: {
                                                 format: 'DD/M/YYYY',
                                             },
-                                            
                                         }}
                                         onApply={handleApplyTopProduct}
                                     >
@@ -350,49 +381,63 @@ const HomeAdmin = () => {
                             <div className="card">
                                 <div className="card-body table-responsive p-0">
                                     <table className="table table-striped table-hover table-bordered border">
-                                        <thead>
-                                            <tr>
-                                                <th>STT</th>
-                                                <th>Product</th>
-                                                <th>Màu</th>
-                                                <th>Size</th>
-                                                <th>Số lượng</th>
-                                                <th>Doanh số</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            {listTopProducts.map(
-                                                (product, index) => (
-                                                    <tr key={index}>
-                                                        <td>{index + 1}</td>
-                                                        <td>
-                                                            {
-                                                                product.productName
-                                                            }
-                                                        </td>
-                                                        <td>
-                                                            {product.colorName}
-                                                        </td>
-                                                        <td>{product.size}</td>
-                                                        <td>
-                                                            {
-                                                                product.totalQuantitySold
-                                                            }
-                                                        </td>
-                                                        <td>
-                                                            {product.totalSales.toLocaleString(
-                                                                'vi-VN',
-                                                                {
-                                                                    style: 'currency',
-                                                                    currency:
-                                                                        'VND',
-                                                                }
-                                                            )}
-                                                        </td>
+                                        {isLoadingTopProduct ? (
+                                            <LoadingSpinner />
+                                        ) : (
+                                            <>
+                                                <thead>
+                                                    <tr>
+                                                        <th>STT</th>
+                                                        <th>Product</th>
+                                                        <th>Màu</th>
+                                                        <th>Size</th>
+                                                        <th>Số lượng</th>
+                                                        <th>Doanh số</th>
                                                     </tr>
-                                                )
-                                            )}
-                                        </tbody>
+                                                </thead>
+                                                <tbody>
+                                                    {listTopProducts.map(
+                                                        (product, index) => (
+                                                            <tr key={index}>
+                                                                <td>
+                                                                    {index + 1}
+                                                                </td>
+                                                                <td>
+                                                                    {
+                                                                        product.productName
+                                                                    }
+                                                                </td>
+                                                                <td>
+                                                                    {
+                                                                        product.colorName
+                                                                    }
+                                                                </td>
+                                                                <td>
+                                                                    {
+                                                                        product.size
+                                                                    }
+                                                                </td>
+                                                                <td>
+                                                                    {
+                                                                        product.totalQuantitySold
+                                                                    }
+                                                                </td>
+                                                                <td>
+                                                                    {product.totalSales.toLocaleString(
+                                                                        'vi-VN',
+                                                                        {
+                                                                            style: 'currency',
+                                                                            currency:
+                                                                                'VND',
+                                                                        }
+                                                                    )}
+                                                                </td>
+                                                            </tr>
+                                                        )
+                                                    )}
+                                                </tbody>
+                                            </>
+                                        )}
                                     </table>
                                 </div>
                             </div>

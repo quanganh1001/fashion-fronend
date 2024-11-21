@@ -386,7 +386,7 @@ export default function ContactUs() {
                                     <div className="right">
                                         <strong>Email</strong>
                                         <br />
-                                        cskh@torano.vn
+                                        cskh@AKIRA.vn
                                     </div>
                                 </div>
                             </div>

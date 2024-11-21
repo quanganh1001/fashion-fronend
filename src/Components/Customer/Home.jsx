@@ -14,6 +14,7 @@ import 'slick-carousel/slick/slick-theme.css';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { getAllProductByCategory, getSelectedListProducts } from '../../Services/ProductService';
 import { Helmet } from 'react-helmet-async';
+import LoadingSpinner from '../Fragments/LoadingSpinner';
 
 export default function Home() {
     const [activeIndex, setActiveIndex] = useState(0);
@@ -22,6 +23,9 @@ export default function Home() {
     const [listProductsSale, setListProductSale] = useState([]);
     const [listProducts, setListProducts] = useState([]);
     const [tab, setTab] = useState('best'); 
+    const [isLoading, setIsLoading] = useState(true);
+    const [isLoadingProductSale, setIsLoadingProductSale] = useState(true);
+    const [isLoadingCategories, setIsLoadingCategories] = useState(true);
 
     useEffect(() => {
         fetchCategories();
@@ -33,9 +37,11 @@ export default function Home() {
     }, [tab]);
 
     const fetchGetSelectedListProducts = () => {
+        setIsLoading(true);
         getSelectedListProducts(tab)
             .then((res) => {
                 setListProducts(res.data);
+                setIsLoading(false);
             })
             .catch((error) => {
                 console.error(error);
@@ -44,8 +50,7 @@ export default function Home() {
 
     const fetchProductSale =  () => {
         getAllProductByCategory(0).then((res) => {
-            console.log(res.data);
-            
+            setIsLoadingProductSale(false)
             setListProductSale(res.data);
          }).catch((error) => {
             console.error(error);
@@ -54,9 +59,9 @@ export default function Home() {
 
     const fetchCategories =  () => {
          getAllCategories()
-            .then((res) => {
+             .then((res) => {
+                 setIsLoadingCategories(false);
                 const categories = res.data;
-
                 // set categoriesF1
                 const categoriesF1 = categories.filter(
                     (category) => category.catParent === null
@@ -76,10 +81,9 @@ export default function Home() {
     };
 
     const listBanner = [
-        'https://res.cloudinary.com/dmmvhjl0m/image/upload/v1711885305/ysmew6aqlneqdojqdgdq.webp',
-        'https://res.cloudinary.com/dmmvhjl0m/image/upload/v1711885303/bfbpbb0zfrhe5k1wn8hx.webp',
-        'https://res.cloudinary.com/dmmvhjl0m/image/upload/v1711885307/tzbdiicr7ds9ncao7jxj.webp',
-        'https://res.cloudinary.com/dmmvhjl0m/image/upload/v1711885309/k6eyr9bcnhwppvvmshq2.webp',
+        'https://res.cloudinary.com/dmmvhjl0m/image/upload/v1732023052/slide_4_img_x8glcg.webp',
+        'https://res.cloudinary.com/dmmvhjl0m/image/upload/v1732023052/slide_3_img_cjxz7y.webp',
+        'https://res.cloudinary.com/dmmvhjl0m/image/upload/v1732023052/slide_1_img_ukqx2g.webp',
     ];
 
 
@@ -212,36 +216,39 @@ export default function Home() {
                 </Helmet>
                 <div className="container-xl">
                     <h2 className="fw-bold mb-5">DANH MỤC SẢN PHẨM</h2>
+                    {isLoadingCategories ? (
+                        <LoadingSpinner />
+                    ) : (
+                        <Slider {...settings}>
+                            {listCategoriesF2.map((cat) => (
+                                <div
+                                    className="shadow-sm position-relative"
+                                    key={cat.categoryCode}
+                                >
+                                    <div className="me-2">
+                                        <img
+                                            src={cat.catBackground}
+                                            style={{
+                                                height: '350px',
+                                                width: '100%',
+                                            }}
+                                            alt=""
+                                        />
 
-                    <Slider {...settings}>
-                        {listCategoriesF2.map((cat) => (
-                            <div
-                                className="shadow-sm position-relative"
-                                key={cat.categoryCode}
-                            >
-                                <div className="me-2">
-                                    <img
-                                        src={cat.catBackground}
-                                        style={{
-                                            height: '350px',
-                                            width: '100%',
-                                        }}
-                                        alt=""
-                                    />
-
-                                    <div className="position-absolute bg-white bg-opacity-50 p-3 d-flex justify-content-between align-items-center w-100 bottom-0">
-                                        <h4>{cat.catName}</h4>
-                                        <Link to={`/category/${cat.id}`}>
-                                            <FontAwesomeIcon
-                                                icon="fa-solid fa-arrow-right-to-bracket fa-1x"
-                                                className="text-dark bg-white rounded-circle p-2 "
-                                            />
-                                        </Link>
+                                        <div className="position-absolute bg-white bg-opacity-50 p-3 d-flex justify-content-between align-items-center w-100 bottom-0">
+                                            <h4>{cat.catName}</h4>
+                                            <Link to={`/category/${cat.id}`}>
+                                                <FontAwesomeIcon
+                                                    icon="fa-solid fa-arrow-right-to-bracket fa-1x"
+                                                    className="text-dark bg-white rounded-circle p-2 "
+                                                />
+                                            </Link>
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
-                        ))}
-                    </Slider>
+                            ))}
+                        </Slider>
+                    )}
                 </div>
             </section>
 
@@ -258,139 +265,139 @@ export default function Home() {
                         />
 
                         <h2 className=" ms-3 fw-bold text-danger">
-                            TẾT NHẤT SALE TẤT
+                            SẢN PHẨM GIÁ TỐT
                         </h2>
                     </div>
 
-                    <Slider {...settings}>
-                        {listProductsSale.map((product) => (
-                            <div className="pe-3" key={product.id}>
-                                <div className="card position-relative">
+                    {isLoadingProductSale ? (
+                        <LoadingSpinner />
+                    ) : (
+                        <Slider {...settings}>
+                            {listProductsSale.map((product) => (
+                                <div className="pe-3" key={product.id}>
+                                    <div className="card position-relative">
+                                        <div
+                                            style={{
+                                                zIndex: '2',
+                                                backgroundColor: 'red',
+                                                width: '50px',
+                                            }}
+                                            className="position-absolute top-0 start-0 text-white rounded-pill m-2 fw-bold d-flex justify-content-center"
+                                        >
+                                            -{product.discountPercent}%
+                                        </div>
+
+                                        {product.imageBackground &&
+                                        product.imageBackground.endsWith(
+                                            '.mp4'
+                                        ) ? (
+                                            <video
+                                                style={{
+                                                    height: '350px',
+                                                    width: '100%',
+                                                }}
+                                                controls
+                                                autoplay
+                                                muted
+                                                src={product.imageBackground}
+                                            ></video>
+                                        ) : (
+                                            <img
+                                                src={product.imageBackground}
+                                                alt="..."
+                                                style={{
+                                                    height: '350px',
+                                                    width: '100%',
+                                                }}
+                                            />
+                                        )}
+
+                                        <Link
+                                            to={'/product/' + product.id}
+                                            style={{ width: '80%' }}
+                                            className="add-to-cart-btn position-absolute button border-white shadow fw-bold"
+                                        >
+                                            Chi tiết sản phẩm
+                                        </Link>
+                                    </div>
+
                                     <div
-                                        style={{
-                                            zIndex: '2',
-                                            backgroundColor: 'red',
-                                            width: '50px',
-                                        }}
-                                        className="position-absolute top-0 start-0 text-white rounded-pill m-2 fw-bold d-flex justify-content-center"
+                                        className="card-body px-2 pb-3 bg-white"
+                                        style={{ minHeight: '20vh' }}
                                     >
-                                        -{product.discountPercent}%
-                                    </div>
-
-                                    {product.imageBackground &&
-                                    product.imageBackground.endsWith(
-                                        '.mp4'
-                                    ) ? (
-                                        <video
-                                            style={{
-                                                height: '350px',
-                                                width: '100%',
-                                            }}
-                                            controls
-                                            autoplay
-                                            muted
-                                            src={
-                                                product.imageBackground
-                                            }
-                                        ></video>
-                                    ) : (
-                                        <img
-                                            src={
-                                                product.imageBackground
-                                            }
-                                            alt="..."
-                                            style={{
-                                                height: '350px',
-                                                width: '100%',
-                                            }}
-                                        />
-                                    )}
-
-                                    <Link
-                                        to={'/product/' + product.id}
-                                        style={{ width: '80%' }}
-                                        className="add-to-cart-btn position-absolute button border-white shadow fw-bold"
-                                    >
-                                        Chi tiết sản phẩm
-                                    </Link>
-                                </div>
-
-                                <div
-                                    className="card-body px-2 pb-3 bg-white"
-                                    style={{ minHeight: '20vh' }}
-                                >
-                                    <div className="d-flex justify-content-between p-2">
-                                        <span
-                                            className="fw-light"
-                                            style={{ fontSize: '14px' }}
-                                        >
-                                            +{product.totalColor} Màu sắc
-                                        </span>
-                                        <span
-                                            className="fw-light"
-                                            style={{ fontSize: '14px' }}
-                                        >
-                                            +{product.totalSize} Kích thước
-                                        </span>
-                                    </div>
-                                    <h5 className="card-title fs-6">
-                                        {product.productName}
-                                    </h5>
-
-                                    {product.discountPrice !== null ? (
-                                        <div>
+                                        <div className="d-flex justify-content-between p-2">
                                             <span
-                                                className="me-2"
-                                                style={{
-                                                    textDecorationLine:
-                                                        'line-through',
-                                                }}
+                                                className="fw-light"
+                                                style={{ fontSize: '14px' }}
                                             >
-                                                {product.price.toLocaleString(
-                                                    'vi-VN',
-                                                    {
-                                                        style: 'currency',
-                                                        currency: 'VND',
-                                                    }
-                                                )}
+                                                +{product.totalColor} Màu sắc
                                             </span>
                                             <span
-                                                style={{
-                                                    color: 'red',
-                                                    fontWeight: 'bold',
-                                                }}
+                                                className="fw-light"
+                                                style={{ fontSize: '14px' }}
                                             >
-                                                {product.discountPrice.toLocaleString(
-                                                    'vi-VN',
-                                                    {
-                                                        style: 'currency',
-                                                        currency: 'VND',
-                                                    }
-                                                )}
+                                                +{product.totalSize} Kích thước
                                             </span>
                                         </div>
-                                    ) : (
-                                        <div>
-                                            <span
-                                                style={{
-                                                    color: 'red',
-                                                    fontWeight: 'bold',
-                                                }}
-                                            >
-                                                {product.price.toLocaleString(
-                                                    'vi-VN',
-                                                    {
-                                                        style: 'currency',
-                                                        currency: 'VND',
-                                                    }
-                                                )}
-                                            </span>
-                                        </div>
-                                    )}
+                                        <h5 className="card-title fs-6">
+                                            {product.productName}
+                                        </h5>
+
+                                        {product.discountPrice !== null ? (
+                                            <div>
+                                                <span
+                                                    className="me-2"
+                                                    style={{
+                                                        textDecorationLine:
+                                                            'line-through',
+                                                    }}
+                                                >
+                                                    {product.price.toLocaleString(
+                                                        'vi-VN',
+                                                        {
+                                                            style: 'currency',
+                                                            currency: 'VND',
+                                                        }
+                                                    )}
+                                                </span>
+                                                <span
+                                                    style={{
+                                                        color: 'red',
+                                                        fontWeight: 'bold',
+                                                    }}
+                                                >
+                                                    {product.discountPrice.toLocaleString(
+                                                        'vi-VN',
+                                                        {
+                                                            style: 'currency',
+                                                            currency: 'VND',
+                                                        }
+                                                    )}
+                                                </span>
+                                            </div>
+                                        ) : (
+                                            <div>
+                                                <span
+                                                    style={{
+                                                        color: 'red',
+                                                        fontWeight: 'bold',
+                                                    }}
+                                                >
+                                                    {product.price.toLocaleString(
+                                                        'vi-VN',
+                                                        {
+                                                            style: 'currency',
+                                                            currency: 'VND',
+                                                        }
+                                                    )}
+                                                </span>
+                                            </div>
+                                        )}
+                                    </div>
                                 </div>
-                            </div>
-                        ))}
-                    </Slider>
+                            ))}
+                        </Slider>
+                    )}
 
                     <div className=" d-flex justify-content-center">
                         <Link
@@ -402,7 +409,7 @@ export default function Home() {
                                 className="fw-bold"
                                 style={{ marginLeft: '3px' }}
                             >
-                                TẾT NHẤT SALE TẤT
+                                SẢN PHẨM GIÁ TỐT
                             </span>{' '}
                         </Link>
                     </div>
@@ -523,126 +530,134 @@ export default function Home() {
                     </nav>
                 </div>
                 <div className="pt-5 d-flex flex-wrap justify-content-center">
-                    {listProducts.map((product) => (
-                        <div className="col-2 m-2" key={product.id}>
-                            <div className=" card position-relative">
-                                {product.discountPercent != null && (
-                                    <div
-                                        style={{
-                                            zIndex: '2',
-                                            backgroundColor: 'red',
-                                            width: '50px',
-                                        }}
-                                        className="position-absolute top-0 start-0 text-white rounded-pill m-2 fw-bold d-flex justify-content-center"
-                                    >
-                                        -{product.discountPercent}%
+                    {isLoading ? (
+                        <LoadingSpinner />
+                    ) : (
+                        <>
+                            {listProducts.map((product) => (
+                                <div className="col-2 m-2" key={product.id}>
+                                    <div className=" card position-relative">
+                                        {product.discountPercent != null && (
+                                            <div
+                                                style={{
+                                                    zIndex: '2',
+                                                    backgroundColor: 'red',
+                                                    width: '50px',
+                                                }}
+                                                className="position-absolute top-0 start-0 text-white rounded-pill m-2 fw-bold d-flex justify-content-center"
+                                            >
+                                                -{product.discountPercent}%
+                                            </div>
+                                        )}
+
+                                        {product.imageBackground &&
+                                        product.imageBackground.endsWith(
+                                            '.mp4'
+                                        ) ? (
+                                            <video
+                                                style={{
+                                                    height: '270px',
+                                                    width: '100%',
+                                                }}
+                                                controls
+                                                autoplay
+                                                muted
+                                                src={product.imageBackground}
+                                            ></video>
+                                        ) : (
+                                            <img
+                                                src={product.imageBackground}
+                                                alt="..."
+                                                style={{
+                                                    height: '270px',
+                                                    width: '100%',
+                                                }}
+                                            />
+                                        )}
+
+                                        <Link
+                                            to={'/product/' + product.id}
+                                            style={{ width: '80%' }}
+                                            className="add-to-cart-btn position-absolute button border-white shadow fw-bold"
+                                        >
+                                            Chi tiết sản phẩm
+                                        </Link>
                                     </div>
-                                )}
 
-                                {product.imageBackground &&
-                                product.imageBackground.endsWith('.mp4') ? (
-                                    <video
-                                        style={{
-                                            height: '270px',
-                                            width: '100%',
-                                        }}
-                                        controls
-                                        autoplay
-                                        muted
-                                        src={product.imageBackground}
-                                    ></video>
-                                ) : (
-                                    <img
-                                        src={product.imageBackground}
-                                        alt="..."
-                                        style={{
-                                            height: '270px',
-                                            width: '100%',
-                                        }}
-                                    />
-                                )}
+                                    <div className="card-body px-2 pb-3 bg-white">
+                                        <div className="d-flex justify-content-between">
+                                            <span
+                                                className="fw-light"
+                                                style={{ fontSize: '14px' }}
+                                            >
+                                                +{product.totalColor} Màu sắc
+                                            </span>
+                                            <span
+                                                className="fw-light"
+                                                style={{ fontSize: '14px' }}
+                                            >
+                                                +{product.totalSize} Kích thước
+                                            </span>
+                                        </div>
+                                        <h5 className="card-title fs-6 my-2">
+                                            {product.productName}
+                                        </h5>
 
-                                <Link
-                                    to={'/product/' + product.id}
-                                    style={{ width: '80%' }}
-                                    className="add-to-cart-btn position-absolute button border-white shadow fw-bold"
-                                >
-                                    Chi tiết sản phẩm
-                                </Link>
-                            </div>
-
-                            <div className="card-body px-2 pb-3 bg-white">
-                                <div className="d-flex justify-content-between">
-                                    <span
-                                        className="fw-light"
-                                        style={{ fontSize: '14px' }}
-                                    >
-                                        +{product.totalColor} Màu sắc
-                                    </span>
-                                    <span
-                                        className="fw-light"
-                                        style={{ fontSize: '14px' }}
-                                    >
-                                        +{product.totalSize} Kích thước
-                                    </span>
+                                        {product.discountPrice !== null ? (
+                                            <div>
+                                                <span
+                                                    style={{
+                                                        textDecorationLine:
+                                                            'line-through',
+                                                    }}
+                                                >
+                                                    {product.price.toLocaleString(
+                                                        'vi-VN',
+                                                        {
+                                                            style: 'currency',
+                                                            currency: 'VND',
+                                                        }
+                                                    )}
+                                                </span>
+                                                <span
+                                                    className="ms-2"
+                                                    style={{
+                                                        color: 'red',
+                                                        fontWeight: 'bold',
+                                                    }}
+                                                >
+                                                    {product.discountPrice.toLocaleString(
+                                                        'vi-VN',
+                                                        {
+                                                            style: 'currency',
+                                                            currency: 'VND',
+                                                        }
+                                                    )}
+                                                </span>
+                                            </div>
+                                        ) : (
+                                            <div>
+                                                <span
+                                                    style={{
+                                                        color: 'red',
+                                                        fontWeight: 'bold',
+                                                    }}
+                                                >
+                                                    {product.price.toLocaleString(
+                                                        'vi-VN',
+                                                        {
+                                                            style: 'currency',
+                                                            currency: 'VND',
+                                                        }
+                                                    )}
+                                                </span>
+                                            </div>
+                                        )}
+                                    </div>
                                 </div>
-                                <h5 className="card-title fs-6 my-2">
-                                    {product.productName}
-                                </h5>
-
-                                {product.discountPrice !== null ? (
-                                    <div>
-                                        <span
-                                            style={{
-                                                textDecorationLine:
-                                                    'line-through',
-                                            }}
-                                        >
-                                            {product.price.toLocaleString(
-                                                'vi-VN',
-                                                {
-                                                    style: 'currency',
-                                                    currency: 'VND',
-                                                }
-                                            )}
-                                        </span>
-                                        <span
-                                            className="ms-2"
-                                            style={{
-                                                color: 'red',
-                                                fontWeight: 'bold',
-                                            }}
-                                        >
-                                            {product.discountPrice.toLocaleString(
-                                                'vi-VN',
-                                                {
-                                                    style: 'currency',
-                                                    currency: 'VND',
-                                                }
-                                            )}
-                                        </span>
-                                    </div>
-                                ) : (
-                                    <div>
-                                        <span
-                                            style={{
-                                                color: 'red',
-                                                fontWeight: 'bold',
-                                            }}
-                                        >
-                                            {product.price.toLocaleString(
-                                                'vi-VN',
-                                                {
-                                                    style: 'currency',
-                                                    currency: 'VND',
-                                                }
-                                            )}
-                                        </span>
-                                    </div>
-                                )}
-                            </div>
-                        </div>
-                    ))}
+                            ))}
+                        </>
+                    )}
                 </div>
             </section>
             <hr />

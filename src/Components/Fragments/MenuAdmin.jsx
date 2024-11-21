@@ -147,9 +147,8 @@ const Menu = (props) => {
                             className="btn btn-danger"
                             onClick={logout}
                         >
-                            Đăng xuất
+                            {isLoading ? <LoadingSpinner />: "Đăng xuất"}
                         </button>
-                        {isLoading && <LoadingSpinner />}
                     </div>
                 </ul>
             </div>

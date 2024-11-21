@@ -101,7 +101,6 @@ export default function Header() {
     const fetchAllCategories = () => {
         getAllCategories()
             .then((res) => {
-                setIsLoading(false);
                 const categories = res.data;
 
                 const categoriesF1 = categories.filter(
@@ -127,7 +126,8 @@ export default function Header() {
             })
             .catch((err) => {
                 console.error(err);
-            });
+            })
+            .finally(() => { setIsLoading(false); });
     };
 
     const searchForm = (e) => {
@@ -252,65 +252,86 @@ export default function Header() {
                                 Sale
                             </Link>
                         </div>
-                        {isLoading && <LoadingSpinner />}
-                        {listCategoriesF1.map((f1) => (
-                            <div
-                                onMouseLeave={() => {
-                                    setHoveredF1(null);
-                                }}
-                                key={f1.id}
-                                onMouseEnter={() => setHoveredF1(f1.id)}
-                                className="menu-item py-4 d-flex align-items-center  f1"
-                            >
-                                <Link
-                                    to={`/category/${f1.id}`}
-                                    className="   text-dark fw-bold text-decoration-none"
-                                >
-                                    {f1.catName}
-                                </Link>
-
-                                {hoveredF1 === f1.id && (
-                                    <div
-                                        className={`dropdown-content d-flex flex-wrap pt-3 pb-3 border bg-white position-absolute start-50 top-100 translate-middle-x col-10 rounded-bottom shadow justify-content-around ${activeClass}`}
-                                        style={{ zIndex: '51' }}
-                                    >
-                                        {listCategoriesF2
-                                            .filter(
-                                                (f2) => f2.catParent === f1.id
-                                            )
-                                            .map((f2) => (
-                                                <div
-                                                    key={f2.id}
-                                                    className="my-2 d-flex flex-column"
-                                                >
-                                                    <Link
-                                                        to={`/category/${f2.id}`}
-                                                        className="text-dark fw-bold text-decoration-none"
-                                                    >
-                                                        {f2.catName}
-                                                    </Link>
-
-                                                    {listCategoriesF3
-                                                        .filter(
-                                                            (f3) =>
-                                                                f3.catParent ===
-                                                                f2.id
-                                                        )
-                                                        .map((f3) => (
-                                                            <Link
-                                                                key={f3.id}
-                                                                to={`/category/${f3.id}`}
-                                                                className="mt-3 text-dark text-decoration-none"
-                                                            >
-                                                                {f3.catName}
-                                                            </Link>
-                                                        ))}
-                                                </div>
-                                            ))}
-                                    </div>
-                                )}
+                        {isLoading ? (
+                            <div className="menu-item d-flex align-items-center">
+                                <LoadingSpinner />
                             </div>
-                        ))}
+                        ) : (
+                            <>
+                                    {listCategoriesF1.map((f1) => (
+                                        <>
+                                            <div
+                                                onMouseLeave={() => {
+                                                    setHoveredF1(null);
+                                                }}
+                                                key={f1.id}
+                                                onMouseEnter={() => setHoveredF1(f1.id)}
+                                                className="menu-item py-4 d-flex align-items-center  f1"
+                                            >
+                                    
+                                                <Link
+                                                    to={`/category/${f1.id}`}
+                                                    className="   text-dark fw-bold text-decoration-none"
+                                                >
+                                                    {f1.catName}
+                                                </Link>
+
+                                                {hoveredF1 === f1.id && (
+                                                    <div
+                                                        className={`dropdown-content d-flex flex-wrap pt-3 pb-3 border bg-white position-absolute start-50 top-100 translate-middle-x col-10 rounded-bottom shadow justify-content-around ${activeClass}`}
+                                                        style={{ zIndex: '51' }}
+                                                    >
+                                                        {listCategoriesF2
+                                                            .filter(
+                                                                (f2) =>
+                                                                    f2.catParent ===
+                                                                    f1.id
+                                                            )
+                                                            .map((f2) => (
+                                                                <div
+                                                                    key={f2.id}
+                                                                    className="my-2 d-flex flex-column"
+                                                                >
+                                                                    <Link
+                                                                        to={`/category/${f2.id}`}
+                                                                        className="text-dark fw-bold text-decoration-none"
+                                                                    >
+                                                                        {f2.catName}
+                                                                    </Link>
+
+                                                                    {listCategoriesF3
+                                                                        .filter(
+                                                                            (f3) =>
+                                                                                f3.catParent ===
+                                                                                f2.id
+                                                                        )
+                                                                        .map(
+                                                                            (
+                                                                                f3
+                                                                            ) => (
+                                                                                <Link
+                                                                                    key={
+                                                                                        f3.id
+                                                                                    }
+                                                                                    to={`/category/${f3.id}`}
+                                                                                    className="mt-3 text-dark text-decoration-none"
+                                                                                >
+                                                                                    {
+                                                                                        f3.catName
+                                                                                    }
+                                                                                </Link>
+                                                                            )
+                                                                        )}
+                                                                </div>
+                                                            ))}
+                                                    </div>
+                                                )}
+                                      
+                                            </div>
+                                        </>
+                                    ))}
+                            </>
+                        )} 
 
                         <div className="d-flex align-items-center">
                             <Link
@@ -353,7 +374,7 @@ export default function Header() {
                             <FontAwesomeIcon icon="fa-solid fa-cart-shopping" />
 
                             {isLoadingCart ? (
-                                <span className="position-absolute top-0 start-0 translate-middle badge rounded-pill bg-danger">
+                                <span className="position-absolute top-0 start-0 translate-middle badge rounded-pill">
                                     <LoadingSpinner />
                                 </span>
                             ) : (

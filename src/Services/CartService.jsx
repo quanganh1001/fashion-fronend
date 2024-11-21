@@ -35,3 +35,7 @@ export const clearCart = () => {
 export const getTotalItems = () => {
     return apiPrivate.get('/carts/getTotal');
 };
+
+export const updateCartFromLocalToRedis = (listCartJson) => {
+    return apiPrivate.put('/carts/updateCartFromLocalToRedis', listCartJson);
+};

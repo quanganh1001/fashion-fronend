@@ -78,7 +78,6 @@ export default function Cart() {
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        console.log(customerInfo);
         let isValid = true;
 
         if (customerInfo.name === '') {

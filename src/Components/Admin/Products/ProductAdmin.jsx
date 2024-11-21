@@ -35,7 +35,6 @@ export default function ProductAdmin() {
                 setTotalPages(response.data.totalPages);
                 setCurrentPage(response.data.currentPage);
                 setTotalItems(response.data.totalItems);
-                setIsLoading(false);
             })
             .catch((err) => {
                 console.error(err);
@@ -55,10 +54,9 @@ export default function ProductAdmin() {
                 })
                 .catch((err) => {
                     toast.error('"Không thể xóa sản phẩm này"');
-                })
-                .finally(() => {
                     setIsLoading(false);
-                });
+                })
+               
             closeModal();
         });
     };
@@ -92,7 +90,7 @@ export default function ProductAdmin() {
                 </thead>
                 <tbody>
                     {isLoading ? (
-                        <LoadingSpinner />
+                         <LoadingSpinner/>
                     ) : (
                         <>
                             {products.map((p) => (
