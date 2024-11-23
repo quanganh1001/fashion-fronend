@@ -5,9 +5,10 @@ import { toast } from 'react-toastify';
 import LoadingSpinner from '../Fragments/LoadingSpinner';
 import { resetPass } from '../../Services/Auth';
 import useModal from '../../CustomHooks/useModal';
-import { Link } from 'react-router-dom';
-import Title from '../Fragments/Title';
+import { Link, Navigate, useNavigate } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
+import useCart from '../../CustomHooks/useCart';
+
 
 export default function ClientLogin() {
     const [username, setUsername] = useState('');
@@ -20,6 +21,8 @@ export default function ClientLogin() {
     const [showModal, setShowModal] = useState(false);
     const { handleLoginClient } = useAuth();
     const { openModal, closeModal } = useModal();
+    const { handleUpdateCartFromLocalToRedis } = useCart();
+    const navigate = useNavigate();
 
     useEffect(() => {
         if (email !== '' || showModal) {
@@ -101,6 +104,28 @@ export default function ClientLogin() {
             try {
                 setIsLoading(true);
                 await handleLoginClient({ username, password });
+const cartData = JSON.parse(localStorage.getItem('cart')) || {};
+if (Object.keys(cartData).length !== 0) {
+    openModal(
+        'Cập nhập giỏ hàng',
+        <>
+            <div className="mb-3 container">
+                Đang có sản phẩm trong giỏ hàng! Bạn muốn tiếp tục mua sắm với
+                giỏ hàng này hay giỏ hàng đã lưu ở tài khoản trước đó?
+            </div>
+            <div className="d-flex justify-content-around">
+                <button className="button" onClick={() => { handleUpdateCartFromLocalToRedis(); closeModal(); }}>
+                    Giỏ hàng hiện tại
+                </button>
+                <button className="button" onClick={() => closeModal()}>
+                    Giỏ hàng đã lưu ở tài khoản
+                </button>
+            </div>
+        </>,
+        () => {},
+        true
+    );
+}  
                 
             } catch (error) {
                 setIsLoading(false);
@@ -117,10 +142,13 @@ export default function ClientLogin() {
                     console.error(error);
                 }
             } finally {
+                
                 setIsLoading(false);
+                
             }
         }
     };
+
 
     return (
         <div

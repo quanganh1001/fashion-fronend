@@ -6,10 +6,12 @@ import {
     getTotalItems,
     removeCart,
     updateCart,
+    updateCartFromLocalToRedis,
 } from '../Services/CartService';
 import { CartContext } from './Context';
 import useAuth from '../CustomHooks/useAuth';
 import { toast } from 'react-toastify';
+import { useNavigate } from 'react-router-dom';
 
 export default function CartProvider({ children }) {
     const [cart, setCart] = useState([]);
@@ -17,7 +19,7 @@ export default function CartProvider({ children }) {
     const [totalPrice, setTotalPrice] = useState(0);
     const { auth } = useAuth();
     const [isLoadingCart, setIsLoadingCart] = useState(false);
-
+    const navigate = useNavigate();
     useEffect(() => {
         fetchGetCart();
     }, [auth]);
@@ -221,6 +223,28 @@ export default function CartProvider({ children }) {
         }
     };
 
+    const handleUpdateCartFromLocalToRedis = () => {
+        setIsLoadingCart(true);
+        const cartItems = JSON.parse(localStorage.getItem('cart')) || {};
+        const listCart = Object.values(cartItems).map((item) => ({
+            id: item.productDetail.id,
+            quantity: item.quantity,
+        }));
+
+        const listCartJson = JSON.stringify(listCart);
+        updateCartFromLocalToRedis(listCartJson)
+            .then((res) => {
+                setCart(res.data);
+                toast.success('Giỏ hàng đã được cập nhật');
+                setIsLoadingCart(false);
+                navigate('/cart');
+            })
+            .catch((error) => {
+                console.error(error);
+                toast.error('Có lỗi xảy ra');
+            });
+    };
+
     return (
         <CartContext.Provider
             value={{
@@ -235,6 +259,7 @@ export default function CartProvider({ children }) {
                 handleUpdateCartWithAuth,
                 handleAddCart,
                 handleAddCartWithAuth,
+                handleUpdateCartFromLocalToRedis,
             }}
         >
             {children}

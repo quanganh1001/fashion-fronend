@@ -33,6 +33,7 @@ export default function Header() {
     const [isLoading, setIsLoading] = useState(true);
     const [isLoadingLogin, setIsLoadingLogin] = useState(false);
     const [isLoadingLogout, setIsLoadingLogout] = useState(false);
+    const { handleUpdateCartFromLocalToRedis } = useCart();
 
     useEffect(() => {
         if (email !== '' || showModal) {
@@ -179,6 +180,39 @@ export default function Header() {
              setIsLoadingLogin(true);
             try {
                 await handleLoginClient({ username, password });
+                const cartData = JSON.parse(localStorage.getItem('cart')) || {};
+                if (Object.keys(cartData).length !== 0) {
+                    openModal(
+                        'Cập nhập giỏ hàng',
+                        <>
+                            <div className="mb-3 container">
+                                Đang có sản phẩm trong giỏ hàng! Bạn muốn tiếp
+                                tục mua sắm với giỏ hàng này hay giỏ hàng đã lưu
+                                ở tài khoản trước đó?
+                            </div>
+                            <div className="d-flex justify-content-around">
+                                <button
+                                    className="button"
+                                    onClick={() => {
+                                        handleUpdateCartFromLocalToRedis();
+                                        closeModal();
+                                        
+                                    }}
+                                >
+                                    Giỏ hàng hiện tại
+                                </button>
+                                <button
+                                    className="button"
+                                    onClick={() => closeModal()}
+                                >
+                                    Giỏ hàng đã lưu ở tài khoản
+                                </button>
+                            </div>
+                        </>,
+                        () => {},
+                        true
+                    );
+                }  
             } catch (error) {
                 if (error.response.data === 'Invalid username or password') {
                     toast.error('Sai tên đăng nhập hoặc mật khẩu');

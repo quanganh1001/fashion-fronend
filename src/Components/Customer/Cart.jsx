@@ -133,9 +133,7 @@ export default function Cart() {
                             });
                     }
                 } else {
-                    
                     if (auth && auth.account) {
-                        
                         checkoutCashWithAuth(customerInfo)
                             .then((res) => {
                                 window.location.href = res.data;
@@ -147,7 +145,6 @@ export default function Cart() {
                             .finally(() => {
                                 setIsLoading(false);
                             });
-                        
                     } else {
                         console.log(auth);
                         checkoutCash(customerInfo)
