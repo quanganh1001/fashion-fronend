@@ -23,7 +23,7 @@ export default function CreateInvoice() {
     const [inputInvoice, setInputInvoice] = useState({
         name: '',
         phone: '',
-        store: '',
+        store: 1,
         note: '',
         invoicesDetails: [],
     });
@@ -197,7 +197,7 @@ export default function CreateInvoice() {
 
         if (isValid) {
             setIsLoadingButton(true);
-
+            
             createInvoiceAtStore(inputInvoice)
                 .then(() => {
                     navigate('/admin/invoices/store');
