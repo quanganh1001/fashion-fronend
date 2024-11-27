@@ -155,6 +155,8 @@ export default function CartProvider({ children }) {
     };
 
     const handleAddCart = (productDetail, quantity) => {
+        console.log(quantity);
+        
         const cartItems = JSON.parse(localStorage.getItem('cart')) || {};
         const price =
             productDetail.discountPrice !== null
@@ -162,9 +164,11 @@ export default function CartProvider({ children }) {
                 : productDetail.price;
         if (cartItems[productDetail.id]) {
             cartItems[productDetail.id].quantity =
-                Number(cartItems[productDetail.id].quantity) + quantity;
+                Number(cartItems[productDetail.id].quantity || 0) +
+                Number(quantity);
+
             cartItems[productDetail.id].totalPriceItem =
-                price * cartItems[productDetail.id].quantity;
+                Number(price) * cartItems[productDetail.id].quantity;
         } else {
             const totalPriceItem = price * quantity;
             cartItems[productDetail.id] = {
@@ -173,6 +177,8 @@ export default function CartProvider({ children }) {
                 totalPriceItem,
             };
         }
+        
+        
 
         const cartArray = Object.values(cartItems).map((item) => ({
             productDetail: item.productDetail,

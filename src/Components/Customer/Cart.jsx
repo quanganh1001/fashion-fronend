@@ -80,6 +80,14 @@ export default function Cart() {
         e.preventDefault();
         let isValid = true;
 
+        customerInfo.invoicesDetails.forEach(element => {
+            if (element.quantity > 99 || element.quantity < 1) {
+                isValid = false;
+                toast.error("Số lượng sản phẩm không hợp lệ (1-99)");
+            }
+        });
+        
+
         if (customerInfo.name === '') {
             isValid = false;
             setNameError('Tên không được để trống');
@@ -146,7 +154,6 @@ export default function Cart() {
                                 setIsLoading(false);
                             });
                     } else {
-                        console.log(auth);
                         checkoutCash(customerInfo)
                             .then((res) => {
                                 window.location.href = res.data;
